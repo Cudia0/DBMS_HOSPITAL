@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'adminEmail' => 'admin@example.com',
+    'adminEmail' => 'luckyvincentcudia@gmail.com',
     'supportEmail' => 'support@example.com',
     'senderEmail' => 'noreply@example.com',
     'senderName' => 'Example.com mailer',

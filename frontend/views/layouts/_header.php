@@ -12,25 +12,53 @@ $items = [
     [
         'label' => 'Home',
         'url' => ['/site/index'],
+     ],
+     [
+        'label' => 'Appointments',
+        'url' => ['/appointment/index'],
+    ],[
+        'label' => 'Bill',
+        'url' => ['/bill/index'],
+    ],[
+        'label' => 'Department',
+        'url' => ['/department/index'],
+    ],[
+        'label' => 'Director',
+        'url' => ['/director/index'],
+    ],[
+        'label' => 'Doctor',
+        'url' => ['/doctor/index'],
+    ],[
+        'label' => 'Medicine',
+        'url' => ['/medicine/index'],
+    ],[
+        'label' => 'Patient',
+        'url' => ['/patient/index'],
+    ],[
+        'label' => 'Prescription',
+        'url' => ['/prescription/index'],
+    ],[
+        'label' => 'Receptionist',
+        'url' => ['/receptionist/index'],
     ],
-    [
-        'label' => 'About',
-        'url' => ['/site/about'],
-    ],
-    [
-        'label' => 'Contact',
-        'url' => ['/site/contact'],
-    ],
-    [
-        'label' => 'Signup',
-        'url' => ['/site/signup'],
-        'visible' => Yii::$app->user->isGuest,
-    ],
-    [
-        'label' => 'Login',
-        'url' => ['/site/login'],
-        'visible' => Yii::$app->user->isGuest,
-    ],
+    // [
+    //     'label' => 'About',
+    //     'url' => ['/site/about'],
+    // ],
+    // [
+    //     'label' => 'Contact',
+    //     'url' => ['/site/contact'],
+    // ],
+     [
+         'label' => 'Signup',
+         'url' => ['/site/signup'],
+         'visible' => Yii::$app->user->isGuest,
+     ],
+     [
+         'label' => 'Login',
+         'url' => ['/site/login'],
+         'visible' => Yii::$app->user->isGuest,
+     ],
     [
         'label' => 'Logout (' . Html::encode(Yii::$app->user->identity?->username) . ')',
         'url' => ['/site/logout'],
