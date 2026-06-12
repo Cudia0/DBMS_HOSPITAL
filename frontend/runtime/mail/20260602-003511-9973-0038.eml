@@ -1,0 +1,50 @@
+From: MediSync robot <support@example.com>
+To: viena@gmail.com
+Subject: Account registration at MediSync
+MIME-Version: 1.0
+Date: Tue, 02 Jun 2026 00:35:12 +0000
+Message-ID: <24b142d339e4d50263bae94efd1e27e8@example.com>
+Content-Type: multipart/alternative; boundary=-8hbf8ke
+
+---8hbf8ke
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Hello viena,
+
+Follow the link below to verify your email:
+
+http://v=
+ince.com/frontend/index.php/site/verify-email?token=3D9Cl4gg0P4xF81n0Rm9NsT=
+JfeZhPM5Je6_1780360511
+---8hbf8ke
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=
+/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns=3D"http://www.w3.org/1999/=
+xhtml">
+<head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/ht=
+ml; charset=3DUTF-8" />
+    <title></title>
+    </head>
+<body>
+    =
+    <div class=3D"verify-email">
+    <p>Hello viena,</p>
+
+    <p>Foll=
+ow the link below to verify your email:</p>
+
+    <p><a href=3D"http://v=
+ince.com/frontend/index.php/site/verify-email?token=3D9Cl4gg0P4xF81n0Rm9NsT=
+JfeZhPM5Je6_1780360511">http://vince.com/frontend/index.php/site/verify-ema=
+il?token=3D9Cl4gg0P4xF81n0Rm9NsTJfeZhPM5Je6_1780360511</a></p>
+</div>
+ =
+   </body>
+</html>
+
+---8hbf8ke--
