@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 200" width="560" height="200">
+  <defs>
+    <style>
+      .logo-fill { fill: #1a1a2e; }
+      .logo-accent { fill: #16213e; }
+      .logo-subtitle { fill: #333333; }
+      .logo-ring { stroke: #1a1a2e; }
+    </style>
+  </defs>
+  
+  <!-- Icon: Medical Cross + Sync -->
+  <g transform="translate(90,100)">
+    <!-- Medical Cross -->
+    <rect x="-25" y="-45" width="50" height="90" rx="6" class="logo-fill"/>
+    <rect x="-45" y="-25" width="90" height="50" rx="6" class="logo-accent"/>
+    
+    <!-- Sync circle -->
+    <circle cx="0" cy="0" r="55" fill="none" class="logo-ring" stroke-width="3" opacity="0.4"/>
+    <circle cx="0" cy="0" r="65" fill="none" class="logo-ring" stroke-width="1.5" stroke-dasharray="10,5" opacity="0.3"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="185" y="108" font-family="'Segoe UI', Arial, sans-serif" font-size="44" font-weight="bold" class="logo-fill" letter-spacing="2">
+    Medi<tspan class="logo-accent">Sync</tspan>
+  </text>
+  <text x="185" y="135" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" class="logo-subtitle" letter-spacing="6">
+    HOSPITAL MANAGEMENT SYSTEM
+  </text>
+</svg>
