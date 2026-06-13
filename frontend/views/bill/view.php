@@ -32,10 +32,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'bill_id',
             'appt_id',
             'payment_status',
-            'qty',
+            'payment_method',
             'dr_fee',
             'totalm_price',
             'total_amount',
+            'bill_date',
+            'created_at',
+            'updated_at',
         ],
     ]) ?>
 

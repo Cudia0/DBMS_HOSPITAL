@@ -31,7 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'med_id',
             'med_name',
+            'dosage_form',
+            'strength',
             'med_price',
+            'created_at',
+            'updated_at',
         ],
     ]) ?>
 

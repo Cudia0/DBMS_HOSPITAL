@@ -24,13 +24,19 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'payment_status') ?>
 
-    <?= $form->field($model, 'qty') ?>
+    <?= $form->field($model, 'payment_method') ?>
 
     <?= $form->field($model, 'dr_fee') ?>
 
     <?php // echo $form->field($model, 'totalm_price') ?>
 
     <?php // echo $form->field($model, 'total_amount') ?>
+
+    <?php // echo $form->field($model, 'bill_date') ?>
+
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'updated_at') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

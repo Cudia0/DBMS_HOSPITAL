@@ -20,11 +20,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'dept_id') ?>
 
+    <?= $form->field($model, 'dept_name') ?>
+
+    <?= $form->field($model, 'operating_days') ?>
+
     <?= $form->field($model, 'office_hours') ?>
 
-    <?= $form->field($model, 'start_time') ?>
+    <?= $form->field($model, 'created_at') ?>
 
-    <?= $form->field($model, 'end_time') ?>
+    <?php // echo $form->field($model, 'updated_at') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

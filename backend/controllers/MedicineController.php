@@ -2,12 +2,12 @@
 
 namespace backend\controllers;
 
-use app\models\TblMedicine;
-use app\models\MedicineSearch;
+use common\models\TblMedicine;
+use common\models\MedicineSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
+
 /**
  * MedicineController implements the CRUD actions for TblMedicine model.
  */
@@ -21,20 +21,6 @@ class MedicineController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['login', 'error'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index', 'create', 'update', 'view', 'delete'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [

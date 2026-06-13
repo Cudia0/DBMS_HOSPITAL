@@ -51,5 +51,12 @@ return [
         ],
 
     ],
+    'modules' => [
+        // Add this section
+        'gridview' => [
+            'class' => 'kartik\grid\Module',
+            'bsVersion' => '5.x',
+        ],
+    ],
     'params' => $params,
 ];

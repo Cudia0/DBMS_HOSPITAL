@@ -2,8 +2,8 @@
 
 namespace frontend\controllers;
 
-use app\models\TblBill;
-use app\models\BillSearch;
+use common\models\TblBill;
+use common\models\BillSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -13,6 +13,41 @@ use yii\filters\VerbFilter;
  */
 class BillController extends Controller
 {
+    public function actionCalculate($appt_id)
+{
+    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    
+    $appointment = TblAppointment::findOne($appt_id);
+    if (!$appointment) {
+        return ['success' => false, 'message' => 'Appointment not found'];
+    }
+    
+    $doctor = TblDoctor::findOne($appointment->dr_id);
+    $dr_fee = $doctor ? $doctor->dr_fee : 0;
+    
+    $prescriptions = TblPrescription::find()->where(['appt_id' => $appt_id])->all();
+    $medicine_total = 0;
+    foreach ($prescriptions as $prescription) {
+        $medlines = TblMedline::find()->where(['prescription_id' => $prescription->prescription_id])->all();
+        foreach ($medlines as $medline) {
+            $medicine = TblMedicine::findOne($medline->med_id);
+            if ($medicine) {
+                $medicine_total += ($medicine->med_price * $medline->qty);
+            }
+        }
+    }
+    
+    $labTests = TblLabTest::find()->where(['appt_id' => $appt_id, 'status' => 'completed'])->all();
+    $labtest_total = count($labTests) * 1500;
+    
+    return [
+        'success' => true,
+        'dr_fee' => $dr_fee,
+        'medicine_total' => $medicine_total,
+        'labtest_total' => $labtest_total,
+        'grand_total' => $dr_fee + $medicine_total + $labtest_total
+    ];
+}
     /**
      * @inheritDoc
      */

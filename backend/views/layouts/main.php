@@ -38,4 +38,4 @@ $this->render('_head');
 <?php $this->endBody() ?>
 </body>
 </html>
-<?php $this->endPage();
+<?php $this->endPage() ?>

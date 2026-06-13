@@ -2,41 +2,44 @@
 
 namespace backend\controllers;
 
-use app\models\TblPatient;
-use app\models\PatientSearch;
+use common\models\TblPatient;
+use common\models\PatientSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use Yii;
+
 /**
- * PatientController implements the CRUD actions for TblPatient model.
+ * PatientController - Director & Receptionist can manage, Doctor can view
  */
 class PatientController extends Controller
 {
-    /**
-     * @inheritDoc
-     */
     public function behaviors()
     {
         return array_merge(
             parent::behaviors(),
             [
                 'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['login', 'error'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index', 'create', 'update', 'view', 'delete'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user->identity;
+                                // All staff can view patients
+                                if (in_array($action->id, ['index', 'view'])) {
+                                    return $user->isDirector() || $user->isReceptionist() || $user->isDoctor();
+                                }
+                                // Only Director & Receptionist can create/update/delete
+                                return $user->isDirector() || $user->isReceptionist();
+                            },
+                        ],
                     ],
                 ],
-            ],
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -45,104 +48,51 @@ class PatientController extends Controller
         );
     }
 
-    /**
-     * Lists all TblPatient models.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         $searchModel = new PatientSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
-    /**
-     * Displays a single TblPatient model.
-     * @param int $patient_id Patient ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($patient_id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($patient_id),
-        ]);
+        return $this->render('view', ['model' => $this->findModel($patient_id)]);
     }
 
-    /**
-     * Creates a new TblPatient model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
     public function actionCreate()
     {
         $model = new TblPatient();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'patient_id' => $model->patient_id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing TblPatient model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $patient_id Patient ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($patient_id)
-    {
-        $model = $this->findModel($patient_id);
-
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'patient_id' => $model->patient_id]);
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['model' => $model]);
     }
 
-    /**
-     * Deletes an existing TblPatient model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $patient_id Patient ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+    public function actionUpdate($patient_id)
+    {
+        $model = $this->findModel($patient_id);
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'patient_id' => $model->patient_id]);
+        }
+        return $this->render('update', ['model' => $model]);
+    }
+
     public function actionDelete($patient_id)
     {
+        if (!Yii::$app->user->identity->isDirector()) {
+            Yii::$app->session->setFlash('error', 'Only Director can delete patients.');
+            return $this->redirect(['index']);
+        }
         $this->findModel($patient_id)->delete();
-
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the TblPatient model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $patient_id Patient ID
-     * @return TblPatient the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($patient_id)
     {
         if (($model = TblPatient::findOne(['patient_id' => $patient_id])) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

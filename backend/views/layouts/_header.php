@@ -12,40 +12,66 @@ $items = [
     [
         'label' => 'Home',
         'url' => ['/site/index'],
-    ],
-    [
-        'label' => 'Appointments',
-        'url' => ['/appointment/index'],
-    ],[
-        'label' => 'Bill',
-        'url' => ['/bill/index'],
-    ],[
-        'label' => 'Department',
+     ],
+     [
+        'label' => 'Departments',
         'url' => ['/department/index'],
     ],[
-        'label' => 'Director',
+        'label' => 'Directors',
         'url' => ['/director/index'],
+    ],[
+        'label' => 'Medicines',
+        'url' => ['/medicine/index'],
+    ],[
+        'label' => 'Receptionists',
+        'url' => ['/receptionist/index'],
     ],[
         'label' => 'Doctor',
         'url' => ['/doctor/index'],
     ],[
-        'label' => 'Medicine',
-        'url' => ['/medicine/index'],
-    ],[
-        'label' => 'Patient',
+        'label' => 'Patients',
         'url' => ['/patient/index'],
     ],[
-        'label' => 'Prescription',
+        'label' => 'Appointments',
+        'url' => ['/appointment/index'],
+    ],[
+        'label' => 'Medical Records',
+        'url' => ['/medical-record/index'],
+    ],[
+        'label' => 'Prescriptions',
         'url' => ['/prescription/index'],
     ],[
-        'label' => 'Receptionist',
-        'url' => ['/receptionist/index'],
+        'label' => 'Medical Line',
+        'url' => ['/medline/index'],
+    ],[
+        'label' => 'Lab Tests',
+        'url' => ['/lab-test/index'],
+    ],[
+        'label' => 'Bills',
+        'url' => ['/bill/index'],
+    ],[
+        'label' => 'Bill Items',
+        'url' => ['/bill-item/index'],
     ],
-    [
-        'label' => 'Login',
-        'url' => ['/site/login'],
-        'visible' => Yii::$app->user->isGuest,
-    ],
+    
+    // [
+    //     'label' => 'About',
+    //     'url' => ['/site/about'],
+    // ],
+    // [
+    //     'label' => 'Contact',
+    //     'url' => ['/site/contact'],
+    // ],
+     [
+         'label' => 'Signup',
+         'url' => ['/site/signup'],
+         'visible' => Yii::$app->user->isGuest,
+     ],
+     [
+         'label' => 'Login',
+         'url' => ['/site/login'],
+         'visible' => Yii::$app->user->isGuest,
+     ],
     [
         'label' => 'Logout (' . Html::encode(Yii::$app->user->identity?->username) . ')',
         'url' => ['/site/logout'],
@@ -56,6 +82,7 @@ $items = [
         'visible' => !Yii::$app->user->isGuest,
     ],
 ];
+
 ?>
 <header id="header">
     <?php NavBar::begin(

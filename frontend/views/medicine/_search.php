@@ -22,7 +22,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'med_name') ?>
 
+    <?= $form->field($model, 'dosage_form') ?>
+
+    <?= $form->field($model, 'strength') ?>
+
     <?= $form->field($model, 'med_price') ?>
+
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'updated_at') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

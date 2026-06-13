@@ -6,21 +6,34 @@ declare(strict_types=1);
 
 use yii\helpers\Html;
 
-$this->title = 'Dashboard';
-$username = Yii::$app->user->identity?->username;
+$this->title = 'medisync';
+$this->params['meta_description'] = 'A high-performance PHP framework best for developing web applications. Fast, secure, and professional.';
+$this->params['meta_keywords'] = 'yii, yii2, php, framework, web application, high-performance';
 ?>
 <div class="site-index">
-    <!-- Welcome banner -->
-    <div class="dashboard-banner text-white rounded-4 p-4 p-lg-5 mb-4">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h1 class="fw-bold mb-2">Hayiiii, <?= Html::encode($username) ?></h1>
-                <p class="opacity-75 mb-0">
-                    This is your administration panel. Manage your application from here.
-                </p>
-            </div>
-            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                
+
+    <!-- Hero banner with Yii gradient -->
+    <div class="hero-banner text-white rounded-4 p-5 mb-4 position-relative overflow-hidden">
+        <?= Html::img(Yii::getAlias(''), [
+            'alt' => '',
+            'class' => 'd-none d-lg-block position-absolute hero-logo',
+        ]) ?>
+        <div class="position-relative">
+            <h1 class="display-5 fw-bold mb-3">Rorrr</h1>
+            <p class="lead opacity-75 mb-4 hero-lead">
+                A high-performance PHP framework best for developing web applications.
+                Fast, secure, and professional.
+            </p>
+            <div class="d-flex gap-2 flex-wrap">
+                <?= Html::a(
+                    'Click meeee!!!!',
+                    'https://youtu.be/Aq5WXmQQooo',
+                    [
+                        'class' => 'btn btn-light btn-lg fw-semibold px-4',
+                        'rel' => 'noopener',
+                        'target' => '_blank',
+                    ],
+                ) ?>
             </div>
         </div>
     </div>

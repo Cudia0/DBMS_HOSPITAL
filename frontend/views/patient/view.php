@@ -4,12 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblPatient $model */
+/** @var common\models\TblPatient $model */
 
-$this->title = $model->patient_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Patients', 'url' => ['index']];
+$this->title = 'Patient: ' . $model->getFullName();
+$this->params['breadcrumbs'][] = ['label' => 'Patients', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="tbl-patient-view">
 
@@ -20,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Delete', ['delete', 'patient_id' => $model->patient_id], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
+                'confirm' => 'Are you sure you want to delete this patient?',
                 'method' => 'post',
             ],
         ]) ?>
@@ -30,15 +29,24 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'patient_id',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'age',
-            'date_of_birth',
-            'phone_num',
-            'country_code',
+            [
+                'label' => 'Full Name',
+                'value' => $model->getFullName(),
+            ],
+            'sex',
+            [
+                'label' => 'Age',
+                'value' => $model->getAgeDisplay(),
+            ],
+            'date_of_birth:date',
+            [
+                'label' => 'Phone',
+                'value' => ($model->country_code ? $model->country_code . ' ' : '') . $model->phone_num,
+            ],
             'email:email',
-            'recep_id',
+            'address:ntext',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

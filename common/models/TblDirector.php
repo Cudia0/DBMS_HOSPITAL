@@ -1,0 +1,108 @@
+<?php
+
+namespace common\models;
+
+use Yii;
+
+class TblDirector extends \yii\db\ActiveRecord
+{
+    public static function tableName()
+    {
+        return 'tbl_director';
+    }
+
+    public function rules()
+    {
+        return [
+            [['first_name', 'last_name'], 'required'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['first_name', 'middle_name', 'last_name'], 'string', 'max' => 100],
+            [['phone_num'], 'string', 'max' => 20],
+            [['country_code'], 'string', 'max' => 10],
+            [['email'], 'string', 'max' => 150],
+            [['email'], 'email', 'message' => 'Please enter a valid email address.'],
+            [
+                ['email'], 
+                'match', 
+                'pattern' => '/^[a-zA-Z0-9._%+-]+@gmail\.com$|^N\/A$|^n\/a$/', 
+                'message' => 'Email must be a valid Gmail address or N/A.'
+            ],
+            // Duplicate check
+            [['email', 'phone_num'], 'validateDuplicateDirector', 'skipOnEmpty' => false],
+        ];
+    }
+
+    /**
+     * Custom validation to check for duplicate directors
+     */
+    public function validateDuplicateDirector($attribute, $params)
+    {
+        // Check if phone number is already registered
+        if ($this->phone_num && $this->country_code) {
+            $existingPhone = self::find()
+                ->where([
+                    'phone_num' => $this->phone_num,
+                    'country_code' => $this->country_code,
+                ])
+                ->andFilterWhere(['!=', 'director_id', $this->director_id])
+                ->one();
+            
+            if ($existingPhone) {
+                $this->addError('phone_num', '⚠️ This phone number is already registered to Director ID: ' . $existingPhone->director_id . ' (' . $existingPhone->first_name . ' ' . $existingPhone->last_name . ').');
+            }
+        }
+        
+        // Check if email is already registered
+        if ($this->email && $this->email !== 'N/A' && $this->email !== 'n/a' && $this->email !== '') {
+            $existingEmail = self::find()
+                ->where(['email' => $this->email])
+                ->andFilterWhere(['!=', 'director_id', $this->director_id])
+                ->one();
+            
+            if ($existingEmail) {
+                $this->addError('email', '⚠️ This email is already registered to Director ID: ' . $existingEmail->director_id . ' (' . $existingEmail->first_name . ' ' . $existingEmail->last_name . ').');
+            }
+        }
+        
+        // Check if director with same full name exists
+        if ($this->first_name && $this->last_name) {
+            $existingDirector = self::find()
+                ->where([
+                    'first_name' => $this->first_name,
+                    'last_name' => $this->last_name,
+                ])
+                ->andFilterWhere(['middle_name' => $this->middle_name])
+                ->andFilterWhere(['!=', 'director_id', $this->director_id])
+                ->one();
+            
+            if ($existingDirector) {
+                $this->addError('first_name', '⚠️ A director with this name already exists (Director ID: ' . $existingDirector->director_id . ').');
+            }
+        }
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'director_id' => 'Director ID',
+            'first_name' => 'First Name',
+            'middle_name' => 'Middle Name',
+            'last_name' => 'Last Name',
+            'phone_num' => 'Phone Number',
+            'country_code' => 'Country Code',
+            'email' => 'Email',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+        ];
+    }
+
+    public function getFullName()
+    {
+        return $this->first_name . ' ' . ($this->middle_name ? $this->middle_name . ' ' : '') . $this->last_name;
+    }
+
+    public function getTblReceptionists()
+    {
+        return $this->hasMany(TblReceptionist::class, ['director_id' => 'director_id']);
+    }
+}

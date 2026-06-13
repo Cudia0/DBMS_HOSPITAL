@@ -1,26 +1,23 @@
 <?php
 
-declare(strict_types=1);
-
 namespace backend\controllers;
 
 use common\models\LoginForm;
 use Yii;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\ErrorAction;
 use yii\web\Response;
 
 /**
- * Site controller
+ * Site controller - BACKEND (Staff Only)
  */
 class SiteController extends Controller
 {
     /**
      * {@inheritdoc}
      */
-    public function behaviors(): array
+    public function behaviors()
     {
         return [
             'access' => [
@@ -29,11 +26,15 @@ class SiteController extends Controller
                     [
                         'actions' => ['login', 'error'],
                         'allow' => true,
+                        'roles' => ['?', '@'],
                     ],
                     [
                         'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return Yii::$app->user->identity->canAccessBackend();
+                        },
                     ],
                 ],
             ],
@@ -49,11 +50,11 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions(): array
+    public function actions()
     {
         return [
             'error' => [
-                'class' => ErrorAction::class,
+                'class' => \yii\web\ErrorAction::class,
             ],
         ];
     }
@@ -63,27 +64,63 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string
+    public function actionIndex()
     {
-        return $this->render('index');
+        $user = Yii::$app->user->identity;
+        
+        return $this->render('index', [
+            'user' => $user,
+        ]);
     }
 
     /**
-     * Login action.
-     *
-     * @return string|Response
+     * Login action - BACKEND ONLY FOR STAFF
+     * Patient accounts will be rejected with error message
      */
-    public function actionLogin(): string|Response
+    public function actionLogin()
     {
+        // If already logged in as staff
         if (!Yii::$app->user->isGuest) {
+            $user = Yii::$app->user->identity;
+            
+            // If patient somehow logged in to backend, log them out
+            if (!$user->canAccessBackend()) {
+                Yii::$app->user->logout();
+                Yii::$app->session->setFlash('error', 'Patients must use the frontend portal. Please login at the patient website.');
+                return $this->redirect(['login']);
+            }
+            
+            // Staff already logged in
             return $this->goHome();
         }
 
-        $this->layout = 'blank';
-
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        
+        if ($model->load(Yii::$app->request->post())) {
+            // First check if user exists and is staff BEFORE logging in
+            $user = \common\models\User::findByUsername($model->username);
+            
+            if ($user && !$user->canAccessBackend()) {
+                // Patient trying to access backend - DON'T LOG THEM IN
+                Yii::$app->session->setFlash('error', '⚠️ Access Denied: Patient accounts cannot access the admin portal. Please use the patient website.');
+                $model->password = '';
+                return $this->render('login', ['model' => $model]);
+            }
+            
+            // Try to login (only staff accounts will succeed)
+            if ($model->login()) {
+                $loggedInUser = Yii::$app->user->identity;
+                
+                // Double-check after login
+                if (!$loggedInUser->canAccessBackend()) {
+                    Yii::$app->user->logout();
+                    Yii::$app->session->setFlash('error', '⚠️ Access Denied: This account does not have backend access.');
+                    return $this->redirect(['login']);
+                }
+                
+                Yii::$app->session->setFlash('success', 'Welcome, ' . $loggedInUser->getFullName() . ' (' . $loggedInUser->getRoleLabel() . ')!');
+                return $this->goBack();
+            }
         }
 
         $model->password = '';
@@ -98,7 +135,7 @@ class SiteController extends Controller
      *
      * @return Response
      */
-    public function actionLogout(): Response
+    public function actionLogout()
     {
         Yii::$app->user->logout();
 

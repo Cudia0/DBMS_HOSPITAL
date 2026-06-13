@@ -1,6 +1,6 @@
 <?php
 
-use app\models\TblDoctor;
+use common\models\TblDoctor;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -34,10 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'first_name',
             'middle_name',
             'last_name',
+            'license_number',
             'dr_fee',
             'dept_id',
             'specialization',
             'certification',
+            //'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TblDoctor $model, $key, $index, $column) {

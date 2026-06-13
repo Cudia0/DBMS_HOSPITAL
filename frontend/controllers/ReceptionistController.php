@@ -2,8 +2,8 @@
 
 namespace frontend\controllers;
 
-use app\models\TblReceptionist;
-use app\models\ReceptionistSearch;
+use common\models\TblReceptionist;
+use common\models\ReceptionistSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

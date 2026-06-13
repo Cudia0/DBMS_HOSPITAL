@@ -2,8 +2,8 @@
 
 namespace frontend\controllers;
 
-use app\models\TblMedicine;
-use app\models\MedicineSearch;
+use common\models\TblMedicine;
+use common\models\MedicineSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

@@ -1,6 +1,6 @@
 <?php
 
-use app\models\TblDepartment;
+use common\models\TblDepartment;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -31,9 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'dept_id',
+            'dept_name',
+            'operating_days',
             'office_hours',
-            'start_time',
-            'end_time',
+            'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TblDepartment $model, $key, $index, $column) {

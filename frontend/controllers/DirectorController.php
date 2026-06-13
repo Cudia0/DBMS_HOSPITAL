@@ -2,8 +2,8 @@
 
 namespace frontend\controllers;
 
-use app\models\TblDirector;
-use app\models\DirectorSearch;
+use common\models\TblDirector;
+use common\models\DirectorSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

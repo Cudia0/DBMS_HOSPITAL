@@ -30,6 +30,14 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'appointment_date') ?>
 
+    <?php // echo $form->field($model, 'appointment_time') ?>
+
+    <?php // echo $form->field($model, 'status') ?>
+
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'updated_at') ?>
+
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>

@@ -39,7 +39,7 @@ return [
         'db' => [
             'class' => \yii\db\Connection::class,
             //dsn = database source name
-            'dsn' => 'mysql:host=localhost;dbname=db_hospital',
+            'dsn' => 'mysql:host=localhost;dbname=hospital',
             'username' => 'root',
             'password' => 'admin',
             'charset' => 'utf8',

@@ -27,9 +27,7 @@ $statusCode = $exception instanceof HttpException ? $exception->statusCode : 500
         <?= Html::a(
             'Go to Homepage',
             Yii::$app->homeUrl,
-            [
-                'class' => 'btn btn-outline-primary btn-lg',
-            ],
+            ['class' => 'btn btn-outline-primary btn-lg'],
         ) ?>
     </div>
 </div>

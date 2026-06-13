@@ -2,12 +2,12 @@
 
 namespace backend\controllers;
 
-use app\models\TblPrescription;
-use app\models\PrescriptionSearch;
+use common\models\TblPrescription;
+use common\models\PrescriptionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
+
 /**
  * PrescriptionController implements the CRUD actions for TblPrescription model.
  */
@@ -21,20 +21,6 @@ class PrescriptionController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['login', 'error'],
-                        'allow' => true,
-                    ],
-                    [
-                        'actions' => ['logout', 'index', 'create', 'update', 'view', 'delete'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -44,6 +30,7 @@ class PrescriptionController extends Controller
             ]
         );
     }
+
     /**
      * Lists all TblPrescription models.
      *

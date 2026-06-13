@@ -31,9 +31,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'prescription_id',
             'appt_id',
-            'med_id',
             'dr_id',
-            'qty',
+            'prescription_date',
+            'dosage_instructions:ntext',
+            'duration_days',
+            'notes:ntext',
+            'created_at',
+            'updated_at',
         ],
     ]) ?>
 

@@ -35,6 +35,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'recep_id',
             'symptoms_list:ntext',
             'appointment_date',
+            'appointment_time',
+            'status',
+            'created_at',
+            'updated_at',
         ],
     ]) ?>
 

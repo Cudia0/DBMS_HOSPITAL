@@ -1,6 +1,6 @@
 <?php
 
-use app\models\TblReceptionist;
+use common\models\TblReceptionist;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -31,10 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'recep_id',
-            'Full_Name',
-            'Email:email',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'email:email',
             'phone_num',
             'country_code',
+            'director_id',
+            //'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TblReceptionist $model, $key, $index, $column) {

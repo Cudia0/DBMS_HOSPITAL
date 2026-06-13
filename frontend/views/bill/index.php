@@ -1,6 +1,6 @@
 <?php
 
-use app\models\TblBill;
+use common\models\TblBill;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -33,10 +33,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'bill_id',
             'appt_id',
             'payment_status',
-            'qty',
+            'payment_method',
             'dr_fee',
             'totalm_price',
             'total_amount',
+            'bill_date',
+            //'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TblBill $model, $key, $index, $column) {

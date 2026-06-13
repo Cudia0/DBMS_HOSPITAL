@@ -1,6 +1,6 @@
 <?php
 
-use app\models\TblAppointment;
+use common\models\TblAppointment;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -35,7 +35,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'patient_id',
             'recep_id',
             'symptoms_list:ntext',
-            'appointment_date',
+            //'appointment_date',
+            //'appointment_time',
+            //'status',
+            //'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TblAppointment $model, $key, $index, $column) {

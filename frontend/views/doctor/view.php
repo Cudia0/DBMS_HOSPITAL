@@ -33,10 +33,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'first_name',
             'middle_name',
             'last_name',
+            'license_number',
             'dr_fee',
             'dept_id',
             'specialization',
             'certification',
+            'created_at',
+            'updated_at',
         ],
     ]) ?>
 

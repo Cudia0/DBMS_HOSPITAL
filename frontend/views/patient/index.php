@@ -1,6 +1,6 @@
 <?php
 
-use app\models\TblPatient;
+use common\models\TblPatient;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -34,12 +34,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'first_name',
             'middle_name',
             'last_name',
+            'sex',
             'age',
             'date_of_birth',
             'phone_num',
             'country_code',
             'email:email',
-            'recep_id',
+            'address:ntext',
+            //'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TblPatient $model, $key, $index, $column) {

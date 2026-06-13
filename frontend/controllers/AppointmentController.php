@@ -2,17 +2,38 @@
 
 namespace frontend\controllers;
 
-use app\models\TblAppointment;
-use app\models\AppointmentSearch;
+use common\models\TblAppointment;
+use common\models\AppointmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use Yii;
 
 /**
- * AppointmentController implements the CRUD actions for TblAppointment model.
+ * AppointmentController - Frontend (Patient Only)
  */
 class AppointmentController extends Controller
 {
+    public function actionGetDetails($id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $appointment = TblAppointment::findOne($id);
+        if ($appointment) {
+            return [
+                'success' => true,
+                'patient_id' => $appointment->patient_id,
+                'dr_id' => $appointment->dr_id,
+                'status' => $appointment->status,
+                'appointment_date' => $appointment->appointment_date,
+                'appointment_time' => $appointment->appointment_time
+            ];
+        }
+        
+        return ['success' => false];
+    }
+    
     /**
      * @inheritDoc
      */
@@ -21,8 +42,21 @@ class AppointmentController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'actions' => ['index', 'view', 'create'], // Patients can view and create
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return Yii::$app->user->identity->isPatient();
+                            },
+                        ],
+                    ],
+                ],
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -32,7 +66,7 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Lists all TblAppointment models.
+     * Lists all TblAppointment models (patient sees only their own).
      *
      * @return string
      */
@@ -40,6 +74,12 @@ class AppointmentController extends Controller
     {
         $searchModel = new AppointmentSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        
+        // Filter to show only patient's own appointments
+        $patientId = Yii::$app->user->identity->patient_id;
+        if ($patientId) {
+            $dataProvider->query->andWhere(['patient_id' => $patientId]);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -68,10 +108,22 @@ class AppointmentController extends Controller
     public function actionCreate()
     {
         $model = new TblAppointment();
+        
+        // Auto-set patient_id from logged-in user
+        $patientId = Yii::$app->user->identity->patient_id;
+        if ($patientId) {
+            $model->patient_id = $patientId;
+        }
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+            if ($model->load($this->request->post())) {
+                $model->patient_id = $patientId; // Ensure patient_id is set
+                $model->status = 'scheduled'; // Default status
+                
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Appointment booked successfully!');
+                    return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -83,42 +135,7 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Updates an existing TblAppointment model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $appt_id Appt ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($appt_id)
-    {
-        $model = $this->findModel($appt_id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'appt_id' => $model->appt_id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing TblAppointment model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $appt_id Appt ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($appt_id)
-    {
-        $this->findModel($appt_id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
      * Finds the TblAppointment model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $appt_id Appt ID
      * @return TblAppointment the loaded model
      * @throws NotFoundHttpException if the model cannot be found

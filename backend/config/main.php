@@ -9,7 +9,7 @@ $params = array_merge(
 
 return [
     'id' => 'app-backend',
-    'name' => 'Medisync',
+    'name' => 'MediSync',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
@@ -24,7 +24,6 @@ return [
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
         ],
         'session' => [
-            // this is the name of the session cookie used for login on the backend
             'name' => 'advanced-backend',
         ],
         'log' => [
@@ -39,14 +38,34 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => true,
-            'rules' => [
+            'rules' => [],
+        ],
+    ],
+    'as beforeRequest' => [
+        'class' => 'yii\filters\AccessControl',
+        'except' => ['site/login', 'site/error', 'site/logout'],
+        'rules' => [
+            [
+                'allow' => true,
+                'roles' => ['@'],
+                'matchCallback' => function ($rule, $action) {
+                    $user = Yii::$app->user->identity;
+                    return $user && $user->canAccessBackend();
+                },
             ],
         ],
-        
+        'denyCallback' => function ($rule, $action) {
+            if (Yii::$app->user->isGuest) {
+                return Yii::$app->response->redirect(['site/login']);
+            }
+            // Patient logged in - log them out
+            Yii::$app->user->logout();
+            Yii::$app->session->setFlash('error', 'Patients must use the frontend portal.');
+            return Yii::$app->response->redirect(['site/login']);
+        },
     ],
     'params' => $params,
 ];

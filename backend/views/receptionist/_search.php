@@ -20,13 +20,23 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'recep_id') ?>
 
-    <?= $form->field($model, 'Full_Name') ?>
+    <?= $form->field($model, 'first_name') ?>
 
-    <?= $form->field($model, 'Email') ?>
+    <?= $form->field($model, 'middle_name') ?>
 
-    <?= $form->field($model, 'phone_num') ?>
+    <?= $form->field($model, 'last_name') ?>
 
-    <?= $form->field($model, 'country_code') ?>
+    <?= $form->field($model, 'email') ?>
+
+    <?php // echo $form->field($model, 'phone_num') ?>
+
+    <?php // echo $form->field($model, 'country_code') ?>
+
+    <?php // echo $form->field($model, 'director_id') ?>
+
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'updated_at') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

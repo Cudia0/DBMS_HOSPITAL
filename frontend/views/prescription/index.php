@@ -1,6 +1,6 @@
 <?php
 
-use app\models\TblPrescription;
+use common\models\TblPrescription;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -32,9 +32,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'prescription_id',
             'appt_id',
-            'med_id',
             'dr_id',
-            'qty',
+            'prescription_date',
+            'dosage_instructions:ntext',
+            'duration_days',
+            'notes:ntext',
+            //'created_at',
+            //'updated_at',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TblPrescription $model, $key, $index, $column) {
