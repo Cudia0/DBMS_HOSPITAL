@@ -6,12 +6,12 @@ namespace frontend\controllers;
 
 use common\models\LoginForm;
 use common\models\User;
-use frontend\models\ContactForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResendVerificationEmailForm;
-use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
-use frontend\models\VerifyEmailForm;
+use common\models\ContactForm;
+use common\models\PasswordResetRequestForm;
+use common\models\ResendVerificationEmailForm;
+use common\models\ResetPasswordForm;
+use common\models\SignupForm;
+use common\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\captcha\CaptchaAction;

@@ -56344,3 +56344,221 @@ $_SERVER = [
     'REQUEST_TIME_FLOAT' => 1781448830.5021
     'REQUEST_TIME' => 1781448830
 ]
+2026-06-14 15:25:03 [127.0.0.1][8][caa6fa1783c24bd43534dbfc5cbbf23d][error][yii\db\IntegrityException] PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`hospital`.`tbl_medline`, CONSTRAINT `tbl_medline_ibfk_2` FOREIGN KEY (`med_id`) REFERENCES `tbl_medicine` (`med_id`)) in /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php:1320
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php(1320): PDOStatement->execute()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php(1120): yii\db\Command->internalExecute()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(400): yii\db\Command->execute()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(788): yii\db\ActiveRecord::deleteAll()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(747): yii\db\ActiveRecord->deleteInternal()
+#5 /var/www/html/hospital_system/backend/controllers/MedicineController.php(114): yii\db\ActiveRecord->delete()
+#6 [internal function]: backend\controllers\MedicineController->actionDelete()
+#7 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#8 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#9 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#10 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#11 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#12 /var/www/html/hospital_system/backend/web/index.php(20): yii\base\Application->run()
+#13 {main}
+
+Next yii\db\IntegrityException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`hospital`.`tbl_medline`, CONSTRAINT `tbl_medline_ibfk_2` FOREIGN KEY (`med_id`) REFERENCES `tbl_medicine` (`med_id`))
+The SQL being executed was: DELETE FROM `tbl_medicine` WHERE `med_id`=1 in /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Schema.php:677
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php(1325): yii\db\Schema->convertException()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php(1120): yii\db\Command->internalExecute()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(400): yii\db\Command->execute()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(788): yii\db\ActiveRecord::deleteAll()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(747): yii\db\ActiveRecord->deleteInternal()
+#5 /var/www/html/hospital_system/backend/controllers/MedicineController.php(114): yii\db\ActiveRecord->delete()
+#6 [internal function]: backend\controllers\MedicineController->actionDelete()
+#7 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#8 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#9 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#10 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#11 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#12 /var/www/html/hospital_system/backend/web/index.php(20): yii\base\Application->run()
+#13 {main}
+Additional Information:
+Array
+(
+    [0] => 23000
+    [1] => 1451
+    [2] => Cannot delete or update a parent row: a foreign key constraint fails (`hospital`.`tbl_medline`, CONSTRAINT `tbl_medline_ibfk_2` FOREIGN KEY (`med_id`) REFERENCES `tbl_medicine` (`med_id`))
+)
+
+2026-06-14 15:25:03 [127.0.0.1][8][caa6fa1783c24bd43534dbfc5cbbf23d][info][application] $_GET = [
+    'med_id' => '1'
+]
+
+$_POST = [
+    '_csrf-backend' => 'rtrl1myb3J2Z0jfNI1A0bfcLDtUO0TUI6TTpDwlce7aDoq6OJeuJ6tK8Zr9xAUw5wGR6v1HmGHitX6Nae2gM_w=='
+]
+
+$_FILES = []
+
+$_COOKIE = [
+    'advanced-backend' => 'caa6fa1783c24bd43534dbfc5cbbf23d'
+    '_identity-backend' => '402cce22a75ab4e635ef2b4d507ba4332fb5fc8bca22c8aa8a2f87ee4c02b85ba:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[8,\"g7SkAisg6peEKjIC7qsVv18keOoVjfrq\",2592000]\";}'
+    '_csrf-backend' => '3b48835bf0ebef15ee6f4a24ef5fb9e03ea4ba665875fe24c8591bb33fcc8345a:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"-xKXIpUwKnQrRQxT7otj_7-pDkJUr4wI\";}'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 8
+    '__authKey' => 'g7SkAisg6peEKjIC7qsVv18keOoVjfrq'
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medicine/delete'
+    'PATH_INFO' => '/medicine/delete'
+    'SCRIPT_NAME' => '/backend/index.php'
+    'REQUEST_URI' => '/backend/index.php/medicine/delete?med_id=1'
+    'QUERY_STRING' => 'med_id=1'
+    'REQUEST_METHOD' => 'POST'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '48990'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/backend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/backend/web/'
+    'CONTEXT_PREFIX' => '/backend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => 'advanced-backend=caa6fa1783c24bd43534dbfc5cbbf23d; _identity-backend=402cce22a75ab4e635ef2b4d507ba4332fb5fc8bca22c8aa8a2f87ee4c02b85ba%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B8%2C%22g7SkAisg6peEKjIC7qsVv18keOoVjfrq%22%2C2592000%5D%22%3B%7D; _csrf-backend=3b48835bf0ebef15ee6f4a24ef5fb9e03ea4ba665875fe24c8591bb33fcc8345a%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22-xKXIpUwKnQrRQxT7otj_7-pDkJUr4wI%22%3B%7D'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/backend/index.php/medicine/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_ORIGIN' => 'http://vince.com'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'CONTENT_TYPE' => 'application/x-www-form-urlencoded'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'CONTENT_LENGTH' => '106'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7Hz0aAKD1jqriNbIeZzwAAAIE'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/backend/index.php/medicine/delete'
+    'REQUEST_TIME_FLOAT' => 1781450703.1691
+    'REQUEST_TIME' => 1781450703
+]
+2026-06-14 15:25:23 [127.0.0.1][8][caa6fa1783c24bd43534dbfc5cbbf23d][error][yii\db\IntegrityException] PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`hospital`.`tbl_medline`, CONSTRAINT `tbl_medline_ibfk_2` FOREIGN KEY (`med_id`) REFERENCES `tbl_medicine` (`med_id`)) in /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php:1320
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php(1320): PDOStatement->execute()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php(1120): yii\db\Command->internalExecute()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(400): yii\db\Command->execute()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(788): yii\db\ActiveRecord::deleteAll()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(747): yii\db\ActiveRecord->deleteInternal()
+#5 /var/www/html/hospital_system/backend/controllers/MedicineController.php(114): yii\db\ActiveRecord->delete()
+#6 [internal function]: backend\controllers\MedicineController->actionDelete()
+#7 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#8 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#9 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#10 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#11 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#12 /var/www/html/hospital_system/backend/web/index.php(20): yii\base\Application->run()
+#13 {main}
+
+Next yii\db\IntegrityException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`hospital`.`tbl_medline`, CONSTRAINT `tbl_medline_ibfk_2` FOREIGN KEY (`med_id`) REFERENCES `tbl_medicine` (`med_id`))
+The SQL being executed was: DELETE FROM `tbl_medicine` WHERE `med_id`=1 in /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Schema.php:677
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php(1325): yii\db\Schema->convertException()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/Command.php(1120): yii\db\Command->internalExecute()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(400): yii\db\Command->execute()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(788): yii\db\ActiveRecord::deleteAll()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/db/ActiveRecord.php(747): yii\db\ActiveRecord->deleteInternal()
+#5 /var/www/html/hospital_system/backend/controllers/MedicineController.php(114): yii\db\ActiveRecord->delete()
+#6 [internal function]: backend\controllers\MedicineController->actionDelete()
+#7 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#8 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#9 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#10 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#11 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#12 /var/www/html/hospital_system/backend/web/index.php(20): yii\base\Application->run()
+#13 {main}
+Additional Information:
+Array
+(
+    [0] => 23000
+    [1] => 1451
+    [2] => Cannot delete or update a parent row: a foreign key constraint fails (`hospital`.`tbl_medline`, CONSTRAINT `tbl_medline_ibfk_2` FOREIGN KEY (`med_id`) REFERENCES `tbl_medicine` (`med_id`))
+)
+
+2026-06-14 15:25:23 [127.0.0.1][8][caa6fa1783c24bd43534dbfc5cbbf23d][info][application] $_GET = [
+    'med_id' => '1'
+]
+
+$_POST = [
+    '_csrf-backend' => 'Z7DfEEIrEliZOuCNW3XGxJcNdnexIlrcIFjGW3WlC_FKyJRIC1tHL9JUsf8JJL6QoGICHe4Vd6xkM4wOB5F8uA=='
+]
+
+$_FILES = []
+
+$_COOKIE = [
+    'advanced-backend' => 'caa6fa1783c24bd43534dbfc5cbbf23d'
+    '_identity-backend' => '402cce22a75ab4e635ef2b4d507ba4332fb5fc8bca22c8aa8a2f87ee4c02b85ba:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[8,\"g7SkAisg6peEKjIC7qsVv18keOoVjfrq\",2592000]\";}'
+    '_csrf-backend' => '3b48835bf0ebef15ee6f4a24ef5fb9e03ea4ba665875fe24c8591bb33fcc8345a:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"-xKXIpUwKnQrRQxT7otj_7-pDkJUr4wI\";}'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 8
+    '__authKey' => 'g7SkAisg6peEKjIC7qsVv18keOoVjfrq'
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medicine/delete'
+    'PATH_INFO' => '/medicine/delete'
+    'SCRIPT_NAME' => '/backend/index.php'
+    'REQUEST_URI' => '/backend/index.php/medicine/delete?med_id=1'
+    'QUERY_STRING' => 'med_id=1'
+    'REQUEST_METHOD' => 'POST'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '33006'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/backend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/backend/web/'
+    'CONTEXT_PREFIX' => '/backend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => 'advanced-backend=caa6fa1783c24bd43534dbfc5cbbf23d; _identity-backend=402cce22a75ab4e635ef2b4d507ba4332fb5fc8bca22c8aa8a2f87ee4c02b85ba%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B8%2C%22g7SkAisg6peEKjIC7qsVv18keOoVjfrq%22%2C2592000%5D%22%3B%7D; _csrf-backend=3b48835bf0ebef15ee6f4a24ef5fb9e03ea4ba665875fe24c8591bb33fcc8345a%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22-xKXIpUwKnQrRQxT7otj_7-pDkJUr4wI%22%3B%7D'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/backend/index.php/medicine/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_ORIGIN' => 'http://vince.com'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'CONTENT_TYPE' => 'application/x-www-form-urlencoded'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'CONTENT_LENGTH' => '106'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7H40CpjZTwjKtZo6YPUwAAAMM'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/backend/index.php/medicine/delete'
+    'REQUEST_TIME_FLOAT' => 1781450723.6773
+    'REQUEST_TIME' => 1781450723
+]

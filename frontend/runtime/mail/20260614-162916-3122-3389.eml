@@ -1,0 +1,50 @@
+From: support@example.com
+To: carlos.torres@gmail.com
+Subject: Verify your account at 
+MIME-Version: 1.0
+Date: Sun, 14 Jun 2026 16:29:16 +0000
+Message-ID: <a293fb6595db9b6e66a666c4ececb26b@example.com>
+Content-Type: multipart/alternative; boundary=8iOpgx8F
+
+--8iOpgx8F
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Hello carlos.torres,
+
+Follow the link below to verify your email:
+
+=
+http://vince.com/frontend/index.php/site/verify-email?token=3DOnOteLbLmiw7j=
+uEymfJ_FHJ5N8Da1nx-_1781454556
+--8iOpgx8F
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=
+/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns=3D"http://www.w3.org/1999/=
+xhtml">
+<head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/ht=
+ml; charset=3DUTF-8" />
+    <title></title>
+    </head>
+<body>
+    =
+    <div class=3D"verify-email">
+    <p>Hello carlos.torres,</p>
+
+   =
+ <p>Follow the link below to verify your email:</p>
+
+    <p><a href=3D"=
+http://vince.com/frontend/index.php/site/verify-email?token=3DOnOteLbLmiw7j=
+uEymfJ_FHJ5N8Da1nx-_1781454556">http://vince.com/frontend/index.php/site/ve=
+rify-email?token=3DOnOteLbLmiw7juEymfJ_FHJ5N8Da1nx-_1781454556</a></p>
+</=
+div>
+    </body>
+</html>
+
+--8iOpgx8F--

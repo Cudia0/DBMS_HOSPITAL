@@ -115172,3 +115172,1806 @@ $_SERVER = [
     'REQUEST_TIME_FLOAT' => 1781450046.4985
     'REQUEST_TIME' => 1781450046
 ]
+2026-06-14 16:14:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\web\NotFoundHttpException: The requested page does not exist. in /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php:132
+Stack trace:
+#0 /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php(59): frontend\controllers\MedicalRecordController->findModel()
+#1 [internal function]: frontend\controllers\MedicalRecordController->actionView()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#7 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2026-06-14 16:14:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'record_id' => '2'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    'advanced-frontend' => 'fb2b3b2767c14caaae4a457231a19f9d'
+    '_identity-frontend' => 'fa6057f9f77ee88945d5baaa30fe14af6917d7f3ce22576457135a18c262ba9ca:2:{i:0;s:18:\"_identity-frontend\";i:1;s:46:\"[5,\"FBtx2j_Usm3E3PUHsdch5V0Lk-umrGy8\",2592000]\";}'
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medical-record/view'
+    'PATH_INFO' => '/medical-record/view'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/medical-record/view?record_id=2'
+    'QUERY_STRING' => 'record_id=2'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => 'advanced-frontend=fb2b3b2767c14caaae4a457231a19f9d; _identity-frontend=fa6057f9f77ee88945d5baaa30fe14af6917d7f3ce22576457135a18c262ba9ca%3A2%3A%7Bi%3A0%3Bs%3A18%3A%22_identity-frontend%22%3Bi%3A1%3Bs%3A46%3A%22%5B5%2C%22FBtx2j_Usm3E3PUHsdch5V0Lk-umrGy8%22%2C2592000%5D%22%3B%7D; _csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TXkCpjZTwjKtZo6YP7AAAAMs'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/medical-record/view'
+    'REQUEST_TIME_FLOAT' => 1781453662.8114
+    'REQUEST_TIME' => 1781453662
+]
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\web\NotFoundHttpException: The requested page does not exist. in /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php:132
+Stack trace:
+#0 /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php(59): frontend\controllers\MedicalRecordController->findModel()
+#1 [internal function]: frontend\controllers\MedicalRecordController->actionView()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#7 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'record_id' => '2'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medical-record/view'
+    'PATH_INFO' => '/medical-record/view'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/medical-record/view?record_id=2'
+    'QUERY_STRING' => 'record_id=2'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TX0CpjZTwjKtZo6YP7QAAAM4'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/medical-record/view'
+    'REQUEST_TIME_FLOAT' => 1781453663.2146
+    'REQUEST_TIME' => 1781453663
+]
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\web\NotFoundHttpException: The requested page does not exist. in /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php:132
+Stack trace:
+#0 /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php(59): frontend\controllers\MedicalRecordController->findModel()
+#1 [internal function]: frontend\controllers\MedicalRecordController->actionView()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#7 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'record_id' => '2'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medical-record/view'
+    'PATH_INFO' => '/medical-record/view'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/medical-record/view?record_id=2'
+    'QUERY_STRING' => 'record_id=2'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TX0CpjZTwjKtZo6YP7gAAAM0'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/medical-record/view'
+    'REQUEST_TIME_FLOAT' => 1781453663.39
+    'REQUEST_TIME' => 1781453663
+]
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\web\NotFoundHttpException: The requested page does not exist. in /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php:132
+Stack trace:
+#0 /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php(59): frontend\controllers\MedicalRecordController->findModel()
+#1 [internal function]: frontend\controllers\MedicalRecordController->actionView()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#7 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'record_id' => '2'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medical-record/view'
+    'PATH_INFO' => '/medical-record/view'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/medical-record/view?record_id=2'
+    'QUERY_STRING' => 'record_id=2'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TX0CpjZTwjKtZo6YP7wAAAM8'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/medical-record/view'
+    'REQUEST_TIME_FLOAT' => 1781453663.6232
+    'REQUEST_TIME' => 1781453663
+]
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\web\NotFoundHttpException: The requested page does not exist. in /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php:132
+Stack trace:
+#0 /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php(59): frontend\controllers\MedicalRecordController->findModel()
+#1 [internal function]: frontend\controllers\MedicalRecordController->actionView()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#7 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'record_id' => '2'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medical-record/view'
+    'PATH_INFO' => '/medical-record/view'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/medical-record/view?record_id=2'
+    'QUERY_STRING' => 'record_id=2'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TX0CpjZTwjKtZo6YP8AAAAMw'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/medical-record/view'
+    'REQUEST_TIME_FLOAT' => 1781453663.7537
+    'REQUEST_TIME' => 1781453663
+]
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\web\NotFoundHttpException: The requested page does not exist. in /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php:132
+Stack trace:
+#0 /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php(59): frontend\controllers\MedicalRecordController->findModel()
+#1 [internal function]: frontend\controllers\MedicalRecordController->actionView()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#7 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2026-06-14 16:14:23 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'record_id' => '2'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medical-record/view'
+    'PATH_INFO' => '/medical-record/view'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/medical-record/view?record_id=2'
+    'QUERY_STRING' => 'record_id=2'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TX0CpjZTwjKtZo6YP8QAAANE'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/medical-record/view'
+    'REQUEST_TIME_FLOAT' => 1781453663.92
+    'REQUEST_TIME' => 1781453663
+]
+2026-06-14 16:14:24 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\web\NotFoundHttpException: The requested page does not exist. in /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php:132
+Stack trace:
+#0 /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php(59): frontend\controllers\MedicalRecordController->findModel()
+#1 [internal function]: frontend\controllers\MedicalRecordController->actionView()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#7 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2026-06-14 16:14:24 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'record_id' => '2'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medical-record/view'
+    'PATH_INFO' => '/medical-record/view'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/medical-record/view?record_id=2'
+    'QUERY_STRING' => 'record_id=2'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TYECpjZTwjKtZo6YP8gAAANA'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/medical-record/view'
+    'REQUEST_TIME_FLOAT' => 1781453664.1513
+    'REQUEST_TIME' => 1781453664
+]
+2026-06-14 16:14:24 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\web\NotFoundHttpException: The requested page does not exist. in /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php:132
+Stack trace:
+#0 /var/www/html/hospital_system/frontend/controllers/MedicalRecordController.php(59): frontend\controllers\MedicalRecordController->findModel()
+#1 [internal function]: frontend\controllers\MedicalRecordController->actionView()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#7 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#8 {main}
+2026-06-14 16:14:24 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'record_id' => '2'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/medical-record/view'
+    'PATH_INFO' => '/medical-record/view'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/medical-record/view?record_id=2'
+    'QUERY_STRING' => 'record_id=2'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/index'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TYECpjZTwjKtZo6YP8wAAANM'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/medical-record/view'
+    'REQUEST_TIME_FLOAT' => 1781453664.2872
+    'REQUEST_TIME' => 1781453664
+]
+2026-06-14 16:14:26 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:14:26 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '50900'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TYkCpjZTwjKtZo6YP9QAAANQ'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453666.1739
+    'REQUEST_TIME' => 1781453666
+]
+2026-06-14 16:15:20 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:20 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40722'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmOhCPwet0FeYR0DU9wAAAE0'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453720.9425
+    'REQUEST_TIME' => 1781453720
+]
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40728'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmUaAKD1jqriNbIeaFAAAAJU'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453721.0866
+    'REQUEST_TIME' => 1781453721
+]
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40740'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmUaAKD1jqriNbIeaFQAAAJc'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453721.2324
+    'REQUEST_TIME' => 1781453721
+]
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40756'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmUCpjZTwjKtZo6YP9gAAANU'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453721.3715
+    'REQUEST_TIME' => 1781453721
+]
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40764'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7Tme9QSKx2HbESe3nFHQAAAAA'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453721.4901
+    'REQUEST_TIME' => 1781453721
+]
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40776'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmUaAKD1jqriNbIeaFgAAAIA'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453721.6332
+    'REQUEST_TIME' => 1781453721
+]
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40784'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmUCpjZTwjKtZo6YP9wAAANY'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453721.7616
+    'REQUEST_TIME' => 1781453721
+]
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:21 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40794'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmUCpjZTwjKtZo6YP-AAAANg'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453721.898
+    'REQUEST_TIME' => 1781453721
+]
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40810'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmkCpjZTwjKtZo6YP-QAAAME'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453722.0492
+    'REQUEST_TIME' => 1781453722
+]
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40822'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmkCpjZTwjKtZo6YP-gAAAMM'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453722.193
+    'REQUEST_TIME' => 1781453722
+]
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40836'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmkCpjZTwjKtZo6YP-wAAAMU'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453722.3219
+    'REQUEST_TIME' => 1781453722
+]
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40850'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmuhCPwet0FeYR0DU-AAAAE4'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453722.4532
+    'REQUEST_TIME' => 1781453722
+]
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40862'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmuhCPwet0FeYR0DU-QAAAFA'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453722.5989
+    'REQUEST_TIME' => 1781453722
+]
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40868'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmkCpjZTwjKtZo6YP_AAAAMc'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453722.7447
+    'REQUEST_TIME' => 1781453722
+]
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][Error] Error: Class "frontend\models\SignupForm" not found in /var/www/html/hospital_system/frontend/controllers/SiteController.php:145
+Stack trace:
+#0 [internal function]: frontend\controllers\SiteController->actionSignup()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(60): call_user_func_array()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#6 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#7 {main}
+2026-06-14 16:15:22 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '40884'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/frontend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7TmkCpjZTwjKtZo6YP_QAAAMA'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781453722.9039
+    'REQUEST_TIME' => 1781453722
+]
+2026-06-14 16:32:24 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][error][yii\web\HttpException:404] yii\base\InvalidRouteException: Unable to resolve the request: site/ver=ify-email in /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php:153
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#3 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#4 {main}
+
+Next yii\web\NotFoundHttpException: Page not found. in /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php:117
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#1 /var/www/html/hospital_system/frontend/web/index.php(18): yii\base\Application->run()
+#2 {main}
+2026-06-14 16:32:24 [127.0.0.1][-][e40bb37bf31e8b9f435ce2ac6bcfaa7b][info][application] $_GET = [
+    'token' => '3DOO15E7gBFNz3gGztwQZl92T5bwRKsXjr_1781454731'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-frontend' => '19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba:2:{i:0;s:14:\"_csrf-frontend\";i:1;s:32:\"X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9\";}'
+    'advanced-backend' => '66064e7e9d2424974fe7e9c92090aa66'
+    '_identity-backend' => 'cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[9,\"1RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1\",2592000]\";}'
+    '_csrf-backend' => 'b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt\";}'
+    'advanced-frontend' => 'e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+]
+
+$_SESSION = [
+    '__flash' => []
+    'pending_patient_id' => 13
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/ver=ify-email'
+    'PATH_INFO' => '/site/ver=ify-email'
+    'SCRIPT_NAME' => '/frontend/index.php'
+    'REQUEST_URI' => '/frontend/index.php/site/ver=ify-email?token=3DOO15E7gBFNz3gGztwQZl92T5bwRKsXjr_1781454731'
+    'QUERY_STRING' => 'token=3DOO15E7gBFNz3gGztwQZl92T5bwRKsXjr_1781454731'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '47766'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/frontend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/frontend/web/'
+    'CONTEXT_PREFIX' => '/frontend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-frontend=19748da34180f06fc0ddb06cae917511c2e9c6ac991a961fd506bd75938aef4ba%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22X-Z01uT7W_jPhi1uJYQvjBu3LF2XUA_9%22%3B%7D; advanced-backend=66064e7e9d2424974fe7e9c92090aa66; _identity-backend=cff199bd6abce21a0b22dd8595d9618226e940cae0f5ba124e1abb0d08ad49b6a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B9%2C%221RhV0UTKCkQv9mBBClxsYvMzeC5bmSe1%22%2C2592000%5D%22%3B%7D; _csrf-backend=b40e52bd04f1a764af92b98c361f4ebfe804f2fb2ef2ec6dd5585d020187133ca%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22H3BLZ9RW1qTsheVic2-PVAXq7ZUFRFSt%22%3B%7D; advanced-frontend=e40bb37bf31e8b9f435ce2ac6bcfaa7b'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7XmECpjZTwjKtZo6YQGAAAAME'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/frontend/index.php/site/ver=ify-email'
+    'REQUEST_TIME_FLOAT' => 1781454744.3108
+    'REQUEST_TIME' => 1781454744
+]

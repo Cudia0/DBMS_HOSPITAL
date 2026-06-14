@@ -1,0 +1,50 @@
+From: support@example.com
+To: juan.delacruz@gmail.com
+Subject: Verify your account at 
+MIME-Version: 1.0
+Date: Sun, 14 Jun 2026 16:19:34 +0000
+Message-ID: <1297f5b6c45467f965c54c291c3a375b@example.com>
+Content-Type: multipart/alternative; boundary=XpmA4tPA
+
+--XpmA4tPA
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Hello juan.delacruz,
+
+Follow the link below to verify your email:
+
+=
+http://vince.com/frontend/index.php/site/verify-email?token=3DC3Wxj1JR3Z1Qr=
+EFL9-sBKH_TntiAf0Ap_1781453974
+--XpmA4tPA
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=
+/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns=3D"http://www.w3.org/1999/=
+xhtml">
+<head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/ht=
+ml; charset=3DUTF-8" />
+    <title></title>
+    </head>
+<body>
+    =
+    <div class=3D"verify-email">
+    <p>Hello juan.delacruz,</p>
+
+   =
+ <p>Follow the link below to verify your email:</p>
+
+    <p><a href=3D"=
+http://vince.com/frontend/index.php/site/verify-email?token=3DC3Wxj1JR3Z1Qr=
+EFL9-sBKH_TntiAf0Ap_1781453974">http://vince.com/frontend/index.php/site/ve=
+rify-email?token=3DC3Wxj1JR3Z1QrEFL9-sBKH_TntiAf0Ap_1781453974</a></p>
+</=
+div>
+    </body>
+</html>
+
+--XpmA4tPA--
