@@ -1,16 +1,17 @@
 <?php
 
-use common\models\TblMedicalRecord;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use common\models\TblMedicalRecord;
+
 /** @var yii\web\View $this */
-/** @var app\models\MedicalRecordSearch $searchModel */
+/** @var common\models\MedicalRecordSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Tbl Medical Records';
+$this->title = 'Medical Records';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tbl-medical-record-index">
@@ -18,29 +19,38 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Tbl Medical Record', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Medical Record', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'record_id',
-            'appt_id',
-            'patient_id',
-            'dr_id',
+            [
+                'attribute' => 'appt_id',
+                'label' => 'Appointment',
+                'value' => function ($model) {
+                    return $model->appointment ? 'Appt #' . $model->appt_id . ' - ' . $model->appointment->appointment_date : 'N/A';
+                }
+            ],
+            [
+                'label' => 'Patient',
+                'value' => function ($model) {
+                    return $model->patient ? $model->patient->getFullName() : 'N/A';
+                }
+            ],
+            [
+                'label' => 'Doctor',
+                'value' => function ($model) {
+                    return $model->doctor ? $model->doctor->getFullName() : 'N/A';
+                }
+            ],
             'diagnosis:ntext',
-            'treatment_plan:ntext',
             'vital_signs',
-            'notes:ntext',
             'record_date',
-            //'created_at',
-            //'updated_at',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, TblMedicalRecord $model, $key, $index, $column) {
@@ -49,7 +59,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-
     <?php Pjax::end(); ?>
 
 </div>

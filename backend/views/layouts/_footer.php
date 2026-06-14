@@ -7,16 +7,22 @@ declare(strict_types=1);
 use yii\helpers\Html;
 
 ?>
-<footer id="footer" class="mt-auto py-3 bg-body-tertiary">
+<footer id="footer" class="bg-dark text-light py-1 mt-auto">
     <div class="container">
-        <div class="row text-body-secondary">
-            <div class="col-md-6 text-center text-md-start">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></div>
-            <div class="col-md-6 text-center text-md-end">
-                <a href="https://www.yiiframework.com/" rel="external" class="text-body-secondary text-decoration-none">
-                    
-                    
-                    <h5>Basta Brand logo here</h5>
-                </a>
+        <div class="row align-items-center">
+            <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                <span class="small">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></span><br>
+                <span class="small opacity-75">Hospital Management System</span>
+            </div>
+            <div class="col-md-4 text-center mb-3 mb-md-0">
+                <?= Html::img('@web/images/medisync-logo-white.svg', [
+                    'alt' => 'MediSync',
+                    'height' => 40,
+                    'class' => 'footer-logo'
+                ]) ?>
+            </div>
+            <div class="col-md-4 text-center text-md-end">
+                <span class="small opacity-75">Powered by Yii2 Framework</span>
             </div>
         </div>
     </div>

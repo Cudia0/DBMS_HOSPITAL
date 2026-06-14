@@ -116,9 +116,9 @@ $this->registerJs("
         $('#item-total_price').val(total.toFixed(2));
         
         if (total > 0) {
-            $('#item-total_price').css('background-color', '#d4edda');
+            
         } else {
-            $('#item-total_price').css('background-color', '#ffffff');
+           
         }
     }
     
