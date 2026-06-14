@@ -4,12 +4,16 @@ use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var common\models\TblBillItem $model */
-/** @var common\models\TblBill $bill */
+/** @var array|null $bill */
 
-$this->title = 'Add Charge to Bill #' . ($bill->bill_id ?? '');
+$billId = '';
+if ($bill) {
+    $billId = is_array($bill) ? ($bill['bill_id'] ?? '') : ($bill->bill_id ?? '');
+}
+$this->title = 'Add Charge to Bill #' . $billId;
 $this->params['breadcrumbs'][] = ['label' => 'Bills', 'url' => ['bill/index']];
-if (isset($bill)) {
-    $this->params['breadcrumbs'][] = ['label' => 'Bill #' . $bill->bill_id, 'url' => ['bill/view', 'bill_id' => $bill->bill_id]];
+if ($bill && $billId) {
+    $this->params['breadcrumbs'][] = ['label' => 'Bill #' . $billId, 'url' => ['bill/view', 'bill_id' => $billId]];
 }
 $this->params['breadcrumbs'][] = 'Add Item';
 ?>
@@ -19,7 +23,7 @@ $this->params['breadcrumbs'][] = 'Add Item';
 
     <?= $this->render('_form', [
         'model' => $model,
-        'bill' => $bill ?? null,
+        'bill' => $bill,
     ]) ?>
 
 </div>

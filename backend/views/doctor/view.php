@@ -4,12 +4,12 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblDoctor $model */
+/** @var object $model */
 
-$this->title = $model->dr_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Doctors', 'url' => ['index']];
+$fullName = 'Dr. ' . ($model->first_name ?? '') . ' ' . ($model->last_name ?? '');
+$this->title = $fullName;
+$this->params['breadcrumbs'][] = ['label' => 'Doctors', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="tbl-doctor-view">
 
@@ -19,10 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Update', ['update', 'dr_id' => $model->dr_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'dr_id' => $model->dr_id], [
             'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
+            'data' => ['confirm' => 'Delete this doctor?', 'method' => 'post'],
         ]) ?>
     </p>
 
@@ -34,12 +31,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'middle_name',
             'last_name',
             'license_number',
-            'dr_fee',
-            'dept_id',
+            [
+                'attribute' => 'dr_fee',
+                'value' => $model->dr_fee ? '₱' . number_format($model->dr_fee, 2) : 'N/A',
+            ],
+            [
+                'attribute' => 'dept_name',
+                'label' => 'Department',
+            ],
             'specialization',
             'certification',
-            'created_at',
-            'updated_at',
+            'email:email',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

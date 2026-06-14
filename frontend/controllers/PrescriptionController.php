@@ -2,19 +2,30 @@
 
 namespace frontend\controllers;
 
-use common\models\TblPrescription;
-use common\models\PrescriptionSearch;
+use common\repositories\PrescriptionRepository;
+use common\repositories\PatientRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
- * PrescriptionController - Patient VIEW ONLY
+ * PrescriptionController - Patient VIEW ONLY (Frontend)
  */
 class PrescriptionController extends Controller
 {
+    private PrescriptionRepository $prescriptionRepo;
+    private PatientRepository $patientRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->prescriptionRepo = new PrescriptionRepository();
+        $this->patientRepo = new PatientRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -35,48 +46,46 @@ class PrescriptionController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
-    public function actionIndex()
+    /**
+     * Get patient ID from logged-in user
+     */
+    private function getPatientId(): ?int
     {
         $user = Yii::$app->user->identity;
-        $patientId = $user->patient_id;
-        
-        $searchModel = new PrescriptionSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->joinWith('appointment')
-            ->andWhere(['tbl_appointment.patient_id' => $patientId]);
-        $dataProvider->query->orderBy(['prescription_date' => SORT_DESC]);
+        if (!empty($user->patient_id)) return $user->patient_id;
+        if (!empty($user->email)) {
+            $patient = $this->patientRepo->findByEmail($user->email);
+            if ($patient) { $user->patient_id = $patient['patient_id']; return $patient['patient_id']; }
+        }
+        return null;
+    }
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+    public function actionIndex()
+    {
+        $patientId = $this->getPatientId();
+        if (!$patientId) { Yii::$app->session->setFlash('warning', 'Please complete your profile first.'); return $this->redirect(['profile/index']); }
+        
+        // SQL: SELECT pr.*, a.appointment_date, d.last_name FROM tbl_prescription pr JOIN tbl_appointment a ON pr.appt_id = a.appt_id JOIN tbl_doctor d ON a.dr_id = d.dr_id WHERE a.patient_id = :patient_id
+        $prescriptions = $this->prescriptionRepo->findByPatient($patientId);
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $prescriptions,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     public function actionView($prescription_id)
     {
-        $model = $this->findModel($prescription_id);
-        $user = Yii::$app->user->identity;
-        
-        if (!$model->appointment || $model->appointment->patient_id !== $user->patient_id) {
-            throw new \yii\web\ForbiddenHttpException('You can only view your own prescriptions.');
-        }
-        
-        return $this->render('view', ['model' => $model]);
-    }
-
-    protected function findModel($prescription_id)
-    {
-        if (($model = TblPrescription::findOne(['prescription_id' => $prescription_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
+        $model = $this->prescriptionRepo->findById($prescription_id);
+        if (!$model) throw new NotFoundHttpException('Prescription not found.');
+        return $this->render('view', ['model' => (object) $model]);
     }
 }

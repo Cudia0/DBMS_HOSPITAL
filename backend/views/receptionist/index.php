@@ -1,16 +1,14 @@
 <?php
 
-use common\models\TblReceptionist;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use yii\widgets\Pjax;
-/** @var yii\web\View $this */
-/** @var app\models\ReceptionistSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Tbl Receptionists';
+/** @var yii\web\View $this */
+/** @var yii\data\ArrayDataProvider $dataProvider */
+
+$this->title = 'Receptionists';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tbl-receptionist-index">
@@ -18,37 +16,56 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Tbl Receptionist', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('<i class="fas fa-plus"></i> Add Receptionist', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        'tableOptions' => ['class' => 'table table-striped table-hover'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'recep_id',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'email:email',
-            'phone_num',
-            'country_code',
-            'director_id',
-            //'created_at',
-            //'updated_at',
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, TblReceptionist $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'recep_id' => $model->recep_id]);
-                 }
+                'label' => 'Full Name',
+                'value' => function($model) {
+                    return ($model['first_name'] ?? '') . ' ' . ($model['last_name'] ?? '');
+                },
+            ],
+            'email',
+            [
+                'label' => 'Phone',
+                'value' => function($model) {
+                    return ($model['country_code'] ?? '') . ' ' . ($model['phone_num'] ?? '');
+                },
+            ],
+            [
+                'label' => 'Director',
+                'value' => function($model) {
+                    return ($model['director_fname'] ?? '') . ' ' . ($model['director_lname'] ?? 'N/A');
+                },
+            ],
+            [
+                'class' => ActionColumn::class,
+                'template' => '{view} {update} {delete}',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-eye"></i>', $url, ['title' => 'View', 'class' => 'btn btn-primary btn-sm']);
+                    },
+                    'update' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-edit"></i>', $url, ['title' => 'Edit', 'class' => 'btn btn-info btn-sm']);
+                    },
+                    'delete' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-trash"></i>', $url, [
+                            'title' => 'Delete', 'class' => 'btn btn-danger btn-sm',
+                            'data' => ['confirm' => 'Delete this receptionist?', 'method' => 'post'],
+                        ]);
+                    },
+                ],
+                'urlCreator' => function ($action, $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'recep_id' => $model['recep_id']]);
+                },
             ],
         ],
     ]); ?>
-
-    <?php Pjax::end(); ?>
 
 </div>

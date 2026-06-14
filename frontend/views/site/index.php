@@ -4,9 +4,10 @@
 /** @var common\models\User|null $user */
 
 use yii\helpers\Html;
-use common\models\TblAppointment;
-use common\models\TblMedicalRecord;
-use common\models\TblBill;
+use yii\helpers\Url;
+use common\repositories\AppointmentRepository;
+use common\repositories\MedicalRecordRepository;
+use common\repositories\BillRepository;
 
 $this->title = 'MediSync - Patient Portal';
 
@@ -18,30 +19,29 @@ $recentRecords = [];
 $pendingBills = 0;
 
 if (!$isGuest && $patientId) {
-    $upcomingAppointments = TblAppointment::find()
-        ->where(['patient_id' => $patientId])
-        ->andWhere(['status' => ['scheduled', 'checked_in', 'in_progress']])
-        ->andWhere(['>=', 'appointment_date', date('Y-m-d')])
-        ->count();
+    $appointmentRepo = new AppointmentRepository();
+    $recordRepo = new MedicalRecordRepository();
+    $billRepo = new BillRepository();
     
-    $recentRecords = TblMedicalRecord::find()
-        ->joinWith('appointment')
-        ->where(['tbl_appointment.patient_id' => $patientId])
-        ->orderBy(['record_date' => SORT_DESC])
-        ->limit(3)
-        ->all();
+    $appointments = $appointmentRepo->findByPatient($patientId);
+    $upcomingAppointments = count(array_filter($appointments, function($a) {
+        return in_array($a['status'], ['scheduled', 'checked_in', 'in_progress']) && $a['appointment_date'] >= date('Y-m-d');
+    }));
     
-    $pendingBills = TblBill::find()
-        ->joinWith('appointment')
-        ->where(['tbl_appointment.patient_id' => $patientId])
-        ->andWhere(['payment_status' => 'pending'])
-        ->count();
+    $recentRecords = $recordRepo->findByPatient($patientId);
+    $recentRecords = array_slice($recentRecords, 0, 3);
+    
+    $bills = $billRepo->findByPatient($patientId);
+    $pendingBills = count(array_filter($bills, function($b) {
+        return $b['payment_status'] === 'pending';
+    }));
 }
 ?>
 
 <div class="site-index">
 
     <?php if ($isGuest): ?>
+    <!-- GUEST VIEW -->
     <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
             <div class="card shadow-lg border-0">
@@ -92,6 +92,7 @@ if (!$isGuest && $patientId) {
     </div>
 
     <?php else: ?>
+    <!-- PATIENT DASHBOARD -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card bg-primary text-white">
@@ -172,10 +173,10 @@ if (!$isGuest && $patientId) {
                             <tbody>
                                 <?php foreach ($recentRecords as $record): ?>
                                 <tr>
-                                    <td><?= Yii::$app->formatter->asDate($record->record_date, 'medium') ?></td>
-                                    <td><?= $record->doctor ? 'Dr. ' . Html::encode($record->doctor->last_name) : 'N/A' ?></td>
-                                    <td><?= Html::encode(substr($record->diagnosis ?? 'No diagnosis', 0, 50)) ?>...</td>
-                                    <td><?= Html::a('<i class="fas fa-eye"></i> View', ['medical-record/view', 'record_id' => $record->record_id], ['class' => 'btn btn-sm btn-primary']) ?></td>
+                                    <td><?= Yii::$app->formatter->asDate($record['record_date'], 'medium') ?></td>
+                                    <td><?= isset($record['doctor_lname']) ? 'Dr. ' . Html::encode($record['doctor_lname']) : 'N/A' ?></td>
+                                    <td><?= Html::encode(substr($record['diagnosis'] ?? 'No diagnosis', 0, 50)) ?>...</td>
+                                    <td><?= Html::a('<i class="fas fa-eye"></i> View', ['medical-record/view', 'record_id' => $record['record_id']], ['class' => 'btn btn-sm btn-primary']) ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>

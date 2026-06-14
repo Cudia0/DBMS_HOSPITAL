@@ -2,20 +2,31 @@
 
 namespace backend\controllers;
 
-use common\models\TblMedicalRecord;
-use common\models\TblAppointment;
-use common\models\MedicalRecordSearch;
+use common\repositories\MedicalRecordRepository;
+use common\repositories\AppointmentRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * MedicalRecordController - Director & Doctor manage, Receptionist can view
+ * Uses raw SQL via MedicalRecordRepository
  */
 class MedicalRecordController extends Controller
 {
+    private MedicalRecordRepository $recordRepo;
+    private AppointmentRepository $appointmentRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->recordRepo = new MedicalRecordRepository();
+        $this->appointmentRepo = new AppointmentRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -46,142 +57,110 @@ class MedicalRecordController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
-    /**
-     * Lists all Medical Records
-     */
     public function actionIndex()
     {
-        $searchModel = new MedicalRecordSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        
         $user = Yii::$app->user->identity;
         
         if ($user->isDoctor()) {
-            $dataProvider->query->joinWith('appointment')
-                ->andWhere(['tbl_appointment.dr_id' => $user->doctor_id]);
+            $records = $this->recordRepo->findByDoctor($user->doctor_id);
+        } else {
+            $records = $this->recordRepo->findAll();
         }
         
-        $dataProvider->query->orderBy(['record_date' => SORT_DESC]);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $records,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
-    /**
-     * Displays a single Medical Record
-     */
     public function actionView($record_id)
     {
-        $model = $this->findModel($record_id);
+        $model = $this->recordRepo->findById($record_id);
         
-        $user = Yii::$app->user->identity;
-        if ($user->isDoctor() && $model->appointment && $model->appointment->dr_id !== $user->doctor_id) {
-            throw new \yii\web\ForbiddenHttpException('You can only view medical records for your own patients.');
+        if (!$model) {
+            throw new NotFoundHttpException('Medical record not found.');
         }
         
-        return $this->render('view', [
-            'model' => $model,
-        ]);
+        $user = Yii::$app->user->identity;
+        if ($user->isDoctor() && isset($model['doctor_lname']) === false) {
+            throw new \yii\web\ForbiddenHttpException('You can only view records for your own patients.');
+        }
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
-    /**
-     * Creates a new Medical Record - Only 1 per appointment
-     */
     public function actionCreate($appt_id = null)
     {
-        $model = new TblMedicalRecord();
-        $model->record_date = date('Y-m-d H:i:s');
+        $model = new \common\models\TblMedicalRecord();
         
-        // If appt_id provided, check for existing record
         if ($appt_id) {
-            $existingRecord = TblMedicalRecord::find()
-                ->where(['appt_id' => $appt_id])
-                ->one();
+            $existing = $this->recordRepo->findByAppointment($appt_id);
             
-            if ($existingRecord) {
-                Yii::$app->session->setFlash('warning', 
-                    '⚠️ A medical record already exists for this appointment (Record #' . $existingRecord->record_id . '). ' .
-                    'You can update the existing record instead.'
-                );
-                return $this->redirect(['update', 'record_id' => $existingRecord->record_id]);
+            if ($existing) {
+                Yii::$app->session->setFlash('warning', '⚠️ Medical record already exists for this appointment (Record #' . $existing['record_id'] . '). You can update it.');
+                return $this->redirect(['update', 'record_id' => $existing['record_id']]);
             }
             
             $model->appt_id = $appt_id;
         }
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                // Check again for existing record before saving
-                $existingRecord = TblMedicalRecord::find()
-                    ->where(['appt_id' => $model->appt_id])
-                    ->andFilterWhere(['!=', 'record_id', $model->record_id])
-                    ->one();
-                
-                if ($existingRecord) {
-                    Yii::$app->session->setFlash('error', 
-                        '❌ A medical record already exists for this appointment. Please update the existing one.'
-                    );
-                    return $this->redirect(['update', 'record_id' => $existingRecord->record_id]);
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblMedicalRecord', []);
+            
+            if (!empty($post['appt_id'])) {
+                $existing = $this->recordRepo->findByAppointment($post['appt_id']);
+                if ($existing) {
+                    Yii::$app->session->setFlash('error', '❌ Medical record already exists for this appointment.');
+                    return $this->redirect(['update', 'record_id' => $existing['record_id']]);
                 }
-                
-                $model->record_date = date('Y-m-d H:i:s');
-                
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', '✅ Medical record created successfully.');
-                    return $this->redirect(['view', 'record_id' => $model->record_id]);
-                }
+            }
+            
+            $post['record_date'] = date('Y-m-d H:i:s');
+            $id = $this->recordRepo->create($post);
+            
+            if ($id) {
+                Yii::$app->session->setFlash('success', '✅ Medical record created successfully.');
+                return $this->redirect(['view', 'record_id' => $id]);
             }
         }
 
         return $this->render('create', ['model' => $model]);
     }
 
-    /**
-     * Updates an existing Medical Record
-     */
     public function actionUpdate($record_id)
     {
-        $model = $this->findModel($record_id);
+        $record = $this->recordRepo->findById($record_id);
+        if (!$record) throw new NotFoundHttpException('Medical record not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', '✅ Medical record updated successfully.');
-            return $this->redirect(['view', 'record_id' => $model->record_id]);
+        $model = new \common\models\TblMedicalRecord();
+        $model->attributes = $record;
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblMedicalRecord', []);
+            $this->recordRepo->update($record_id, $post);
+            Yii::$app->session->setFlash('success', '✅ Medical record updated.');
+            return $this->redirect(['view', 'record_id' => $record_id]);
         }
 
         return $this->render('update', ['model' => $model]);
     }
 
-    /**
-     * Deletes a Medical Record (Director only)
-     */
     public function actionDelete($record_id)
     {
         if (!Yii::$app->user->identity->isDirector()) {
             Yii::$app->session->setFlash('error', 'Only Director can delete medical records.');
             return $this->redirect(['index']);
         }
-        $this->findModel($record_id)->delete();
+        
+        $this->recordRepo->delete($record_id);
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the TblMedicalRecord model
-     */
-    protected function findModel($record_id)
-    {
-        if (($model = TblMedicalRecord::findOne(['record_id' => $record_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

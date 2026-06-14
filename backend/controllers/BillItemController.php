@@ -2,24 +2,32 @@
 
 namespace backend\controllers;
 
-use common\models\TblBillItem;
-use common\models\TblBill;
-use common\models\BillItemSearch;
+use common\repositories\BillItemRepository;
+use common\repositories\BillRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use yii\helpers\Html;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * BillItemController - Director & Receptionist manage bill items
- * 
- * Bill Items = Individual charges on a bill (like items on a receipt)
- * Bill Total = Sum of ALL bill items (single source of truth)
+ * Bill Items = Individual charges on a bill
+ * Uses raw SQL via repositories
  */
 class BillItemController extends Controller
 {
+    private BillItemRepository $billItemRepo;
+    private BillRepository $billRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->billItemRepo = new BillItemRepository();
+        $this->billRepo = new BillRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -58,88 +66,132 @@ class BillItemController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
+    /**
+     * Lists all bill items
+     * SQL: SELECT * FROM tbl_bill_item ORDER BY created_at DESC
+     */
     public function actionIndex()
     {
-        $searchModel = new BillItemSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->orderBy(['created_at' => SORT_DESC]);
-        return $this->render('index', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+        // SQL: SELECT * FROM tbl_bill_item ORDER BY created_at DESC
+        $items = $this->billItemRepo->findAll();
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $items,
+            'pagination' => ['pageSize' => 20],
+        ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
+    /**
+     * Displays a single bill item
+     * SQL: SELECT * FROM tbl_bill_item WHERE bill_item_id = :id
+     */
     public function actionView($bill_item_id)
     {
-        return $this->render('view', ['model' => $this->findModel($bill_item_id)]);
+        // SQL: SELECT * FROM tbl_bill_item WHERE bill_item_id = :id
+        $model = $this->billItemRepo->findById($bill_item_id);
+        
+        if (!$model) {
+            throw new NotFoundHttpException('Bill item not found.');
+        }
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
+    /**
+     * Adds a new charge to a bill
+     * SQL: INSERT INTO tbl_bill_item (...) VALUES (...)
+     * SQL: UPDATE tbl_bill SET total_amount = ... WHERE bill_id = :id
+     */
     public function actionCreate($bill_id = null)
     {
-        $model = new TblBillItem();
+        $model = new \common\models\TblBillItem();
         
         if ($bill_id) {
             $model->bill_id = $bill_id;
-            $bill = TblBill::findOne($bill_id);
+            $bill = $this->billRepo->findById($bill_id);
             if (!$bill) {
                 Yii::$app->session->setFlash('error', 'Bill not found.');
                 return $this->redirect(['bill/index']);
             }
         }
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->total_price = $model->quantity * $model->unit_price;
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblBillItem', []);
+            $post['total_price'] = ($post['quantity'] ?? 0) * ($post['unit_price'] ?? 0);
+            
+            // SQL: INSERT INTO tbl_bill_item (...) VALUES (...)
+            $id = $this->billItemRepo->create($post);
+            
+            if ($id) {
+                // Recalculate bill total
+                $this->recalculateBillTotal($post['bill_id']);
                 
-                if ($model->save()) {
-                    $this->recalculateBillTotal($model->bill_id);
-                    
-                    Yii::$app->session->setFlash('success', 
-                        '✅ Charge added to Bill #' . $model->bill_id . '<br>' .
-                        '<small>Item: ' . Html::encode($model->description) . ' | Amount: ₱' . number_format($model->total_price, 2) . '</small>'
-                    );
-                    return $this->redirect(['bill/view', 'bill_id' => $model->bill_id]);
-                }
+                Yii::$app->session->setFlash('success', '✅ Charge added to Bill #' . $post['bill_id']);
+                return $this->redirect(['bill/view', 'bill_id' => $post['bill_id']]);
             }
         }
 
         return $this->render('create', ['model' => $model, 'bill' => $bill ?? null]);
     }
 
+    /**
+     * Updates a bill item
+     * SQL: UPDATE tbl_bill_item SET ... WHERE bill_item_id = :id
+     */
     public function actionUpdate($bill_item_id)
     {
-        $model = $this->findModel($bill_item_id);
-        $bill = TblBill::findOne($model->bill_id);
+        $item = $this->billItemRepo->findById($bill_item_id);
+        if (!$item) throw new NotFoundHttpException('Bill item not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            $model->total_price = $model->quantity * $model->unit_price;
+        $model = new \common\models\TblBillItem();
+        $model->attributes = $item;
+        $bill = $this->billRepo->findById($item['bill_id']);
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblBillItem', []);
+            $post['total_price'] = ($post['quantity'] ?? 0) * ($post['unit_price'] ?? 0);
             
-            if ($model->save()) {
-                $this->recalculateBillTotal($model->bill_id);
-                Yii::$app->session->setFlash('success', '✅ Bill item updated successfully.');
-                return $this->redirect(['bill/view', 'bill_id' => $model->bill_id]);
-            }
+            // SQL: UPDATE tbl_bill_item SET ... WHERE bill_item_id = :id
+            $this->billItemRepo->update($bill_item_id, $post);
+            
+            // Recalculate bill total
+            $this->recalculateBillTotal($post['bill_id']);
+            
+            Yii::$app->session->setFlash('success', '✅ Bill item updated.');
+            return $this->redirect(['bill/view', 'bill_id' => $post['bill_id']]);
         }
 
         return $this->render('update', ['model' => $model, 'bill' => $bill]);
     }
 
+    /**
+     * Deletes a bill item (Director only)
+     * SQL: DELETE FROM tbl_bill_item WHERE bill_item_id = :id
+     */
     public function actionDelete($bill_item_id)
     {
-        $model = $this->findModel($bill_item_id);
-        $billId = $model->bill_id;
+        $item = $this->billItemRepo->findById($bill_item_id);
+        if (!$item) throw new NotFoundHttpException('Bill item not found.');
+        
+        $billId = $item['bill_id'];
         
         if (!Yii::$app->user->identity->isDirector()) {
             Yii::$app->session->setFlash('error', 'Only Director can delete bill items.');
             return $this->redirect(['bill/view', 'bill_id' => $billId]);
         }
         
-        $model->delete();
+        // SQL: DELETE FROM tbl_bill_item WHERE bill_item_id = :id
+        $this->billItemRepo->delete($bill_item_id);
+        
+        // Recalculate bill total
         $this->recalculateBillTotal($billId);
         
         Yii::$app->session->setFlash('success', '✅ Bill item deleted.');
@@ -147,39 +199,21 @@ class BillItemController extends Controller
     }
 
     /**
-     * Recalculate bill total FROM BILL ITEMS ONLY (single source of truth)
+     * Recalculate bill total from bill items
+     * SQL: UPDATE tbl_bill SET dr_fee = ?, totalm_price = ?, total_amount = ? WHERE bill_id = ?
      */
-    public function recalculateBillTotal($bill_id)
+    private function recalculateBillTotal($bill_id)
     {
-        $bill = TblBill::findOne($bill_id);
-        if (!$bill) return;
+        // SQL: SELECT COALESCE(SUM(total_price), 0) FROM tbl_bill_item WHERE bill_id = :bill_id
+        $totalAmount = $this->billItemRepo->getTotalByBill($bill_id);
         
-        // Sum ALL bill items
-        $totalAmount = TblBillItem::find()
-            ->where(['bill_id' => $bill_id])
-            ->sum('total_price') ?? 0;
+        // SQL: SELECT COALESCE(SUM(total_price), 0) FROM tbl_bill_item WHERE bill_id = :bill_id AND item_type = 'consultation'
+        $consultationTotal = $this->billItemRepo->getTotalByBillAndType($bill_id, 'consultation');
         
-        // Sum by type
-        $consultationTotal = TblBillItem::find()
-            ->where(['bill_id' => $bill_id, 'item_type' => 'consultation'])
-            ->sum('total_price') ?? 0;
+        // SQL: SELECT COALESCE(SUM(total_price), 0) FROM tbl_bill_item WHERE bill_id = :bill_id AND item_type = 'medicine'
+        $medicineTotal = $this->billItemRepo->getTotalByBillAndType($bill_id, 'medicine');
         
-        $medicineTotal = TblBillItem::find()
-            ->where(['bill_id' => $bill_id, 'item_type' => 'medicine'])
-            ->sum('total_price') ?? 0;
-        
-        // Update bill
-        $bill->dr_fee = $consultationTotal;
-        $bill->totalm_price = $medicineTotal;
-        $bill->total_amount = $totalAmount;
-        $bill->save();
-    }
-
-    protected function findModel($bill_item_id)
-    {
-        if (($model = TblBillItem::findOne(['bill_item_id' => $bill_item_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
+        // SQL: UPDATE tbl_bill SET dr_fee = ?, totalm_price = ?, total_amount = ? WHERE bill_id = ?
+        $this->billRepo->updateTotals($bill_id, $consultationTotal, $medicineTotal, $totalAmount);
     }
 }

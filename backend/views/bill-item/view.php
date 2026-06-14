@@ -4,11 +4,10 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var common\models\TblBillItem $model */
+/** @var object $model */
 
 $this->title = 'Bill Item #' . $model->bill_item_id;
-$this->params['breadcrumbs'][] = ['label' => 'Bills', 'url' => ['bill/index']];
-$this->params['breadcrumbs'][] = ['label' => 'Bill #' . $model->bill_id, 'url' => ['bill/view', 'bill_id' => $model->bill_id]];
+$this->params['breadcrumbs'][] = ['label' => 'Bill Items', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tbl-bill-item-view">
@@ -16,8 +15,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('<i class="fas fa-arrow-left"></i> Back to Bill #' . $model->bill_id, ['bill/view', 'bill_id' => $model->bill_id], ['class' => 'btn btn-secondary']) ?>
         <?= Html::a('<i class="fas fa-edit"></i> Edit', ['update', 'bill_item_id' => $model->bill_item_id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('<i class="fas fa-arrow-left"></i> Back to Bill', ['bill/view', 'bill_id' => $model->bill_id], ['class' => 'btn btn-secondary']) ?>
     </p>
 
     <?= DetailView::widget([

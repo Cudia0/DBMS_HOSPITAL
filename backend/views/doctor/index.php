@@ -1,16 +1,14 @@
 <?php
 
-use common\models\TblDoctor;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use yii\widgets\Pjax;
-/** @var yii\web\View $this */
-/** @var app\models\DoctorSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Tbl Doctors';
+/** @var yii\web\View $this */
+/** @var yii\data\ArrayDataProvider $dataProvider */
+
+$this->title = 'Doctors';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tbl-doctor-index">
@@ -18,38 +16,57 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Tbl Doctor', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('<i class="fas fa-plus"></i> Add Doctor', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        'tableOptions' => ['class' => 'table table-striped table-hover'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'dr_id',
-            'first_name',
-            'middle_name',
-            'last_name',
-            'license_number',
-            'dr_fee',
-            'dept_id',
-            'specialization',
-            'certification',
-            //'created_at',
-            //'updated_at',
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, TblDoctor $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'dr_id' => $model->dr_id]);
-                 }
+                'label' => 'Full Name',
+                'value' => function($model) {
+                    return 'Dr. ' . ($model['first_name'] ?? '') . ' ' . ($model['last_name'] ?? '');
+                },
+            ],
+            'specialization',
+            'license_number',
+            [
+                'attribute' => 'dr_fee',
+                'label' => 'Fee',
+                'value' => function($model) {
+                    return $model['dr_fee'] ? '₱' . number_format($model['dr_fee'], 2) : 'N/A';
+                },
+            ],
+            [
+                'attribute' => 'dept_name',
+                'label' => 'Department',
+            ],
+            'email',
+            [
+                'class' => ActionColumn::class,
+                'template' => '{view} {update} {delete}',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-eye"></i>', $url, ['title' => 'View', 'class' => 'btn btn-primary btn-sm']);
+                    },
+                    'update' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-edit"></i>', $url, ['title' => 'Edit', 'class' => 'btn btn-info btn-sm']);
+                    },
+                    'delete' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-trash"></i>', $url, [
+                            'title' => 'Delete', 'class' => 'btn btn-danger btn-sm',
+                            'data' => ['confirm' => 'Delete this doctor?', 'method' => 'post'],
+                        ]);
+                    },
+                ],
+                'urlCreator' => function ($action, $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'dr_id' => $model['dr_id']]);
+                },
             ],
         ],
     ]); ?>
-
-    <?php Pjax::end(); ?>
 
 </div>

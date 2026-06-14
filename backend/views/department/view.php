@@ -4,12 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblDepartment $model */
+/** @var object $model */
 
-$this->title = $model->dept_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Departments', 'url' => ['index']];
+$this->title = $model->dept_name;
+$this->params['breadcrumbs'][] = ['label' => 'Departments', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="tbl-department-view">
 
@@ -19,10 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Update', ['update', 'dept_id' => $model->dept_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'dept_id' => $model->dept_id], [
             'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
+            'data' => ['confirm' => 'Delete?', 'method' => 'post'],
         ]) ?>
     </p>
 
@@ -33,8 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'dept_name',
             'operating_days',
             'office_hours',
-            'created_at',
-            'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

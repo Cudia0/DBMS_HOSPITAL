@@ -2,34 +2,32 @@
 
 namespace backend\controllers;
 
-use common\models\TblAppointment;
-use common\models\AppointmentSearch;
+use common\repositories\AppointmentRepository;
+use common\repositories\PatientRepository;
+use common\repositories\DoctorRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * AppointmentController - Receptionist & Director manage, Doctor views own
+ * Uses raw SQL via AppointmentRepository
  */
 class AppointmentController extends Controller
 {
-    public function actionGetDetails($id)
+    private AppointmentRepository $appointmentRepo;
+    private PatientRepository $patientRepo;
+    private DoctorRepository $doctorRepo;
+
+    public function __construct($id, $module, $config = [])
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $appointment = TblAppointment::findOne($id);
-        if ($appointment) {
-            return [
-                'success' => true,
-                'patient_id' => $appointment->patient_id,
-                'dr_id' => $appointment->dr_id,
-                'status' => $appointment->status,
-                'appointment_date' => $appointment->appointment_date,
-                'appointment_time' => $appointment->appointment_time
-            ];
-        }
-        return ['success' => false];
+        parent::__construct($id, $module, $config);
+        $this->appointmentRepo = new AppointmentRepository();
+        $this->patientRepo = new PatientRepository();
+        $this->doctorRepo = new DoctorRepository();
     }
 
     public function behaviors()
@@ -55,12 +53,8 @@ class AppointmentController extends Controller
                             'roles' => ['@'],
                             'matchCallback' => function ($rule, $action) {
                                 $user = Yii::$app->user->identity;
-                                if ($user->isDirector()) {
-                                    return true;
-                                }
-                                if ($user->isReceptionist() && in_array($action->id, ['create', 'update', 'accept', 'reject', 'check-in'])) {
-                                    return true;
-                                }
+                                if ($user->isDirector()) return true;
+                                if ($user->isReceptionist() && in_array($action->id, ['create', 'update', 'accept', 'reject', 'check-in'])) return true;
                                 return false;
                             },
                         ],
@@ -68,177 +62,168 @@ class AppointmentController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                        'accept' => ['POST'],
-                        'reject' => ['POST'],
-                        'check-in' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST'], 'accept' => ['POST'], 'reject' => ['POST'], 'check-in' => ['POST']],
                 ],
             ]
         );
     }
 
-    /**
-     * Lists appointments - Filtered for doctor to show only their own
-     */
     public function actionIndex()
     {
-        $searchModel = new AppointmentSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        
         $user = Yii::$app->user->identity;
         
-        // If doctor, only show their appointments
         if ($user->isDoctor()) {
-            $dataProvider->query->andWhere(['dr_id' => $user->doctor_id]);
+            $appointments = $this->appointmentRepo->findByDoctor($user->doctor_id);
+        } else {
+            $appointments = $this->appointmentRepo->findAll();
         }
         
-        $dataProvider->query->orderBy([
-            'status' => SORT_ASC,
-            'appointment_date' => SORT_DESC, 
-            'appointment_time' => SORT_DESC
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $appointments,
+            'pagination' => ['pageSize' => 20],
         ]);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
-    /**
-     * Displays a single appointment - Doctor can only view their own
-     */
     public function actionView($appt_id)
     {
-        $model = $this->findModel($appt_id);
+        $model = $this->appointmentRepo->findById($appt_id);
         
-        // If doctor, ensure they can only view their own appointments
-        $user = Yii::$app->user->identity;
-        if ($user->isDoctor() && $model->dr_id !== $user->doctor_id) {
-            throw new \yii\web\ForbiddenHttpException('You can only view your own appointments.');
+        if (!$model) {
+            throw new NotFoundHttpException('Appointment not found.');
         }
         
-        return $this->render('view', [
-            'model' => $model,
-        ]);
+        $user = Yii::$app->user->identity;
+        if ($user->isDoctor() && $model['dr_id'] != $user->doctor_id) {
+            throw new \yii\web\ForbiddenHttpException('You can only view your own appointments.');
+        }
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
     public function actionCreate()
     {
-        $model = new TblAppointment();
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $user = Yii::$app->user->identity;
-                if ($user->isReceptionist() && !$model->recep_id) {
-                    $model->recep_id = $user->receptionist_id;
-                }
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Appointment created successfully.');
-                    return $this->redirect(['view', 'appt_id' => $model->appt_id]);
-                }
+        $model = new \common\models\TblAppointment();
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblAppointment', []);
+            $user = Yii::$app->user->identity;
+            
+            if ($user->isReceptionist() && empty($post['recep_id'])) {
+                $post['recep_id'] = $user->receptionist_id;
             }
-        } else {
-            $model->loadDefaultValues();
+            
+            $id = $this->appointmentRepo->create($post);
+            
+            if ($id) {
+                Yii::$app->session->setFlash('success', 'Appointment created successfully.');
+                return $this->redirect(['view', 'appt_id' => $id]);
+            }
         }
+
         return $this->render('create', ['model' => $model]);
     }
 
     public function actionAccept($appt_id)
     {
-        $model = $this->findModel($appt_id);
-        $user = Yii::$app->user->identity;
+        $appointment = $this->appointmentRepo->findById($appt_id);
+        if (!$appointment) throw new NotFoundHttpException('Appointment not found.');
         
+        $user = Yii::$app->user->identity;
         if (!$user->isDirector() && !$user->isReceptionist()) {
-            Yii::$app->session->setFlash('error', 'You do not have permission to accept appointments.');
-            return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+            Yii::$app->session->setFlash('error', 'You do not have permission.');
+            return $this->redirect(['view', 'appt_id' => $appt_id]);
         }
         
-        if ($model->status === null || $model->status === '') {
+        if (empty($appointment['status'])) {
             if (Yii::$app->request->isPost) {
-                $model->load(Yii::$app->request->post());
+                $date = Yii::$app->request->post('TblAppointment')['appointment_date'] ?? null;
+                $time = Yii::$app->request->post('TblAppointment')['appointment_time'] ?? null;
                 
-                if (empty($model->appointment_date) || empty($model->appointment_time)) {
-                    Yii::$app->session->setFlash('error', 'Please set the appointment date and time before accepting.');
-                    return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+                if (empty($date) || empty($time)) {
+                    Yii::$app->session->setFlash('error', 'Please set date and time.');
+                    return $this->redirect(['view', 'appt_id' => $appt_id]);
                 }
                 
-                $model->status = 'scheduled';
-                if ($user->isReceptionist()) {
-                    $model->recep_id = $user->receptionist_id;
-                }
-                
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', '✅ Appointment accepted and scheduled.');
-                }
+                $this->appointmentRepo->accept($appt_id, 'scheduled', $date, $time, $user->isReceptionist() ? $user->receptionist_id : null);
+                Yii::$app->session->setFlash('success', '✅ Appointment accepted and scheduled.');
             }
         } else {
             Yii::$app->session->setFlash('warning', 'This appointment is already processed.');
         }
         
-        return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+        return $this->redirect(['view', 'appt_id' => $appt_id]);
     }
 
     public function actionReject($appt_id)
     {
-        $model = $this->findModel($appt_id);
-        $user = Yii::$app->user->identity;
+        $appointment = $this->appointmentRepo->findById($appt_id);
+        if (!$appointment) throw new NotFoundHttpException('Appointment not found.');
         
+        $user = Yii::$app->user->identity;
         if (!$user->isDirector() && !$user->isReceptionist()) {
-            Yii::$app->session->setFlash('error', 'You do not have permission to reject appointments.');
-            return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+            Yii::$app->session->setFlash('error', 'You do not have permission.');
+            return $this->redirect(['view', 'appt_id' => $appt_id]);
         }
         
-        if ($model->status === null || $model->status === '' || $model->status === 'scheduled') {
+        if (empty($appointment['status']) || $appointment['status'] === 'scheduled') {
             if (Yii::$app->request->isPost) {
-                $rejectReason = Yii::$app->request->post('reject_reason', '');
-                $model->status = 'cancelled';
-                if ($user->isReceptionist()) {
-                    $model->recep_id = $user->receptionist_id;
+                $reason = Yii::$app->request->post('reject_reason', '');
+                $this->appointmentRepo->updateStatus($appt_id, 'cancelled');
+                
+                if ($reason) {
+                    $currentSymptoms = $appointment['symptoms_list'] ?? '';
+                    $this->appointmentRepo->update($appt_id, [
+                        'symptoms_list' => $currentSymptoms . "\n\n[CANCELLED]\nReason: " . $reason,
+                    ]);
                 }
-                if ($rejectReason) {
-                    $model->symptoms_list = $model->symptoms_list . "\n\n[CANCELLED]\nReason: " . $rejectReason;
-                }
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', '❌ Appointment request has been cancelled.');
-                }
+                
+                Yii::$app->session->setFlash('success', '❌ Appointment cancelled.');
             }
         } else {
-            Yii::$app->session->setFlash('warning', 'This appointment cannot be cancelled. Current status: ' . $model->status);
+            Yii::$app->session->setFlash('warning', 'Cannot cancel. Current status: ' . $appointment['status']);
         }
         
-        return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+        return $this->redirect(['view', 'appt_id' => $appt_id]);
     }
 
     public function actionCheckIn($appt_id)
     {
-        $model = $this->findModel($appt_id);
+        $appointment = $this->appointmentRepo->findById($appt_id);
+        if (!$appointment) throw new NotFoundHttpException('Appointment not found.');
+        
         $user = Yii::$app->user->identity;
-        
         if (!$user->isDirector() && !$user->isReceptionist()) {
-            Yii::$app->session->setFlash('error', 'You do not have permission to check in patients.');
-            return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+            Yii::$app->session->setFlash('error', 'You do not have permission.');
+            return $this->redirect(['view', 'appt_id' => $appt_id]);
         }
         
-        if ($model->status === 'scheduled') {
-            $model->status = 'checked_in';
-            if ($model->save()) {
-                Yii::$app->session->setFlash('success', '✅ Patient checked in successfully.');
-            }
+        if ($appointment['status'] === 'scheduled') {
+            $this->appointmentRepo->updateStatus($appt_id, 'checked_in');
+            Yii::$app->session->setFlash('success', '✅ Patient checked in successfully.');
         } else {
-            Yii::$app->session->setFlash('warning', 'Appointment must be in scheduled status to check in.');
+            Yii::$app->session->setFlash('warning', 'Appointment must be in scheduled status.');
         }
         
-        return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+        return $this->redirect(['view', 'appt_id' => $appt_id]);
     }
 
     public function actionUpdate($appt_id)
     {
-        $model = $this->findModel($appt_id);
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', 'Appointment updated successfully.');
-            return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+        $appointment = $this->appointmentRepo->findById($appt_id);
+        if (!$appointment) throw new NotFoundHttpException('Appointment not found.');
+
+        $model = new \common\models\TblAppointment();
+        $model->attributes = $appointment;
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblAppointment', []);
+            $this->appointmentRepo->update($appt_id, $post);
+            Yii::$app->session->setFlash('success', 'Appointment updated.');
+            return $this->redirect(['view', 'appt_id' => $appt_id]);
         }
+
         return $this->render('update', ['model' => $model]);
     }
 
@@ -248,15 +233,8 @@ class AppointmentController extends Controller
             Yii::$app->session->setFlash('error', 'Only Director can delete appointments.');
             return $this->redirect(['index']);
         }
-        $this->findModel($appt_id)->delete();
+        
+        $this->appointmentRepo->delete($appt_id);
         return $this->redirect(['index']);
-    }
-
-    protected function findModel($appt_id)
-    {
-        if (($model = TblAppointment::findOne(['appt_id' => $appt_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

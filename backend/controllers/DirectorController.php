@@ -2,21 +2,32 @@
 
 namespace backend\controllers;
 
-use common\models\TblDirector;
-use common\models\DirectorSearch;
-use common\models\User;
+use common\repositories\DirectorRepository;
+use common\repositories\UserRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * DirectorController - Only Director can manage directors
- * When Director creates a director, a user account is auto-created
+ * Auto-creates user account when director is created
+ * Uses raw SQL via repositories
  */
 class DirectorController extends Controller
 {
+    private DirectorRepository $directorRepo;
+    private UserRepository $userRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->directorRepo = new DirectorRepository();
+        $this->userRepo = new UserRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -36,187 +47,179 @@ class DirectorController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
     /**
-     * Lists all TblDirector models.
+     * Lists all directors
+     * SQL: SELECT * FROM tbl_director ORDER BY last_name
      */
     public function actionIndex()
     {
-        $searchModel = new DirectorSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        // SQL: SELECT * FROM tbl_director
+        $directors = $this->directorRepo->findAll();
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $directors,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**
-     * Displays a single TblDirector model.
+     * Displays a single director
+     * SQL: SELECT * FROM tbl_director WHERE director_id = :id
      */
     public function actionView($director_id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($director_id),
-        ]);
+        // SQL: SELECT * FROM tbl_director WHERE director_id = :id
+        $model = $this->directorRepo->findById($director_id);
+        
+        if (!$model) {
+            throw new NotFoundHttpException('Director not found.');
+        }
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
     /**
-     * Creates a new TblDirector model.
-     * Also auto-creates a User account for login.
+     * Creates a new director + Auto-creates user account
+     * SQL: INSERT INTO tbl_director (...) VALUES (...)
+     * SQL: INSERT INTO user (...) VALUES (...)
      */
     public function actionCreate()
     {
-        $model = new TblDirector();
+        $model = new \common\models\TblDirector();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    if ($model->save()) {
-                        // Auto-create user account for director
-                        $existingUser = User::find()->where(['email' => $model->email])->one();
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblDirector', []);
+            
+            // SQL: INSERT INTO tbl_director (...) VALUES (...)
+            $directorId = $this->directorRepo->create($post);
+            
+            if ($directorId) {
+                // Auto-create user account
+                if (!empty($post['email'])) {
+                    // SQL: SELECT * FROM user WHERE email = :email
+                    $existingUser = $this->userRepo->findByEmail($post['email']);
+                    
+                    if ($existingUser) {
+                        Yii::$app->session->setFlash('warning', 'Director saved, but a user account with this email already exists.');
+                    } else {
+                        $username = $this->generateUsername($post);
+                        $password = $this->generatePassword($post);
                         
-                        if ($existingUser) {
-                            Yii::$app->session->setFlash('warning', 
-                                'Director saved, but a user account with this email already exists.'
-                            );
-                        } else {
-                            // Generate username: dir.firstname.lastname
-                            $username = $this->generateUsername($model);
-                            
-                            // Generate password: Lastname@emailusername
-                            $password = $this->generatePassword($model);
-                            
-                            $user = new User();
-                            $user->username = $username;
-                            $user->email = $model->email;
-                            $user->status = User::STATUS_ACTIVE;
-                            $user->setPassword($password);
-                            $user->generateAuthKey();
-                            $user->generateEmailVerificationToken();
-                            
-                            if ($user->save()) {
-                                Yii::$app->session->setFlash('success', 
-                                    '✅ Director created successfully!<br><br>' .
-                                    '<div class="alert alert-info">' .
-                                    '<strong>📋 Login Credentials:</strong><br>' .
-                                    'Username: <strong>' . $user->username . '</strong><br>' .
-                                    'Password: <strong>' . $password . '</strong><br>' .
-                                    'Role: <strong>Director</strong><br>' .
-                                    '<small class="text-danger">⚠️ Please save these credentials. Share them securely with the director.</small>' .
-                                    '</div>'
-                                );
-                            } else {
-                                $errors = implode(', ', $user->getFirstErrors());
-                                Yii::$app->session->setFlash('error', 
-                                    'Director saved, but failed to create user account: ' . $errors
-                                );
-                            }
-                        }
+                        // SQL: INSERT INTO user (...) VALUES (...)
+                        $this->userRepo->create([
+                            'username' => $username,
+                            'auth_key' => Yii::$app->security->generateRandomString(),
+                            'password_hash' => Yii::$app->security->generatePasswordHash($password),
+                            'email' => $post['email'],
+                            'status' => 10,
+                            'verification_token' => Yii::$app->security->generateRandomString() . '_' . time(),
+                            'created_at' => time(),
+                            'updated_at' => time(),
+                        ]);
                         
-                        $transaction->commit();
-                        return $this->redirect(['view', 'director_id' => $model->director_id]);
+                        Yii::$app->session->setFlash('success', 
+                            '✅ Director created!<br>Username: <strong>' . $username . '</strong><br>Password: <strong>' . $password . '</strong>'
+                        );
+                        return $this->redirect(['view', 'director_id' => $directorId]);
                     }
-                    $transaction->rollBack();
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                    Yii::$app->session->setFlash('error', '❌ Error: ' . $e->getMessage());
                 }
+                
+                Yii::$app->session->setFlash('success', '✅ Director created successfully.');
+                return $this->redirect(['view', 'director_id' => $directorId]);
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', ['model' => $model]);
     }
 
     /**
-     * Updates an existing TblDirector model.
+     * Updates a director
+     * SQL: UPDATE tbl_director SET ... WHERE director_id = :id
      */
     public function actionUpdate($director_id)
     {
-        $model = $this->findModel($director_id);
-        $oldEmail = $model->email;
+        $director = $this->directorRepo->findById($director_id);
+        if (!$director) throw new NotFoundHttpException('Director not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                if ($model->save()) {
-                    // If email changed, update the user account
-                    if ($model->email && $model->email !== $oldEmail) {
-                        $user = User::find()->where(['email' => $oldEmail])->one();
-                        if ($user) {
-                            $user->email = $model->email;
-                            $user->setPassword($this->generatePassword($model));
-                            $user->save();
-                            Yii::$app->session->setFlash('info', 'User account email and password updated to match.');
-                        }
-                    }
-                    
-                    $transaction->commit();
-                    Yii::$app->session->setFlash('success', '✅ Director updated successfully.');
-                    return $this->redirect(['view', 'director_id' => $model->director_id]);
+        $model = new \common\models\TblDirector();
+        $model->attributes = $director;
+        $oldEmail = $director['email'];
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblDirector', []);
+            
+            // SQL: UPDATE tbl_director SET ... WHERE director_id = :id
+            $this->directorRepo->update($director_id, $post);
+            
+            // If email changed, update user account
+            if (!empty($post['email']) && $post['email'] !== $oldEmail) {
+                // SQL: SELECT * FROM user WHERE email = :email
+                $user = $this->userRepo->findByEmail($oldEmail);
+                if ($user) {
+                    $password = $this->generatePassword($post);
+                    $this->userRepo->update($user['id'], [
+                        'username' => $this->generateUsername($post),
+                        'email' => $post['email'],
+                        'updated_at' => time(),
+                    ]);
+                    $this->userRepo->updatePassword($user['id'], Yii::$app->security->generatePasswordHash($password), time());
+                    Yii::$app->session->setFlash('info', 'User account updated with new email and password.');
                 }
-                $transaction->rollBack();
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                Yii::$app->session->setFlash('error', '❌ Error: ' . $e->getMessage());
             }
+            
+            Yii::$app->session->setFlash('success', '✅ Director updated successfully.');
+            return $this->redirect(['view', 'director_id' => $director_id]);
         }
 
         return $this->render('update', ['model' => $model]);
     }
 
     /**
-     * Deletes an existing TblDirector model.
-     * Also removes the associated user account.
+     * Deletes a director + associated user account
+     * SQL: DELETE FROM tbl_director WHERE director_id = :id
+     * SQL: DELETE FROM user WHERE email = :email
      */
     public function actionDelete($director_id)
     {
-        $model = $this->findModel($director_id);
-        $email = $model->email;
-        $name = $model->first_name . ' ' . $model->last_name;
+        $director = $this->directorRepo->findById($director_id);
+        if (!$director) throw new NotFoundHttpException('Director not found.');
         
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            if ($email) {
-                $user = User::find()->where(['email' => $email])->one();
-                if ($user) {
-                    $user->delete();
-                }
+        $name = $director['first_name'] . ' ' . $director['last_name'];
+        $email = $director['email'];
+        
+        // SQL: DELETE FROM user WHERE email = :email
+        if ($email) {
+            $user = $this->userRepo->findByEmail($email);
+            if ($user) {
+                $this->userRepo->delete($user['id']);
             }
-            
-            $model->delete();
-            $transaction->commit();
-            
-            Yii::$app->session->setFlash('success', '✅ Director "' . $name . '" and associated account deleted.');
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            Yii::$app->session->setFlash('error', '❌ Failed to delete: ' . $e->getMessage());
         }
-
+        
+        // SQL: DELETE FROM tbl_director WHERE director_id = :id
+        $this->directorRepo->delete($director_id);
+        
+        Yii::$app->session->setFlash('success', '✅ ' . $name . ' and associated account deleted.');
         return $this->redirect(['index']);
     }
 
     /**
-     * Generate a unique username for the director
-     * Format: dir.firstname.lastname
+     * Generate username: dir.firstname.lastname
      */
-    protected function generateUsername($model)
+    private function generateUsername(array $data): string
     {
-        $base = 'dir.' . strtolower($model->first_name . '.' . $model->last_name);
-        $base = preg_replace('/[^a-z0-9.]/', '', $base);
+        $base = 'dir.' . strtolower(preg_replace('/[^a-z0-9]/', '', $data['first_name'] . '.' . $data['last_name']));
         $username = $base;
         $count = 1;
         
-        while (User::findByUsername($username)) {
+        while ($this->userRepo->usernameExists($username)) {
             $username = $base . $count;
             $count++;
         }
@@ -225,30 +228,14 @@ class DirectorController extends Controller
     }
 
     /**
-     * Generate password for director
-     * Format: Lastname@emailusername
+     * Generate password: Lastname@emailusername
      */
-    protected function generatePassword($model)
+    private function generatePassword(array $data): string
     {
-        $lastname = ucfirst(strtolower($model->last_name));
-        $lastname = preg_replace('/[^a-zA-Z]/', '', $lastname);
-        
-        $emailParts = explode('@', $model->email);
-        $emailUsername = isset($emailParts[0]) ? $emailParts[0] : 'user';
-        $emailUsername = strtolower($emailUsername);
-        $emailUsername = preg_replace('/[^a-z0-9]/', '', $emailUsername);
+        $lastname = ucfirst(strtolower(preg_replace('/[^a-zA-Z]/', '', $data['last_name'])));
+        $emailParts = explode('@', $data['email']);
+        $emailUsername = strtolower(preg_replace('/[^a-z0-9]/', '', $emailParts[0] ?? 'user'));
         
         return $lastname . '@' . $emailUsername;
-    }
-
-    /**
-     * Finds the TblDirector model
-     */
-    protected function findModel($director_id)
-    {
-        if (($model = TblDirector::findOne(['director_id' => $director_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

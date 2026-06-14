@@ -4,12 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblMedicine $model */
+/** @var object $model */
 
-$this->title = $model->med_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Medicines', 'url' => ['index']];
+$this->title = $model->med_name;
+$this->params['breadcrumbs'][] = ['label' => 'Medicines', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="tbl-medicine-view">
 
@@ -19,10 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Update', ['update', 'med_id' => $model->med_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'med_id' => $model->med_id], [
             'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
+            'data' => ['confirm' => 'Delete?', 'method' => 'post'],
         ]) ?>
     </p>
 
@@ -33,9 +29,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'med_name',
             'dosage_form',
             'strength',
-            'med_price',
-            'created_at',
-            'updated_at',
+            [
+                'attribute' => 'med_price',
+                'value' => $model->med_price ? '₱' . number_format($model->med_price, 2) : 'N/A',
+            ],
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

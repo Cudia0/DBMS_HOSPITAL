@@ -3,14 +3,14 @@
 namespace backend\controllers;
 
 use common\models\LoginForm;
-use common\models\TblAppointment;
-use common\models\TblPatient;
-use common\models\TblDoctor;
-use common\models\TblReceptionist;
-use common\models\TblBill;
-use common\models\TblMedicine;
-use common\models\TblDepartment;
-use common\models\TblDirector;
+use common\repositories\AppointmentRepository;
+use common\repositories\PatientRepository;
+use common\repositories\DoctorRepository;
+use common\repositories\ReceptionistRepository;
+use common\repositories\DirectorRepository;
+use common\repositories\BillRepository;
+use common\repositories\MedicineRepository;
+use common\repositories\DepartmentRepository;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -22,6 +22,28 @@ use yii\web\Response;
  */
 class SiteController extends Controller
 {
+    private AppointmentRepository $appointmentRepo;
+    private PatientRepository $patientRepo;
+    private DoctorRepository $doctorRepo;
+    private ReceptionistRepository $receptionistRepo;
+    private DirectorRepository $directorRepo;
+    private BillRepository $billRepo;
+    private MedicineRepository $medicineRepo;
+    private DepartmentRepository $deptRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->appointmentRepo = new AppointmentRepository();
+        $this->patientRepo = new PatientRepository();
+        $this->doctorRepo = new DoctorRepository();
+        $this->receptionistRepo = new ReceptionistRepository();
+        $this->directorRepo = new DirectorRepository();
+        $this->billRepo = new BillRepository();
+        $this->medicineRepo = new MedicineRepository();
+        $this->deptRepo = new DepartmentRepository();
+    }
+
     public function behaviors()
     {
         return [
@@ -29,7 +51,7 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['login', 'error', 'about', 'contact'],
                         'allow' => true,
                         'roles' => ['?', '@'],
                     ],
@@ -55,172 +77,61 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'error' => [
-                'class' => \yii\web\ErrorAction::class,
-            ],
+            'error' => ['class' => \yii\web\ErrorAction::class],
         ];
     }
 
-    /**
-     * Dashboard with statistics based on role
-     */
     public function actionIndex()
     {
         $user = Yii::$app->user->identity;
-        
-        // Statistics for dashboard
         $stats = [];
-        
+
         if ($user->isDirector()) {
-            $stats = $this->getDirectorStats();
+            $stats['totalPatients'] = $this->patientRepo->count();
+            $stats['totalDoctors'] = $this->doctorRepo->count();
+            $stats['totalReceptionists'] = $this->receptionistRepo->count();
+            $stats['totalDirectors'] = $this->directorRepo->count();
+            $stats['totalDepartments'] = $this->deptRepo->count();
+            $stats['totalMedicines'] = $this->medicineRepo->count();
+            $stats['totalAppointments'] = $this->appointmentRepo->count();
+            $stats['scheduledAppointments'] = $this->appointmentRepo->countByStatus('scheduled');
+            $stats['completedAppointments'] = $this->appointmentRepo->countByStatus('completed');
+            $stats['todayAppointments'] = $this->appointmentRepo->countToday(date('Y-m-d'));
+            $stats['pendingAppointments'] = count($this->appointmentRepo->findPending());
+            $stats['totalBills'] = $this->billRepo->count();
+            $stats['totalRevenue'] = $this->billRepo->getTotalRevenue();
+            $stats['monthlyRevenue'] = $this->billRepo->getMonthlyRevenue(date('Y-m-01'));
+            $stats['todayAppointmentList'] = $this->appointmentRepo->findToday(date('Y-m-d'));
+            $stats['recentPatients'] = $this->patientRepo->findRecent(5);
         } elseif ($user->isReceptionist()) {
-            $stats = $this->getReceptionistStats();
+            $stats['todayAppointments'] = $this->appointmentRepo->countToday(date('Y-m-d'));
+            $stats['pendingAppointments'] = count($this->appointmentRepo->findPending());
+            $stats['scheduledAppointments'] = $this->appointmentRepo->countByStatus('scheduled');
+            $stats['checkedInAppointments'] = $this->appointmentRepo->countByStatus('checked_in');
+            $stats['todayAppointmentList'] = $this->appointmentRepo->findToday(date('Y-m-d'));
         } elseif ($user->isDoctor()) {
-            $stats = $this->getDoctorStats($user->doctor_id);
+            $doctorAppointments = $this->appointmentRepo->findByDoctor($user->doctor_id);
+            $todayApps = array_filter($doctorAppointments, function($a) { return ($a['appointment_date'] ?? '') === date('Y-m-d'); });
+            $stats['todayAppointments'] = count($todayApps);
+            $stats['pendingConsultations'] = count(array_filter($doctorAppointments, function($a) { return ($a['status'] ?? '') === 'checked_in'; }));
+            $stats['completedToday'] = count(array_filter($todayApps, function($a) { return ($a['status'] ?? '') === 'completed'; }));
+            $stats['todayAppointmentList'] = $doctorAppointments;
         }
-        
-        return $this->render('index', [
-            'user' => $user,
-            'stats' => $stats,
-        ]);
+
+        return $this->render('index', ['user' => $user, 'stats' => $stats]);
     }
 
-    /**
-     * Get statistics for Director dashboard
-     */
-    private function getDirectorStats()
-    {
-        $today = date('Y-m-d');
-        $thisMonth = date('Y-m-01');
-        
-        return [
-            // Total counts
-            'totalPatients' => TblPatient::find()->count(),
-            'totalDoctors' => TblDoctor::find()->count(),
-            'totalReceptionists' => TblReceptionist::find()->count(),
-            'totalDirectors' => TblDirector::find()->count(),
-            'totalDepartments' => TblDepartment::find()->count(),
-            'totalMedicines' => TblMedicine::find()->count(),
-            
-            // Appointment stats
-            'todayAppointments' => TblAppointment::find()
-                ->where(['appointment_date' => $today])
-                ->andWhere(['IS NOT', 'status', null])
-                ->count(),
-            'pendingAppointments' => TblAppointment::find()
-                ->where(['status' => null])
-                ->orWhere(['status' => ''])
-                ->count(),
-            'scheduledAppointments' => TblAppointment::find()
-                ->where(['status' => 'scheduled'])
-                ->count(),
-            'completedAppointments' => TblAppointment::find()
-                ->where(['status' => 'completed'])
-                ->count(),
-            'totalAppointments' => TblAppointment::find()->count(),
-            
-            // Bill stats
-            'totalBills' => TblBill::find()->count(),
-            'pendingPayments' => TblBill::find()
-                ->where(['payment_status' => 'pending'])
-                ->count(),
-            'paidBills' => TblBill::find()
-                ->where(['payment_status' => 'paid'])
-                ->count(),
-            'monthlyRevenue' => TblBill::find()
-                ->where(['payment_status' => 'paid'])
-                ->andWhere(['>=', 'bill_date', $thisMonth])
-                ->sum('total_amount') ?? 0,
-            'totalRevenue' => TblBill::find()
-                ->where(['payment_status' => 'paid'])
-                ->sum('total_amount') ?? 0,
-                
-            // Today's appointments list
-            'todayAppointmentList' => TblAppointment::find()
-                ->with(['patient', 'doctor'])
-                ->where(['appointment_date' => $today])
-                ->andWhere(['IS NOT', 'status', null])
-                ->orderBy(['appointment_time' => SORT_ASC])
-                ->limit(10)
-                ->all(),
-                
-            // Recent patients
-            'recentPatients' => TblPatient::find()
-                ->orderBy(['created_at' => SORT_DESC])
-                ->limit(5)
-                ->all(),
-        ];
-    }
-
-    /**
-     * Get statistics for Receptionist dashboard
-     */
-    private function getReceptionistStats()
-    {
-        $today = date('Y-m-d');
-        
-        return [
-            'todayAppointments' => TblAppointment::find()
-                ->where(['appointment_date' => $today])
-                ->count(),
-            'pendingAppointments' => TblAppointment::find()
-                ->where(['status' => null])
-                ->orWhere(['status' => ''])
-                ->count(),
-            'scheduledAppointments' => TblAppointment::find()
-                ->where(['status' => 'scheduled'])
-                ->count(),
-            'checkedInAppointments' => TblAppointment::find()
-                ->where(['status' => 'checked_in'])
-                ->count(),
-            'todayAppointmentList' => TblAppointment::find()
-                ->with(['patient', 'doctor'])
-                ->where(['appointment_date' => $today])
-                ->orderBy(['appointment_time' => SORT_ASC])
-                ->all(),
-        ];
-    }
-
-    /**
-     * Get statistics for Doctor dashboard
-     */
-    private function getDoctorStats($doctorId)
-    {
-        $today = date('Y-m-d');
-        
-        return [
-            'todayAppointments' => TblAppointment::find()
-                ->where(['dr_id' => $doctorId, 'appointment_date' => $today])
-                ->count(),
-            'pendingConsultations' => TblAppointment::find()
-                ->where(['dr_id' => $doctorId, 'status' => 'checked_in'])
-                ->count(),
-            'completedToday' => TblAppointment::find()
-                ->where(['dr_id' => $doctorId, 'status' => 'completed'])
-                ->andWhere(['appointment_date' => $today])
-                ->count(),
-            'todayAppointmentList' => TblAppointment::find()
-                ->with(['patient'])
-                ->where(['dr_id' => $doctorId, 'appointment_date' => $today])
-                ->orderBy(['appointment_time' => SORT_ASC])
-                ->all(),
-        ];
-    }
-
-    /**
-     * Login action - BACKEND ONLY FOR STAFF
-     */
     public function actionLogin()
     {
+        $this->layout = 'blank';
+
         if (!Yii::$app->user->isGuest) {
             $user = Yii::$app->user->identity;
-            
             if (!$user->canAccessBackend()) {
                 Yii::$app->user->logout();
-                Yii::$app->session->setFlash('error', 'Patients must use the frontend portal. Please login at the patient website.');
+                Yii::$app->session->setFlash('error', 'Patients must use the frontend portal.');
                 return $this->redirect(['login']);
             }
-            
             return $this->goHome();
         }
 
@@ -230,27 +141,24 @@ class SiteController extends Controller
             $user = \common\models\User::findByUsername($model->username);
             
             if ($user && !$user->canAccessBackend()) {
-                Yii::$app->session->setFlash('error', '⚠️ Access Denied: Patient accounts cannot access the admin portal. Please use the patient website.');
+                Yii::$app->session->setFlash('error', '⚠️ Patient accounts cannot access the admin portal.');
                 $model->password = '';
                 return $this->render('login', ['model' => $model]);
             }
             
             if ($model->login()) {
                 $loggedInUser = Yii::$app->user->identity;
-                
                 if (!$loggedInUser->canAccessBackend()) {
                     Yii::$app->user->logout();
-                    Yii::$app->session->setFlash('error', '⚠️ Access Denied: This account does not have backend access.');
+                    Yii::$app->session->setFlash('error', '⚠️ Access Denied.');
                     return $this->redirect(['login']);
                 }
-                
-                Yii::$app->session->setFlash('success', 'Welcome, ' . $loggedInUser->getFullName() . ' (' . $loggedInUser->getRoleLabel() . ')!');
+                Yii::$app->session->setFlash('success', 'Welcome, ' . $loggedInUser->getFullName() . '!');
                 return $this->goBack();
             }
         }
 
         $model->password = '';
-
         return $this->render('login', ['model' => $model]);
     }
 
@@ -258,5 +166,15 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
         return $this->goHome();
+    }
+
+    public function actionAbout()
+    {
+        return $this->render('about');
+    }
+
+    public function actionContact()
+    {
+        return $this->render('contact');
     }
 }

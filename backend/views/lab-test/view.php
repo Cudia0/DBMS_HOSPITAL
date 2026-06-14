@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\TblLabTest $model */
+/** @var object $model */
 
 $this->title = 'Lab Test #' . $model->test_id;
 $this->params['breadcrumbs'][] = ['label' => 'Lab Tests', 'url' => ['index']];
@@ -11,6 +11,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $user = Yii::$app->user->identity;
 $canEdit = $user && ($user->isDirector() || $user->isDoctor());
+
+// Build names from available fields
+$patientName = 'N/A';
+if (!empty($model->patient_fname) || !empty($model->patient_lname)) {
+    $patientName = ($model->patient_lname ?? '') . ', ' . ($model->patient_fname ?? '');
+}
+$doctorName = 'N/A';
+if (!empty($model->doctor_lname)) {
+    $doctorName = 'Dr. ' . ($model->doctor_lname ?? '');
+}
 ?>
 <div class="tbl-lab-test-view">
 
@@ -23,10 +33,7 @@ $canEdit = $user && ($user->isDirector() || $user->isDoctor());
         <?php if ($user && $user->isDirector()): ?>
             <?= Html::a('<i class="fas fa-trash"></i> Delete', ['delete', 'test_id' => $model->test_id], [
                 'class' => 'btn btn-danger',
-                'data' => [
-                    'confirm' => 'Are you sure you want to delete this lab test?',
-                    'method' => 'post',
-                ],
+                'data' => ['confirm' => 'Delete this lab test?', 'method' => 'post'],
             ]) ?>
         <?php endif; ?>
     </p>
@@ -35,19 +42,13 @@ $canEdit = $user && ($user->isDirector() || $user->isDoctor());
     <div class="row mb-4">
         <div class="col-12">
             <?php
-            $statusColors = [
-                'ordered' => 'info',
-                'collected' => 'primary',
-                'processing' => 'warning',
-                'completed' => 'success',
-                'cancelled' => 'danger',
-            ];
+            $statusColors = ['ordered' => 'info', 'collected' => 'primary', 'processing' => 'warning', 'completed' => 'success', 'cancelled' => 'danger'];
             $color = $statusColors[$model->status] ?? 'secondary';
             ?>
             <div class="card bg-<?= $color ?> text-white">
                 <div class="card-body text-center">
                     <h3 class="mb-0"><?= strtoupper($model->status) ?></h3>
-                    <?php if ($model->is_abnormal): ?>
+                    <?php if (!empty($model->is_abnormal)): ?>
                         <span class="badge bg-danger mt-2">⚠️ Abnormal Results</span>
                     <?php endif; ?>
                 </div>
@@ -57,36 +58,32 @@ $canEdit = $user && ($user->isDirector() || $user->isDoctor());
 
     <!-- Test Details -->
     <div class="card">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0"><i class="fas fa-flask"></i> Test Details</h5>
-        </div>
+        <div class="card-header bg-dark text-white"><h5 class="mb-0"><i class="fas fa-flask"></i> Test Details</h5></div>
         <div class="card-body">
             <table class="table table-bordered">
                 <tr><th width="150">Test ID</th><td>#<?= $model->test_id ?></td></tr>
                 <tr><th>Appointment</th><td>#<?= $model->appt_id ?></td></tr>
+                <tr><th>Patient</th><td><?= Html::encode($patientName) ?></td></tr>
+                <tr><th>Doctor</th><td><?= Html::encode($doctorName) ?></td></tr>
                 <tr><th>Test Name</th><td><strong><?= Html::encode($model->test_name) ?></strong></td></tr>
                 <tr><th>Category</th><td><?= Html::encode(ucfirst($model->test_category ?? 'N/A')) ?></td></tr>
                 <tr><th>Status</th><td><?= ucfirst($model->status) ?></td></tr>
                 <tr><th>Ordered Date</th><td><?= Yii::$app->formatter->asDatetime($model->ordered_date, 'medium') ?></td></tr>
-                <?php if ($model->results_date): ?>
+                <?php if (!empty($model->results_date)): ?>
                 <tr><th>Results Date</th><td><?= Yii::$app->formatter->asDatetime($model->results_date, 'medium') ?></td></tr>
                 <?php endif; ?>
             </table>
 
-            <?php if ($model->results): ?>
+            <?php if (!empty($model->results)): ?>
             <hr>
             <h6><i class="fas fa-clipboard-check"></i> Results</h6>
-            <div class="p-3  rounded">
-                <?= nl2br(Html::encode($model->results)) ?>
-            </div>
+            <div class="p-3  rounded"><?= nl2br(Html::encode($model->results)) ?></div>
             <?php endif; ?>
 
-            <?php if ($model->notes): ?>
+            <?php if (!empty($model->notes)): ?>
             <hr>
             <h6><i class="fas fa-sticky-note"></i> Notes</h6>
-            <div class="p-3  rounded">
-                <?= nl2br(Html::encode($model->notes)) ?>
-            </div>
+            <div class="p-3  rounded"><?= nl2br(Html::encode($model->notes)) ?></div>
             <?php endif; ?>
         </div>
     </div>

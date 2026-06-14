@@ -4,12 +4,12 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblDirector $model */
+/** @var object $model */
 
-$this->title = $model->director_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Directors', 'url' => ['index']];
+$fullName = ($model->first_name ?? '') . ' ' . ($model->last_name ?? '');
+$this->title = 'Director: ' . $fullName;
+$this->params['breadcrumbs'][] = ['label' => 'Directors', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="tbl-director-view">
 
@@ -19,10 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Update', ['update', 'director_id' => $model->director_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'director_id' => $model->director_id], [
             'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
+            'data' => ['confirm' => 'Delete this director?', 'method' => 'post'],
         ]) ?>
     </p>
 
@@ -33,11 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'first_name',
             'middle_name',
             'last_name',
-            'phone_num',
-            'country_code',
+            [
+                'label' => 'Phone',
+                'value' => ($model->country_code ? $model->country_code . ' ' : '') . ($model->phone_num ?? 'N/A'),
+            ],
             'email:email',
-            'created_at',
-            'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

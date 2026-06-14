@@ -6,23 +6,29 @@ use common\models\TblBill;
 use common\models\TblBillItem;
 use common\models\TblLabTest;
 use common\models\TblAppointment;
+use common\repositories\LabTestRepository;
 use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\TblBillItem $model */
-/** @var common\models\TblBill|null $bill */
+/** @var array|null $bill */
 /** @var yii\widgets\ActiveForm $form */
 
 $isNewRecord = $model->isNewRecord;
 $billId = $model->bill_id;
+if (!$billId && $bill) {
+    $billId = is_array($bill) ? ($bill['bill_id'] ?? null) : ($bill->bill_id ?? null);
+}
 
-// Get appointment to find lab tests
+// Get completed lab tests for this appointment
 $completedLabTests = [];
-if ($bill && $bill->appt_id) {
-    $completedLabTests = TblLabTest::find()
-        ->where(['appt_id' => $bill->appt_id, 'status' => 'completed'])
-        ->andWhere(['IS NOT', 'results', null])
-        ->all();
+if ($bill && $billId) {
+    $billData = is_array($bill) ? $bill : (array) $bill;
+    $apptId = $billData['appt_id'] ?? null;
+    if ($apptId) {
+        $labTestRepo = new LabTestRepository();
+        $completedLabTests = $labTestRepo->findByAppointmentAndStatus($apptId, 'completed');
+    }
 }
 ?>
 
@@ -56,11 +62,8 @@ if ($bill && $bill->appt_id) {
                     ArrayHelper::map(
                         TblBill::find()->orderBy(['bill_id' => SORT_DESC])->all(),
                         'bill_id',
-                        function($model) {
-                            return 'Bill #' . $model->bill_id . 
-                                   ' | Appt #' . $model->appt_id . 
-                                   ' | Total: ₱' . number_format($model->total_amount, 2) . 
-                                   ' | ' . ucfirst($model->payment_status);
+                        function($m) {
+                            return 'Bill #' . $m->bill_id . ' | Appt #' . $m->appt_id . ' | Total: ₱' . number_format($m->total_amount, 2) . ' | ' . ucfirst($m->payment_status);
                         }
                     ),
                     ['prompt' => '-- Select Bill --', 'class' => 'form-control prompt-select', 'required' => true]
@@ -125,7 +128,7 @@ if ($bill && $bill->appt_id) {
                         'step' => '0.01',
                         'readonly' => true,
                         'id' => 'item-total_price',
-                        'style' => 'font-weight: bold; font-size: 18px; background-color: #e8f5e9;'
+                        'style' => 'font-weight: bold; font-size: 18px; background-color: #e8f5e900;'
                     ])->label('Total (Auto)') ?>
                 </div>
             </div>
@@ -140,9 +143,9 @@ if ($bill && $bill->appt_id) {
                     <p class="small text-muted">These lab tests have been completed. Click to add them as charges:</p>
                     <?php foreach ($completedLabTests as $labTest): ?>
                     <button type="button" class="btn btn-sm btn-outline-warning m-1" 
-                            onclick="quickAddLabTest('<?= Html::encode($labTest->test_name) ?>', <?= $labTest->test_id ?>)">
-                        🔬 <?= Html::encode($labTest->test_name) ?> 
-                        <?= $labTest->results_date ? ' (' . Yii::$app->formatter->asDate($labTest->results_date) . ')' : '' ?>
+                            onclick="quickAddLabTest('<?= Html::encode($labTest['test_name']) ?>', <?= $labTest['test_id'] ?>)">
+                        🔬 <?= Html::encode($labTest['test_name']) ?> 
+                        <?= !empty($labTest['results_date']) ? ' (' . Yii::$app->formatter->asDate($labTest['results_date']) . ')' : '' ?>
                     </button>
                     <?php endforeach; ?>
                 </div>
@@ -203,9 +206,7 @@ function calculateTotal() {
     var price = parseFloat(document.getElementById('item-unit_price').value) || 0;
     var total = qty * price;
     document.getElementById('item-total_price').value = total.toFixed(2);
-    
-    var totalField = document.getElementById('item-total_price');
-    totalField.style.backgroundColor = total > 0 ? '#e8f5e900' : '#ffffff00';
+    document.getElementById('item-total_price').style.backgroundColor = total > 0 ? '#e8f5e900' : '#ffffff00';
 }
 
 // Quick add common charges
@@ -223,7 +224,7 @@ function quickAddLabTest(testName, testId) {
     document.querySelector('input[name*="description"]').value = testName;
     document.querySelector('input[name*="reference_id"]').value = testId;
     document.getElementById('item-quantity').value = 1;
-    document.getElementById('item-unit_price').value = 1500; // Default lab test price
+    document.getElementById('item-unit_price').value = 1500;
     calculateTotal();
 }
 
@@ -231,9 +232,7 @@ function quickAddLabTest(testName, testId) {
 function disablePromptOption(selectElement) {
     var selectedValue = selectElement.value;
     var promptOption = selectElement.querySelector('option[value=""]');
-    if (promptOption) {
-        promptOption.disabled = selectedValue !== '';
-    }
+    if (promptOption) promptOption.disabled = selectedValue !== '';
 }
 
 document.addEventListener('DOMContentLoaded', function() {

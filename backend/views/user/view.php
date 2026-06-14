@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use common\models\User;
 
 /** @var yii\web\View $this */
 /** @var common\models\User $model */
@@ -19,29 +20,20 @@ $model->detectRole();
     <p>
         <?= Html::a('<i class="fas fa-edit"></i> Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?php if ($model->id !== Yii::$app->user->id): ?>
-            <?php if ($model->status === \common\models\User::STATUS_ACTIVE): ?>
+            <?php if ($model->status === User::STATUS_ACTIVE): ?>
                 <?= Html::a('<i class="fas fa-ban"></i> Deactivate', ['deactivate', 'id' => $model->id], [
                     'class' => 'btn btn-warning',
-                    'data' => [
-                        'confirm' => 'Deactivate this user?',
-                        'method' => 'post',
-                    ],
+                    'data' => ['confirm' => 'Deactivate this user?', 'method' => 'post'],
                 ]) ?>
             <?php else: ?>
                 <?= Html::a('<i class="fas fa-check-circle"></i> Activate', ['activate', 'id' => $model->id], [
                     'class' => 'btn btn-success',
-                    'data' => [
-                        'confirm' => 'Activate this user?',
-                        'method' => 'post',
-                    ],
+                    'data' => ['confirm' => 'Activate this user?', 'method' => 'post'],
                 ]) ?>
             <?php endif; ?>
             <?= Html::a('<i class="fas fa-trash"></i> Delete', ['delete', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
-                'data' => [
-                    'confirm' => 'Are you sure you want to delete this user?',
-                    'method' => 'post',
-                ],
+                'data' => ['confirm' => 'Delete this user?', 'method' => 'post'],
             ]) ?>
         <?php endif; ?>
     </p>
@@ -56,9 +48,9 @@ $model->detectRole();
                 'attribute' => 'status',
                 'format' => 'raw',
                 'value' => function($model) {
-                    if ($model->status === \common\models\User::STATUS_ACTIVE) {
+                    if ($model->status == User::STATUS_ACTIVE) {
                         return '<span class="badge bg-success">Active</span>';
-                    } elseif ($model->status === \common\models\User::STATUS_INACTIVE) {
+                    } elseif ($model->status == User::STATUS_INACTIVE) {
                         return '<span class="badge bg-warning">Inactive</span>';
                     } else {
                         return '<span class="badge bg-danger">Deleted</span>';

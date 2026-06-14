@@ -2,19 +2,28 @@
 
 namespace backend\controllers;
 
-use common\models\User;
+use common\repositories\UserRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
-use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 
 /**
  * UserController - Director manages user accounts
+ * Uses raw SQL via UserRepository
  */
 class UserController extends Controller
 {
+    private UserRepository $userRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->userRepo = new UserRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -46,53 +55,56 @@ class UserController extends Controller
 
     /**
      * Lists all user accounts
+     * SQL: SELECT * FROM user ORDER BY created_at DESC
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => User::find()->orderBy(['created_at' => SORT_DESC]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
+        // SQL: SELECT * FROM user ORDER BY created_at DESC
+        $users = $this->userRepo->findAll();
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $users,
+            'pagination' => ['pageSize' => 20],
         ]);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**
      * Displays a single user
+     * SQL: SELECT * FROM user WHERE id = :id AND status = 10
      */
     public function actionView($id)
     {
-        $model = $this->findModel($id);
-        $model->detectRole();
+        // SQL: SELECT * FROM user WHERE id = :id
+        $model = \common\models\User::findOne($id);
+        
+        if (!$model) {
+            throw new NotFoundHttpException('User not found.');
+        }
 
-        return $this->render('view', [
-            'model' => $model,
-        ]);
+        return $this->render('view', ['model' => $model]);
     }
 
     /**
-     * Creates a new user (Director can create staff accounts)
+     * Creates a new user
+     * SQL: INSERT INTO user (...) VALUES (...)
      */
     public function actionCreate()
     {
-        $model = new User();
+        $model = new \common\models\User();
         $model->scenario = 'create';
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->status = User::STATUS_ACTIVE;
-                $model->setPassword($model->password_hash);
-                $model->generateAuthKey();
-                $model->generateEmailVerificationToken();
-                
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'User account created successfully.');
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            $model->status = \common\models\User::STATUS_ACTIVE;
+            $model->setPassword($model->password_hash);
+            $model->generateAuthKey();
+            $model->generateEmailVerificationToken();
+            
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'User account created successfully.');
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
@@ -100,18 +112,19 @@ class UserController extends Controller
     }
 
     /**
-     * Updates a user account
+     * Updates a user
+     * SQL: UPDATE user SET ... WHERE id = :id
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = \common\models\User::findOne($id);
+        if (!$model) throw new NotFoundHttpException('User not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            // If password changed
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
             if (!empty($model->password_hash)) {
                 $model->setPassword($model->password_hash);
             }
-            
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'User updated successfully.');
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -123,18 +136,19 @@ class UserController extends Controller
 
     /**
      * Activate user account
+     * SQL: UPDATE user SET status = 10, updated_at = :updated_at WHERE id = :id
      */
     public function actionActivate($id)
     {
-        $model = $this->findModel($id);
+        $model = \common\models\User::findOne($id);
+        if (!$model) throw new NotFoundHttpException('User not found.');
         
-        if ($model->status === User::STATUS_INACTIVE) {
-            $model->status = User::STATUS_ACTIVE;
-            if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'User account activated successfully.');
-            }
+        if ($model->status === \common\models\User::STATUS_INACTIVE) {
+            // SQL: UPDATE user SET status = 10, updated_at = :updated_at WHERE id = :id
+            $this->userRepo->activate($id, time());
+            Yii::$app->session->setFlash('success', 'User activated.');
         } else {
-            Yii::$app->session->setFlash('warning', 'User account is already active.');
+            Yii::$app->session->setFlash('warning', 'User is already active.');
         }
         
         return $this->redirect(['index']);
@@ -142,57 +156,47 @@ class UserController extends Controller
 
     /**
      * Deactivate user account
+     * SQL: UPDATE user SET status = 9, updated_at = :updated_at WHERE id = :id
      */
     public function actionDeactivate($id)
     {
-        $model = $this->findModel($id);
+        $model = \common\models\User::findOne($id);
+        if (!$model) throw new NotFoundHttpException('User not found.');
         
-        // Prevent deactivating own account
         if ($model->id === Yii::$app->user->id) {
             Yii::$app->session->setFlash('error', 'You cannot deactivate your own account.');
             return $this->redirect(['index']);
         }
         
-        if ($model->status === User::STATUS_ACTIVE) {
-            $model->status = User::STATUS_INACTIVE;
-            if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'User account deactivated successfully.');
-            }
+        if ($model->status === \common\models\User::STATUS_ACTIVE) {
+            // SQL: UPDATE user SET status = 9, updated_at = :updated_at WHERE id = :id
+            $this->userRepo->deactivate($id, time());
+            Yii::$app->session->setFlash('success', 'User deactivated.');
         } else {
-            Yii::$app->session->setFlash('warning', 'User account is already inactive.');
+            Yii::$app->session->setFlash('warning', 'User is already inactive.');
         }
         
         return $this->redirect(['index']);
     }
 
     /**
-     * Deletes a user account
+     * Delete user account
+     * SQL: DELETE FROM user WHERE id = :id
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
+        $model = \common\models\User::findOne($id);
+        if (!$model) throw new NotFoundHttpException('User not found.');
         
-        // Prevent deleting own account
         if ($model->id === Yii::$app->user->id) {
             Yii::$app->session->setFlash('error', 'You cannot delete your own account.');
             return $this->redirect(['index']);
         }
         
-        $username = $model->username;
-        $model->delete();
+        // SQL: DELETE FROM user WHERE id = :id
+        $this->userRepo->delete($id);
         
-        Yii::$app->session->setFlash('success', 'User "' . $username . '" deleted successfully.');
+        Yii::$app->session->setFlash('success', 'User "' . $model->username . '" deleted.');
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the User model
-     */
-    protected function findModel($id)
-    {
-        if (($model = User::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

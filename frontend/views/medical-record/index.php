@@ -6,8 +6,7 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var common\models\MedicalRecordSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var yii\data\ArrayDataProvider $dataProvider */
 
 $this->title = 'My Medical Records';
 $this->params['breadcrumbs'][] = $this->title;
@@ -18,7 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'tableOptions' => ['class' => 'table table-striped table-hover'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -27,25 +25,32 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Doctor',
                 'value' => function($model) {
-                    return $model->doctor ? 'Dr. ' . $model->doctor->last_name : 'N/A';
+                    return isset($model['doctor_lname']) ? 'Dr. ' . $model['doctor_lname'] : 'N/A';
                 },
             ],
             [
                 'attribute' => 'diagnosis',
+                'label' => 'Diagnosis',
                 'value' => function($model) {
-                    return $model->diagnosis ? substr($model->diagnosis, 0, 50) . '...' : '<span class="text-muted">No diagnosis</span>';
+                    return !empty($model['diagnosis']) ? substr($model['diagnosis'], 0, 50) . '...' : '<span class="text-muted">No diagnosis</span>';
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'record_date',
+                'label' => 'Date',
                 'format' => 'datetime',
             ],
             [
                 'class' => ActionColumn::class,
                 'template' => '{view}',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-eye"></i>', $url, ['title' => 'View', 'class' => 'btn btn-primary btn-sm']);
+                    },
+                ],
                 'urlCreator' => function ($action, $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'record_id' => $model->record_id]);
+                    return Url::toRoute([$action, 'record_id' => $model['record_id']]);
                 },
             ],
         ],

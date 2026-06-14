@@ -5,7 +5,7 @@ use yii\widgets\DetailView;
 use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\TblBill $model */
+/** @var object $model */
 /** @var array $billItems */
 
 $this->title = 'Bill #' . $model->bill_id;
@@ -30,10 +30,7 @@ $canProcess = ($model->payment_status === 'pending' || $model->payment_status ==
             <?= Html::a('<i class="fas fa-edit"></i> Edit Bill', ['update', 'bill_id' => $model->bill_id], ['class' => 'btn btn-primary']) ?>
             <?= Html::a('<i class="fas fa-trash"></i> Delete', ['delete', 'bill_id' => $model->bill_id], [
                 'class' => 'btn btn-danger',
-                'data' => [
-                    'confirm' => 'Are you sure?',
-                    'method' => 'post',
-                ],
+                'data' => ['confirm' => 'Delete?', 'method' => 'post'],
             ]) ?>
         <?php endif; ?>
     </p>
@@ -48,9 +45,7 @@ $canProcess = ($model->payment_status === 'pending' || $model->payment_status ==
             <div class="card bg-<?= $color ?> text-white">
                 <div class="card-body text-center">
                     <h3 class="mb-0"><?= strtoupper($model->payment_status) ?></h3>
-                    <?php if ($model->payment_method): ?>
-                        <small>Payment Method: <?= ucfirst($model->payment_method) ?></small>
-                    <?php endif; ?>
+                    <?php if ($model->payment_method): ?><small>via <?= ucfirst($model->payment_method) ?></small><?php endif; ?>
                 </div>
             </div>
         </div>
@@ -59,35 +54,20 @@ $canProcess = ($model->payment_status === 'pending' || $model->payment_status ==
     <!-- Process Payment -->
     <?php if ($canProcess): ?>
     <div class="card mb-4 border-success">
-        <div class="card-header bg-success text-white">
-            <h5 class="mb-0"><i class="fas fa-cash-register"></i> Process Payment</h5>
-        </div>
+        <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="fas fa-cash-register"></i> Process Payment</h5></div>
         <div class="card-body">
-            <div class="alert alert-info">
-                <strong>Amount Due:</strong> 
-                <span style="font-size: 24px; font-weight: bold;">₱<?= number_format($model->total_amount, 2) ?></span>
-            </div>
+            <div class="alert alert-info"><strong>Amount Due:</strong> <span style="font-size: 24px; font-weight: bold;">₱<?= number_format($model->total_amount, 2) ?></span></div>
             <?php $form = ActiveForm::begin(['action' => ['mark-paid', 'bill_id' => $model->bill_id], 'method' => 'post']); ?>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label class="form-label fw-bold">Payment Method *</label>
-                        <select name="payment_method" class="form-select form-select-lg" required>
-                            <option value="">-- Select --</option>
-                            <option value="cash">Cash</option>
-                            <option value="gcash">GCash</option>
-                            <option value="maya">Maya</option>
-                            <option value="credit_card">Credit Card</option>
-                            <option value="debit_card">Debit Card</option>
-                            <option value="bank_transfer">Bank Transfer</option>
-                            <option value="insurance">Insurance</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-success btn-lg">
-                <i class="fas fa-check-circle"></i> Mark as Paid
-            </button>
+            <div class="row"><div class="col-md-6"><div class="form-group mb-3">
+                <label class="form-label fw-bold">Payment Method *</label>
+                <select name="payment_method" class="form-select form-select-lg" required>
+                    <option value="">-- Select --</option>
+                    <option value="cash">Cash</option><option value="gcash">GCash</option><option value="maya">Maya</option>
+                    <option value="credit_card">Credit Card</option><option value="debit_card">Debit Card</option>
+                    <option value="bank_transfer">Bank Transfer</option><option value="insurance">Insurance</option>
+                </select>
+            </div></div></div>
+            <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-check-circle"></i> Mark as Paid</button>
             <?php ActiveForm::end(); ?>
         </div>
     </div>
@@ -106,22 +86,13 @@ $canProcess = ($model->payment_status === 'pending' || $model->payment_status ==
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead class="table-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Qty</th>
-                            <th>Unit Price</th>
-                            <th>Total</th>
-                            <?php if ($isReceptionist || $isDirector): ?>
-                            <th>Actions</th>
-                            <?php endif; ?>
-                        </tr>
+                        <tr><th>#</th><th>Type</th><th>Description</th><th>Qty</th><th>Unit Price</th><th>Total</th>
+                        <?php if ($isReceptionist || $isDirector): ?><th>Actions</th><?php endif; ?></tr>
                     </thead>
                     <tbody>
                         <?php $totalItems = 0; ?>
                         <?php foreach ($billItems as $index => $item): ?>
-                        <?php $totalItems += $item->total_price; ?>
+                        <?php $totalItems += $item['total_price']; ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
                             <td>
@@ -133,21 +104,20 @@ $canProcess = ($model->payment_status === 'pending' || $model->payment_status ==
                                     'procedure' => '<span class="badge bg-info">Procedure</span>',
                                     'other' => '<span class="badge bg-secondary">Other</span>',
                                 ];
-                                echo $typeLabels[$item->item_type] ?? $item->item_type;
+                                echo $typeLabels[$item['item_type']] ?? $item['item_type'];
                                 ?>
                             </td>
-                            <td><?= Html::encode($item->description) ?></td>
-                            <td class="text-center"><?= $item->quantity ?></td>
-                            <td class="text-end">₱<?= number_format($item->unit_price, 2) ?></td>
-                            <td class="text-end"><strong>₱<?= number_format($item->total_price, 2) ?></strong></td>
+                            <td><?= Html::encode($item['description']) ?></td>
+                            <td class="text-center"><?= $item['quantity'] ?></td>
+                            <td class="text-end">₱<?= number_format($item['unit_price'], 2) ?></td>
+                            <td class="text-end"><strong>₱<?= number_format($item['total_price'], 2) ?></strong></td>
                             <?php if ($isReceptionist || $isDirector): ?>
                             <td>
-                                <?= Html::a('<i class="fas fa-edit"></i>', ['bill-item/update', 'bill_item_id' => $item->bill_item_id], ['class' => 'btn btn-sm btn-primary', 'title' => 'Edit']) ?>
+                                <?= Html::a('<i class="fas fa-edit"></i>', ['bill-item/update', 'bill_item_id' => $item['bill_item_id']], ['class' => 'btn btn-sm btn-primary', 'title' => 'Edit']) ?>
                                 <?php if ($isDirector): ?>
-                                    <?= Html::a('<i class="fas fa-trash"></i>', ['bill-item/delete', 'bill_item_id' => $item->bill_item_id], [
-                                        'class' => 'btn btn-sm btn-danger',
-                                        'title' => 'Delete',
-                                        'data' => ['confirm' => 'Delete this charge?', 'method' => 'post'],
+                                    <?= Html::a('<i class="fas fa-trash"></i>', ['bill-item/delete', 'bill_item_id' => $item['bill_item_id']], [
+                                        'class' => 'btn btn-sm btn-danger', 'title' => 'Delete',
+                                        'data' => ['confirm' => 'Delete?', 'method' => 'post'],
                                     ]) ?>
                                 <?php endif; ?>
                             </td>
@@ -156,49 +126,31 @@ $canProcess = ($model->payment_status === 'pending' || $model->payment_status ==
                         <?php endforeach; ?>
                     </tbody>
                     <tfoot class="table-light">
-                        <tr>
-                            <td colspan="5" class="text-end"><strong>Total:</strong></td>
-                            <td class="text-end"><strong>₱<?= number_format($totalItems, 2) ?></strong></td>
-                            <?php if ($isReceptionist || $isDirector): ?><td></td><?php endif; ?>
-                        </tr>
+                        <tr><td colspan="5" class="text-end"><strong>Total:</strong></td><td class="text-end"><strong>₱<?= number_format($totalItems, 2) ?></strong></td>
+                        <?php if ($isReceptionist || $isDirector): ?><td></td><?php endif; ?></tr>
                     </tfoot>
                 </table>
             </div>
             <?php else: ?>
-            <p class="text-muted text-center mb-0">
-                No charges yet. 
-                <?php if ($isReceptionist || $isDirector): ?>
-                    <?= Html::a('Add a charge', ['bill-item/create', 'bill_id' => $model->bill_id], ['class' => 'btn btn-sm btn-success']) ?>
-                <?php endif; ?>
-            </p>
+            <p class="text-muted text-center mb-0">No charges yet.</p>
             <?php endif; ?>
         </div>
     </div>
 
     <!-- Bill Summary -->
     <div class="card">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0"><i class="fas fa-info-circle"></i> Bill Summary</h5>
-        </div>
+        <div class="card-header bg-dark text-white"><h5 class="mb-0"><i class="fas fa-info-circle"></i> Bill Summary</h5></div>
         <div class="card-body">
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
                     'bill_id',
                     'appt_id',
-                    [
-                        'attribute' => 'total_amount',
-                        'format' => 'raw',
-                        'value' => '<span style="font-size: 22px; font-weight: bold;">₱' . number_format($model->total_amount, 2) . '</span>',
-                    ],
-                    [
-                        'attribute' => 'payment_status',
-                        'format' => 'raw',
-                        'value' => function($model) {
-                            $labels = ['pending' => '<span class="badge bg-warning">Pending</span>', 'paid' => '<span class="badge bg-success">Paid</span>'];
-                            return $labels[$model->payment_status] ?? $model->payment_status;
-                        },
-                    ],
+                    ['attribute' => 'total_amount', 'format' => 'raw', 'value' => '<span style="font-size: 22px; font-weight: bold;">₱' . number_format($model->total_amount, 2) . '</span>'],
+                    ['attribute' => 'payment_status', 'format' => 'raw', 'value' => function($m) {
+                        $labels = ['pending' => '<span class="badge bg-warning">Pending</span>', 'paid' => '<span class="badge bg-success">Paid</span>'];
+                        return $labels[$m->payment_status] ?? $m->payment_status;
+                    }],
                     'payment_method',
                     'bill_date:datetime',
                 ],

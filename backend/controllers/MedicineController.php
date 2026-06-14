@@ -2,133 +2,152 @@
 
 namespace backend\controllers;
 
-use common\models\TblMedicine;
-use common\models\MedicineSearch;
+use common\repositories\MedicineRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use yii\data\ArrayDataProvider;
 
 /**
- * MedicineController implements the CRUD actions for TblMedicine model.
+ * MedicineController - Only Director can manage medicines
+ * Uses raw SQL via MedicineRepository
  */
 class MedicineController extends Controller
 {
-    /**
-     * @inheritDoc
-     */
+    private MedicineRepository $medicineRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->medicineRepo = new MedicineRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
             parent::behaviors(),
             [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return Yii::$app->user->identity->isDirector();
+                            },
+                        ],
                     ],
+                ],
+                'verbs' => [
+                    'class' => VerbFilter::class,
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
     /**
-     * Lists all TblMedicine models.
-     *
-     * @return string
+     * Lists all medicines
+     * SQL: SELECT * FROM tbl_medicine ORDER BY med_name
      */
     public function actionIndex()
     {
-        $searchModel = new MedicineSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        // SQL: SELECT * FROM tbl_medicine
+        $medicines = $this->medicineRepo->findAll();
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $medicines,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**
-     * Displays a single TblMedicine model.
-     * @param int $med_id Med ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * Displays a single medicine
+     * SQL: SELECT * FROM tbl_medicine WHERE med_id = :id
      */
     public function actionView($med_id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($med_id),
-        ]);
+        // SQL: SELECT * FROM tbl_medicine WHERE med_id = :id
+        $model = $this->medicineRepo->findById($med_id);
+        
+        if (!$model) {
+            throw new NotFoundHttpException('Medicine not found.');
+        }
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
     /**
-     * Creates a new TblMedicine model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * Creates a new medicine
+     * SQL: INSERT INTO tbl_medicine (med_name, dosage_form, strength, med_price) VALUES (...)
      */
     public function actionCreate()
     {
-        $model = new TblMedicine();
+        $model = new \common\models\TblMedicine();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'med_id' => $model->med_id]);
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblMedicine', []);
+            
+            // Check duplicate
+            if (!empty($post['med_name']) && !empty($post['strength'])) {
+                $duplicate = $this->medicineRepo->findDuplicate($post['med_name'], $post['strength']);
+                if ($duplicate) {
+                    Yii::$app->session->setFlash('warning', '⚠️ Medicine with this name and strength already exists (ID: ' . $duplicate['med_id'] . ').');
+                }
             }
-        } else {
-            $model->loadDefaultValues();
+            
+            // SQL: INSERT INTO tbl_medicine (...) VALUES (...)
+            $id = $this->medicineRepo->create($post);
+            
+            if ($id) {
+                Yii::$app->session->setFlash('success', '✅ Medicine created successfully.');
+                return $this->redirect(['view', 'med_id' => $id]);
+            }
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['model' => $model]);
     }
 
     /**
-     * Updates an existing TblMedicine model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $med_id Med ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * Updates a medicine
+     * SQL: UPDATE tbl_medicine SET ... WHERE med_id = :id
      */
     public function actionUpdate($med_id)
     {
-        $model = $this->findModel($med_id);
+        $medicine = $this->medicineRepo->findById($med_id);
+        if (!$medicine) throw new NotFoundHttpException('Medicine not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'med_id' => $model->med_id]);
+        $model = new \common\models\TblMedicine();
+        $model->attributes = $medicine;
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblMedicine', []);
+            
+            // SQL: UPDATE tbl_medicine SET ... WHERE med_id = :id
+            $this->medicineRepo->update($med_id, $post);
+            
+            Yii::$app->session->setFlash('success', '✅ Medicine updated successfully.');
+            return $this->redirect(['view', 'med_id' => $med_id]);
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->render('update', ['model' => $model]);
     }
 
     /**
-     * Deletes an existing TblMedicine model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $med_id Med ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * Deletes a medicine
+     * SQL: DELETE FROM tbl_medicine WHERE med_id = :id
      */
     public function actionDelete($med_id)
     {
-        $this->findModel($med_id)->delete();
-
+        // SQL: DELETE FROM tbl_medicine WHERE med_id = :id
+        $this->medicineRepo->delete($med_id);
+        
+        Yii::$app->session->setFlash('success', 'Medicine deleted.');
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the TblMedicine model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $med_id Med ID
-     * @return TblMedicine the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($med_id)
-    {
-        if (($model = TblMedicine::findOne(['med_id' => $med_id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

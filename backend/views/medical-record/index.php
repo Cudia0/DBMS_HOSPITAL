@@ -4,11 +4,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use common\models\TblMedicalRecord;
 
 /** @var yii\web\View $this */
-/** @var common\models\MedicalRecordSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var yii\data\ArrayDataProvider $dataProvider */
 
 $this->title = 'Medical Records';
 $this->params['breadcrumbs'][] = $this->title;
@@ -28,25 +26,42 @@ $canCreate = $user && ($user->isDirector() || $user->isDoctor());
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'tableOptions' => ['class' => 'table table-striped table-hover'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            
-            'record_id',
-            'appt_id',
+            [
+                'attribute' => 'record_id',
+                'label' => 'ID',
+            ],
+            [
+                'attribute' => 'appt_id',
+                'label' => 'Appt',
+            ],
+            [
+                'label' => 'Patient',
+                'value' => function($model) {
+                    return ($model['patient_fname'] ?? '') . ' ' . ($model['patient_lname'] ?? 'N/A');
+                },
+            ],
+            [
+                'label' => 'Doctor',
+                'value' => function($model) {
+                    return isset($model['doctor_lname']) ? 'Dr. ' . $model['doctor_lname'] : 'N/A';
+                },
+            ],
             [
                 'attribute' => 'vital_signs',
                 'label' => 'Vital Signs',
                 'value' => function($model) {
-                    return $model->vital_signs ? substr($model->vital_signs, 0, 30) . '...' : '<span class="text-muted">Not recorded</span>';
+                    return !empty($model['vital_signs']) ? substr($model['vital_signs'], 0, 30) . '...' : '<span class="text-muted">Not recorded</span>';
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'diagnosis',
+                'label' => 'Diagnosis',
                 'value' => function($model) {
-                    return $model->diagnosis ? substr($model->diagnosis, 0, 40) . '...' : '<span class="text-muted">No diagnosis</span>';
+                    return !empty($model['diagnosis']) ? substr($model['diagnosis'], 0, 50) . '...' : '<span class="text-muted">No diagnosis</span>';
                 },
                 'format' => 'raw',
             ],
@@ -54,21 +69,22 @@ $canCreate = $user && ($user->isDirector() || $user->isDoctor());
                 'attribute' => 'treatment_plan',
                 'label' => 'Treatment',
                 'value' => function($model) {
-                    return $model->treatment_plan ? substr($model->treatment_plan, 0, 30) . '...' : '<span class="text-muted">No plan</span>';
+                    return !empty($model['treatment_plan']) ? substr($model['treatment_plan'], 0, 30) . '...' : '<span class="text-muted">No plan</span>';
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'notes',
+                'label' => 'Notes',
                 'value' => function($model) {
-                    return $model->notes ? substr($model->notes, 0, 30) . '...' : '<span class="text-muted">None</span>';
+                    return !empty($model['notes']) ? substr($model['notes'], 0, 30) . '...' : '<span class="text-muted">None</span>';
                 },
                 'format' => 'raw',
             ],
             [
                 'attribute' => 'record_date',
-                'format' => 'datetime',
                 'label' => 'Date',
+                'format' => 'datetime',
             ],
             [
                 'class' => ActionColumn::class,
@@ -81,8 +97,22 @@ $canCreate = $user && ($user->isDirector() || $user->isDoctor());
                         return $user && $user->isDirector();
                     },
                 ],
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-eye"></i>', $url, ['title' => 'View', 'class' => 'btn btn-primary btn-sm']);
+                    },
+                    'update' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-edit"></i>', $url, ['title' => 'Edit', 'class' => 'btn btn-info btn-sm']);
+                    },
+                    'delete' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-trash"></i>', $url, [
+                            'title' => 'Delete', 'class' => 'btn btn-danger btn-sm',
+                            'data' => ['confirm' => 'Delete?', 'method' => 'post'],
+                        ]);
+                    },
+                ],
                 'urlCreator' => function ($action, $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'record_id' => $model->record_id]);
+                    return Url::toRoute([$action, 'record_id' => $model['record_id']]);
                 },
             ],
         ],

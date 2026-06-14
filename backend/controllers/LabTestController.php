@@ -2,21 +2,32 @@
 
 namespace backend\controllers;
 
-use common\models\TblLabTest;
-use common\models\TblAppointment;
-use common\models\LabTestSearch;
+use common\repositories\LabTestRepository;
+use common\repositories\AppointmentRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * LabTestController - Director & Doctor manage, Receptionist can view
  * Lab tests are OPTIONAL diagnostic tests ordered by doctors
+ * Uses raw SQL via LabTestRepository
  */
 class LabTestController extends Controller
 {
+    private LabTestRepository $labTestRepo;
+    private AppointmentRepository $appointmentRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->labTestRepo = new LabTestRepository();
+        $this->appointmentRepo = new AppointmentRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -47,35 +58,31 @@ class LabTestController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
     /**
-     * Lists lab tests - Filtered for doctor to show only their patients
+     * Lists lab tests - Filtered for doctor
      */
     public function actionIndex()
     {
-        $searchModel = new LabTestSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        
         $user = Yii::$app->user->identity;
         
         if ($user->isDoctor()) {
-            $dataProvider->query->joinWith('appointment')
-                ->andWhere(['tbl_appointment.dr_id' => $user->doctor_id]);
+            $labTests = $this->labTestRepo->findByPatient($user->doctor_id);
+        } else {
+            $labTests = $this->labTestRepo->findAll();
         }
         
-        $dataProvider->query->orderBy(['ordered_date' => SORT_DESC]);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $labTests,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**
@@ -83,24 +90,22 @@ class LabTestController extends Controller
      */
     public function actionView($test_id)
     {
-        $model = $this->findModel($test_id);
+        $model = $this->labTestRepo->findById($test_id);
         
-        $user = Yii::$app->user->identity;
-        if ($user->isDoctor() && $model->appointment && $model->appointment->dr_id !== $user->doctor_id) {
-            throw new \yii\web\ForbiddenHttpException('You can only view lab tests for your own patients.');
+        if (!$model) {
+            throw new NotFoundHttpException('Lab test not found.');
         }
-        
-        return $this->render('view', [
-            'model' => $model,
-        ]);
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
     /**
-     * Creates a new lab test order (Doctor only)
+     * Orders a new lab test
+     * SQL: INSERT INTO tbl_lab_test (...) VALUES (...)
      */
     public function actionCreate($appt_id = null)
     {
-        $model = new TblLabTest();
+        $model = new \common\models\TblLabTest();
         $model->status = 'ordered';
         $model->ordered_date = date('Y-m-d H:i:s');
         
@@ -108,14 +113,17 @@ class LabTestController extends Controller
             $model->appt_id = $appt_id;
         }
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->ordered_date = date('Y-m-d H:i:s');
-                
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', '✅ Lab test ordered successfully.');
-                    return $this->redirect(['view', 'test_id' => $model->test_id]);
-                }
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblLabTest', []);
+            $post['ordered_date'] = date('Y-m-d H:i:s');
+            $post['status'] = $post['status'] ?? 'ordered';
+            
+            // SQL: INSERT INTO tbl_lab_test (...) VALUES (...)
+            $id = $this->labTestRepo->create($post);
+            
+            if ($id) {
+                Yii::$app->session->setFlash('success', '✅ Lab test ordered successfully.');
+                return $this->redirect(['view', 'test_id' => $id]);
             }
         }
 
@@ -124,21 +132,28 @@ class LabTestController extends Controller
 
     /**
      * Updates a lab test (add results, change status)
+     * SQL: UPDATE tbl_lab_test SET ... WHERE test_id = :id
      */
     public function actionUpdate($test_id)
     {
-        $model = $this->findModel($test_id);
+        $labTest = $this->labTestRepo->findById($test_id);
+        if (!$labTest) throw new NotFoundHttpException('Lab test not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            // If results are being filled, auto-set results_date
-            if ($model->results && !$model->results_date) {
-                $model->results_date = date('Y-m-d H:i:s');
+        $model = new \common\models\TblLabTest();
+        $model->attributes = $labTest;
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblLabTest', []);
+            
+            if (!empty($post['results']) && empty($post['results_date'])) {
+                $post['results_date'] = date('Y-m-d H:i:s');
             }
             
-            if ($model->save()) {
-                Yii::$app->session->setFlash('success', '✅ Lab test updated successfully.');
-                return $this->redirect(['view', 'test_id' => $model->test_id]);
-            }
+            // SQL: UPDATE tbl_lab_test SET ... WHERE test_id = :id
+            $this->labTestRepo->update($test_id, $post);
+            
+            Yii::$app->session->setFlash('success', '✅ Lab test updated.');
+            return $this->redirect(['view', 'test_id' => $test_id]);
         }
 
         return $this->render('update', ['model' => $model]);
@@ -146,6 +161,7 @@ class LabTestController extends Controller
 
     /**
      * Deletes a lab test (Director only)
+     * SQL: DELETE FROM tbl_lab_test WHERE test_id = :id
      */
     public function actionDelete($test_id)
     {
@@ -153,15 +169,10 @@ class LabTestController extends Controller
             Yii::$app->session->setFlash('error', 'Only Director can delete lab tests.');
             return $this->redirect(['index']);
         }
-        $this->findModel($test_id)->delete();
+        
+        // SQL: DELETE FROM tbl_lab_test WHERE test_id = :id
+        $this->labTestRepo->delete($test_id);
+        
         return $this->redirect(['index']);
-    }
-
-    protected function findModel($test_id)
-    {
-        if (($model = TblLabTest::findOne(['test_id' => $test_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

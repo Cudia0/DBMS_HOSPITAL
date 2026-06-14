@@ -6,12 +6,13 @@ namespace frontend\controllers;
 
 use common\models\LoginForm;
 use common\models\User;
-use common\models\ContactForm;
-use common\models\PasswordResetRequestForm;
-use common\models\ResendVerificationEmailForm;
-use common\models\ResetPasswordForm;
+use common\repositories\PatientRepository;
 use common\models\SignupForm;
 use common\models\VerifyEmailForm;
+use common\models\PasswordResetRequestForm;
+use common\models\ResetPasswordForm;
+use common\models\ResendVerificationEmailForm;
+use common\models\ContactForm;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\captcha\CaptchaAction;
@@ -29,13 +30,12 @@ use yii\web\Response;
  */
 class SiteController extends Controller
 {
-    public function __construct(
-        $id,
-        $module,
-        private readonly MailerInterface $mailer,
-        $config = [],
-    ) {
+    private PatientRepository $patientRepo;
+
+    public function __construct($id, $module, private readonly MailerInterface $mailer, $config = [])
+    {
         parent::__construct($id, $module, $config);
+        $this->patientRepo = new PatientRepository();
     }
 
     public function behaviors(): array
@@ -45,23 +45,13 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'only' => ['logout', 'signup'],
                 'rules' => [
-                    [
-                        'actions' => ['signup'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
+                    ['actions' => ['signup'], 'allow' => true, 'roles' => ['?']],
+                    ['actions' => ['logout'], 'allow' => true, 'roles' => ['@']],
                 ],
             ],
             'verbs' => [
                 'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
-                ],
+                'actions' => ['logout' => ['post']],
             ],
         ];
     }
@@ -87,7 +77,7 @@ class SiteController extends Controller
             if ($user->canAccessBackend()) {
                 Yii::$app->user->logout();
                 Yii::$app->session->setFlash('info', 'Staff members must use the backend portal.');
-                return $this->redirect(Yii::$app->params['backendUrl'] ?? 'http://vince.com/backend/web/index.php?r=site/login');
+                return $this->redirect(Yii::$app->params['backendUrl'] ?? '/backend/web');
             }
             return $this->goHome();
         }
@@ -95,11 +85,25 @@ class SiteController extends Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             $user = Yii::$app->user->identity;
+            
+            // Staff cannot login to frontend
             if ($user->canAccessBackend()) {
                 Yii::$app->user->logout();
                 Yii::$app->session->setFlash('info', 'Staff members must use the backend portal.');
-                return $this->redirect(Yii::$app->params['backendUrl'] ?? 'http://vince.com/backend/web/index.php?r=site/login');
+                return $this->redirect(Yii::$app->params['backendUrl'] ?? '/backend/web');
             }
+            
+            // Verify patient record exists
+            // SQL: SELECT patient_id FROM tbl_patient WHERE email = :email
+            $patientId = Yii::$app->db->createCommand(
+                "SELECT patient_id FROM tbl_patient WHERE email = :email",
+                [':email' => $user->email]
+            )->queryScalar();
+            
+            if ($patientId) {
+                $user->patient_id = (int) $patientId;
+            }
+            
             Yii::$app->session->setFlash('success', 'Welcome, ' . $user->getFullName() . '!');
             return $this->goBack();
         }
@@ -120,23 +124,30 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $user = $model->signup();
             if ($user) {
-                $emailSent = $model->sendEmail($user);
-                if ($emailSent) {
-                    Yii::$app->session->setFlash('success', '✅ Registration successful! Please check your email (' . Html::encode($model->email) . ') to verify your account.');
-                } else {
-                    Yii::$app->session->setFlash('warning', '⚠️ Registration completed. Please check your email to verify your account.');
-                }
+                $model->sendEmail($user);
+                Yii::$app->session->setFlash('success', '✅ Registration successful! Please check your email to verify your account.');
                 return $this->goHome();
             }
-            Yii::$app->session->setFlash('error', 'Registration failed. Please check the errors below.');
         }
         return $this->render('signup', ['model' => $model]);
     }
 
-    public function actionAbout(): string
+    public function actionVerifyEmail(string $token): Response
     {
-        return $this->render('about');
+        try {
+            $model = new VerifyEmailForm($token);
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+        if ($model->verifyEmail()) {
+            Yii::$app->session->setFlash('success', '✅ Email verified! You can now login.');
+            return $this->goHome();
+        }
+        Yii::$app->session->setFlash('error', 'Unable to verify your account.');
+        return $this->goHome();
     }
+
+    public function actionAbout(): string { return $this->render('about'); }
 
     public function actionContact(): string|Response
     {
@@ -154,7 +165,7 @@ class SiteController extends Controller
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->sendEmail($this->mailer, Yii::$app->params['supportEmail'], Yii::$app->name);
-            Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+            Yii::$app->session->setFlash('success', 'Check your email for instructions.');
             return $this->goHome();
         }
         return $this->render('requestPasswordResetToken', ['model' => $model]);
@@ -174,27 +185,12 @@ class SiteController extends Controller
         return $this->render('resetPassword', ['model' => $model]);
     }
 
-    public function actionVerifyEmail(string $token): Response
-    {
-        try {
-            $model = new VerifyEmailForm($token);
-        } catch (InvalidArgumentException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
-        if ($model->verifyEmail()) {
-            Yii::$app->session->setFlash('success', '✅ Your email has been confirmed! You can now login and book appointments.');
-            return $this->goHome();
-        }
-        Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account.');
-        return $this->goHome();
-    }
-
     public function actionResendVerificationEmail(): string|Response
     {
         $model = new ResendVerificationEmailForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->sendEmail($this->mailer, Yii::$app->params['supportEmail'], Yii::$app->name);
-            Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+            Yii::$app->session->setFlash('success', 'Check your email.');
             return $this->goHome();
         }
         return $this->render('resendVerificationEmail', ['model' => $model]);

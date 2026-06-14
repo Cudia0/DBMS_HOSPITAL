@@ -43,6 +43,9 @@ return [
             'username' => 'root',
             'password' => 'admin',
             'charset' => 'utf8',
+            'enableLogging' => true,      // IMPORTANT: Enable SQL logging
+            'enableProfiling' => true,     // IMPORTANT: Enable profiling
+
         ],
         'mailer' => \yii\mail\MailerInterface::class,
     ],

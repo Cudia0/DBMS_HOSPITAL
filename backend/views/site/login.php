@@ -27,11 +27,11 @@ $labelOptions = ['class' => 'form-label fw-semibold small'];
                 <div class="d-flex flex-column justify-content-between p-4 p-lg-5 w-100">
                     <div>
                         <?= Html::img(
-                            Yii::getAlias('@web/images/yii3_full_white_for_dark.svg'),
+                            Yii::getAlias('@web/images/medisync-logo-black.svg'),
                             [
-                                'alt' => 'Yii Framework',
-                                'class' => 'mb-4',
-                                'height' => 40,
+                                'alt' => 'MediSync',
+                                'class' => 'mb-5',
+                                'height' => 100,
                             ],
                         ) ?>
                     </div>
@@ -40,7 +40,7 @@ $labelOptions = ['class' => 'form-label fw-semibold small'];
                             Welcome<br>Back
                         </h2>
                         <p class="opacity-75 mb-0 login-brand-text">
-                            Log in to access your Yii2 application and manage your account.
+                            Log in to access and manage your account.
                         </p>
                     </div>
                 </div>
@@ -107,9 +107,9 @@ $labelOptions = ['class' => 'form-label fw-semibold small'];
                     <?php ActiveForm::end(); ?>
 
                     <div class="text-body-secondary text-center mt-3 small">
-                        <?= Html::a('Forgot your password?', ['site/request-password-reset']) ?>
-                        <span class="mx-1">&middot;</span>
-                        <?= Html::a('Resend verification email', ['site/resend-verification-email']) ?>
+                        <h9>Forgot Password?<span class="mx-1">&middot; Contact Admin</span></h9>
+                        
+                        
                     </div>
 
                 </div>

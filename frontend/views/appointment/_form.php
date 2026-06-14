@@ -7,8 +7,19 @@ use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\TblAppointment $model */
-/** @var common\models\TblPatient $patient */
+/** @var array|object $patient */
 /** @var yii\widgets\ActiveForm $form */
+
+// Handle both array and object
+$patientData = is_array($patient) ? $patient : (array) $patient;
+$fullName = ($patientData['last_name'] ?? '') . ', ' . ($patientData['first_name'] ?? '');
+$sex = $patientData['sex'] ?? 'N/A';
+$age = 'N/A';
+if (!empty($patientData['date_of_birth'])) {
+    $dob = new DateTime($patientData['date_of_birth']);
+    $now = new DateTime();
+    $age = $now->diff($dob)->y . ' years old';
+}
 ?>
 
 <div class="tbl-appointment-form">
@@ -23,9 +34,9 @@ use yii\helpers\ArrayHelper;
             <div class="alert alert-info">
                 <h5 class="mb-2"><i class="fas fa-user"></i> Patient Information</h5>
                 <div class="row">
-                    <div class="col-md-6"><strong>Name:</strong> <?= Html::encode($patient->getFullName()) ?></div>
-                    <div class="col-md-3"><strong>Sex:</strong> <?= Html::encode($patient->sex) ?></div>
-                    <div class="col-md-3"><strong>Age:</strong> <?= $patient->getAgeDisplay() ?></div>
+                    <div class="col-md-6"><strong>Name:</strong> <?= Html::encode($fullName) ?></div>
+                    <div class="col-md-3"><strong>Sex:</strong> <?= Html::encode($sex) ?></div>
+                    <div class="col-md-3"><strong>Age:</strong> <?= $age ?></div>
                 </div>
             </div>
 
@@ -93,17 +104,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    document.getElementById('appointment-dr_id').addEventListener('change', function() {
-        var text = this.options[this.selectedIndex].text;
-        var feeMatch = text.match(/Fee: ₱([\d,]+\.\d{2})/);
-        var display = document.getElementById('doctor-fee-display');
-        if (feeMatch) {
-            display.value = feeMatch[1].replace(/,/g, '');
-            display.style.backgroundColor = '#d4edda00';
-        } else {
-            display.value = '';
-            display.style.backgroundColor = '#ffffff01';
-        }
-    });
+    var drSelect = document.getElementById('appointment-dr_id');
+    if (drSelect) {
+        drSelect.addEventListener('change', function() {
+            var text = this.options[this.selectedIndex].text;
+            var feeMatch = text.match(/Fee: ₱([\d,]+\.\d{2})/);
+            var display = document.getElementById('doctor-fee-display');
+            if (feeMatch) {
+                display.value = feeMatch[1].replace(/,/g, '');
+                display.style.backgroundColor = '#d4edda00';
+            } else {
+                display.value = '';
+                display.style.backgroundColor = '#ffffff00';
+            }
+        });
+    }
 });
 </script>

@@ -4,11 +4,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use common\models\TblAppointment;
 
 /** @var yii\web\View $this */
-/** @var common\models\AppointmentSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var yii\data\ArrayDataProvider $dataProvider */
 
 $this->title = 'Appointments';
 $this->params['breadcrumbs'][] = $this->title;
@@ -30,61 +28,59 @@ $isDoctor = $user && $user->isDoctor();
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'tableOptions' => ['class' => 'table table-striped table-hover'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            
-            'appt_id',
             [
-                'attribute' => 'patient_id',
+                'attribute' => 'appt_id',
+                'label' => 'ID',
+            ],
+            [
                 'label' => 'Patient',
                 'value' => function($model) {
-                    return $model->patient ? $model->patient->getFullName() : 'N/A';
+                    return ($model['patient_fname'] ?? '') . ' ' . ($model['patient_lname'] ?? 'N/A');
                 },
             ],
             [
-                'attribute' => 'dr_id',
                 'label' => 'Doctor',
                 'value' => function($model) {
-                    return $model->doctor ? 'Dr. ' . $model->doctor->last_name : 'N/A';
+                    return isset($model['doctor_lname']) ? 'Dr. ' . $model['doctor_lname'] : 'N/A';
                 },
             ],
             [
                 'attribute' => 'appointment_date',
+                'label' => 'Date',
                 'format' => 'raw',
                 'value' => function($model) {
-                    if ($model->appointment_date) {
-                        return Yii::$app->formatter->asDate($model->appointment_date, 'medium');
-                    }
-                    return '<span class="text-warning">Pending</span>';
+                    return $model['appointment_date'] ? Yii::$app->formatter->asDate($model['appointment_date'], 'medium') : '<span class="text-warning">Pending</span>';
                 },
             ],
             [
                 'attribute' => 'appointment_time',
+                'label' => 'Time',
                 'format' => 'raw',
                 'value' => function($model) {
-                    if ($model->appointment_time) {
-                        return Yii::$app->formatter->asTime($model->appointment_time, 'short');
-                    }
-                    return '<span class="text-warning">Pending</span>';
+                    return $model['appointment_time'] ? Yii::$app->formatter->asTime($model['appointment_time'], 'short') : '<span class="text-warning">Pending</span>';
                 },
             ],
             [
                 'attribute' => 'status',
+                'label' => 'Status',
                 'format' => 'raw',
                 'value' => function($model) {
-                    return $model->getStatusLabel();
+                    if (empty($model['status'])) {
+                        return '<span class="badge bg-secondary">Pending</span>';
+                    }
+                    $labels = [
+                        'scheduled' => '<span class="badge bg-warning">Scheduled</span>',
+                        'checked_in' => '<span class="badge bg-info">Checked In</span>',
+                        'in_progress' => '<span class="badge bg-primary">In Progress</span>',
+                        'completed' => '<span class="badge bg-success">Completed</span>',
+                        'cancelled' => '<span class="badge bg-danger">Cancelled</span>',
+                        'no_show' => '<span class="badge bg-dark">No Show</span>',
+                    ];
+                    return $labels[$model['status']] ?? $model['status'];
                 },
-                'filter' => [
-                    '' => 'Pending',
-                    'scheduled' => 'Scheduled',
-                    'checked_in' => 'Checked In',
-                    'in_progress' => 'In Progress',
-                    'completed' => 'Completed',
-                    'cancelled' => 'Cancelled',
-                    'no_show' => 'No Show',
-                ],
             ],
             [
                 'class' => ActionColumn::class,
@@ -97,41 +93,43 @@ $isDoctor = $user && $user->isDoctor();
                         return $isDirector;
                     },
                     'accept' => function($model) use ($isReceptionist, $isDirector) {
-                        return ($isReceptionist || $isDirector) && ($model->status === null || $model->status === '');
+                        return ($isReceptionist || $isDirector) && empty($model['status']);
                     },
                     'reject' => function($model) use ($isReceptionist, $isDirector) {
-                        return ($isReceptionist || $isDirector) && ($model->status === null || $model->status === '' || $model->status === 'scheduled');
+                        return ($isReceptionist || $isDirector) && (empty($model['status']) || $model['status'] === 'scheduled');
                     },
                     'checkin' => function($model) use ($isReceptionist, $isDirector) {
-                        return ($isReceptionist || $isDirector) && $model->status === 'scheduled';
+                        return ($isReceptionist || $isDirector) && $model['status'] === 'scheduled';
                     },
                 ],
                 'buttons' => [
-                    'accept' => function ($url, $model) {
-                        return Html::a('<i class="fas fa-check-circle"></i>', ['view', 'appt_id' => $model->appt_id], [
-                            'title' => 'Accept & Schedule',
-                            'class' => 'btn btn-success btn-sm',
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-eye"></i>', $url, ['title' => 'View', 'class' => 'btn btn-primary btn-sm']);
+                    },
+                    'update' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-edit"></i>', $url, ['title' => 'Edit', 'class' => 'btn btn-info btn-sm']);
+                    },
+                    'delete' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-trash"></i>', $url, [
+                            'title' => 'Delete', 'class' => 'btn btn-danger btn-sm',
+                            'data' => ['confirm' => 'Delete?', 'method' => 'post'],
                         ]);
+                    },
+                    'accept' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-check-circle"></i>', ['view', 'appt_id' => $model['appt_id']], ['title' => 'Accept', 'class' => 'btn btn-success btn-sm']);
                     },
                     'reject' => function ($url, $model) {
-                        return Html::a('<i class="fas fa-times-circle"></i>', ['view', 'appt_id' => $model->appt_id], [
-                            'title' => 'Reject / Cancel',
-                            'class' => 'btn btn-danger btn-sm',
-                        ]);
+                        return Html::a('<i class="fas fa-times-circle"></i>', ['view', 'appt_id' => $model['appt_id']], ['title' => 'Reject', 'class' => 'btn btn-danger btn-sm']);
                     },
                     'checkin' => function ($url, $model) {
-                        return Html::a('<i class="fas fa-sign-in-alt"></i>', ['check-in', 'appt_id' => $model->appt_id], [
-                            'title' => 'Check In Patient',
-                            'data' => [
-                                'confirm' => 'Check in this patient?',
-                                'method' => 'post',
-                            ],
-                            'class' => 'btn btn-info btn-sm',
+                        return Html::a('<i class="fas fa-sign-in-alt"></i>', $url, [
+                            'title' => 'Check In', 'class' => 'btn btn-info btn-sm',
+                            'data' => ['confirm' => 'Check in patient?', 'method' => 'post'],
                         ]);
                     },
                 ],
                 'urlCreator' => function ($action, $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'appt_id' => $model->appt_id]);
+                    return Url::toRoute([$action, 'appt_id' => $model['appt_id']]);
                 },
             ],
         ],

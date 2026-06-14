@@ -1,16 +1,14 @@
 <?php
 
 use yii\helpers\Html;
-use common\models\TblBillItem;
 
 /** @var yii\web\View $this */
-/** @var common\models\TblBill $model */
+/** @var object $model */
+/** @var array $billItems */
 
 $this->title = 'Bill #' . $model->bill_id;
 $this->params['breadcrumbs'][] = ['label' => 'My Bills', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-
-$billItems = TblBillItem::find()->where(['bill_id' => $model->bill_id])->orderBy(['item_type' => SORT_ASC])->all();
 ?>
 <div class="tbl-bill-view">
 
@@ -41,14 +39,14 @@ $billItems = TblBillItem::find()->where(['bill_id' => $model->bill_id])->orderBy
                 <tbody>
                     <?php $totalItems = 0; ?>
                     <?php foreach ($billItems as $index => $item): ?>
-                    <?php $totalItems += $item->total_price; ?>
+                    <?php $totalItems += $item['total_price']; ?>
                     <tr>
                         <td><?= $index + 1 ?></td>
-                        <td><?= ucfirst($item->item_type) ?></td>
-                        <td><?= Html::encode($item->description) ?></td>
-                        <td class="text-center"><?= $item->quantity ?></td>
-                        <td class="text-end">₱<?= number_format($item->unit_price, 2) ?></td>
-                        <td class="text-end"><strong>₱<?= number_format($item->total_price, 2) ?></strong></td>
+                        <td><?= ucfirst($item['item_type']) ?></td>
+                        <td><?= Html::encode($item['description']) ?></td>
+                        <td class="text-center"><?= $item['quantity'] ?></td>
+                        <td class="text-end">₱<?= number_format($item['unit_price'], 2) ?></td>
+                        <td class="text-end"><strong>₱<?= number_format($item['total_price'], 2) ?></strong></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

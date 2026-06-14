@@ -15,7 +15,6 @@ $this->render('_head');
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" class="h-100" data-bs-theme="light">
 <head>
-    <!-- Apply saved theme IMMEDIATELY before page renders -->
     <script>
     (function() {
         var savedTheme = localStorage.getItem('medisync-theme');
@@ -35,10 +34,7 @@ $this->render('_head');
 <main id="main" class="flex-grow-1" role="main">
     <div class="container-fluid px-4 py-3">
         <?php if (!empty($this->params['breadcrumbs'])): ?>
-            <?= Breadcrumbs::widget([
-                'links' => $this->params['breadcrumbs'],
-                'options' => ['class' => 'breadcrumb mb-3'],
-            ]) ?>
+            <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs'], 'options' => ['class' => 'breadcrumb mb-3']]) ?>
         <?php endif ?>
         <?= Alert::widget() ?>
         <?= $content ?>
@@ -49,80 +45,41 @@ $this->render('_head');
 
 <script>
 (function() {
-    // Wait for DOM to be ready
     function initThemeToggle() {
         var themeToggle = document.getElementById('theme-toggle');
         var themeIcon = document.getElementById('theme-icon');
         var htmlElement = document.documentElement;
         var navbar = document.getElementById('main-navbar');
         
-        if (!themeToggle || !themeIcon) {
-            // Elements not found, retry after short delay
-            setTimeout(initThemeToggle, 100);
-            return;
-        }
+        if (!themeToggle || !themeIcon) { setTimeout(initThemeToggle, 100); return; }
         
-        // Get current theme
-        function getCurrentTheme() {
-            return htmlElement.getAttribute('data-bs-theme') || 'light';
-        }
+        function getCurrentTheme() { return htmlElement.getAttribute('data-bs-theme') || 'light'; }
         
-        // Update UI elements based on theme
         function updateThemeUI(theme) {
-            // Update icon
             if (theme === 'dark') {
                 themeIcon.className = 'fas fa-sun';
                 themeToggle.setAttribute('aria-label', 'Switch to light mode');
-                themeToggle.setAttribute('title', 'Switch to light mode');
             } else {
                 themeIcon.className = 'fas fa-moon';
                 themeToggle.setAttribute('aria-label', 'Switch to dark mode');
-                themeToggle.setAttribute('title', 'Switch to dark mode');
             }
-            
-            // Update navbar
             if (navbar) {
-                if (theme === 'dark') {
-                    navbar.classList.add('navbar-dark', 'bg-dark');
-                    navbar.classList.remove('navbar-light', 'bg-light');
-                } else {
-                    navbar.classList.remove('navbar-dark', 'bg-dark');
-                    navbar.classList.add('navbar-light', 'bg-light');
-                }
+                if (theme === 'dark') { navbar.classList.add('navbar-dark', 'bg-dark'); navbar.classList.remove('navbar-light', 'bg-light'); }
+                else { navbar.classList.remove('navbar-dark', 'bg-dark'); navbar.classList.add('navbar-light', 'bg-light'); }
             }
         }
         
-        // Apply theme
-        function setTheme(theme) {
-            htmlElement.setAttribute('data-bs-theme', theme);
-            localStorage.setItem('medisync-theme', theme);
-            updateThemeUI(theme);
-        }
+        function setTheme(theme) { htmlElement.setAttribute('data-bs-theme', theme); localStorage.setItem('medisync-theme', theme); updateThemeUI(theme); }
+        function toggleTheme() { setTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark'); }
         
-        // Toggle theme
-        function toggleTheme() {
-            var currentTheme = getCurrentTheme();
-            var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
-        }
-        
-        // Initialize: apply saved theme and update UI
         var savedTheme = localStorage.getItem('medisync-theme');
-        if (savedTheme === 'dark' || savedTheme === 'light') {
-            htmlElement.setAttribute('data-bs-theme', savedTheme);
-        }
+        if (savedTheme === 'dark' || savedTheme === 'light') { htmlElement.setAttribute('data-bs-theme', savedTheme); }
         updateThemeUI(getCurrentTheme());
-        
-        // Add click event listener
         themeToggle.addEventListener('click', toggleTheme);
     }
     
-    // Start initialization when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initThemeToggle);
-    } else {
-        initThemeToggle();
-    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initThemeToggle); }
+    else { initThemeToggle(); }
 })();
 </script>
 

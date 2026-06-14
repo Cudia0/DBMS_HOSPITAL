@@ -1,142 +1,153 @@
 <?php
 
-declare(strict_types=1);
-
 /** @var yii\web\View $this */
-/** @var yii\bootstrap5\ActiveForm $form */
-/** @var \frontend\models\ContactForm $model */
 
-use yii\bootstrap5\ActiveForm;
-use yii\bootstrap5\Html;
-use yii\captcha\Captcha;
+use yii\helpers\Html;
 
-$this->title = 'Contact us';
+$this->title = 'Contact Us';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['meta_description'] = 'Get in touch with us. Send us a message using the contact form.';
-$this->params['meta_keywords'] = 'yii, yii2, contact, support, feedback';
-$htmlIcon = <<<HTML
-{label}<div class="input-group"><span class="input-group-text" aria-hidden="true">%s</span>{input}</div>{error}{hint}
-HTML;
-$labelOptions = ['class' => 'form-label fw-semibold small'];
 ?>
-<div class="site-contact d-flex align-items-center justify-content-center py-5">
-    <div class="card border-0 overflow-hidden login-split-card login-split-card-wide">
-        <div class="row g-0">
+<div class="site-contact">
 
-            <!-- Brand panel -->
-            <div class="col-md-4 d-none d-md-flex login-brand-panel text-white">
-                <div class="d-flex flex-column justify-content-between p-4 p-lg-5 w-100">
-                    <div>
-                        <?= Html::img(
-                            Yii::getAlias('@web/images/yii3_full_white_for_dark.svg'),
-                            [
-                                'alt' => 'Yii Framework',
-                                'class' => 'mb-4',
-                                'height' => 40,
-                            ],
-                        ) ?>
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-envelope"></i> Get in Touch</h5>
+                </div>
+                <div class="card-body">
+                    <p>For support, inquiries, or assistance with the MediSync Hospital Management System, please contact us through any of the channels below.</p>
+                    
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-map-marker-alt fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <strong>Address</strong><br>
+                                <span class="text-muted">123 Health Street, Medical City, Philippines</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-phone fa-2x text-success"></i>
+                            </div>
+                            <div>
+                                <strong>Phone</strong><br>
+                                <span class="text-muted">(02) 8123-4567</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-envelope fa-2x text-info"></i>
+                            </div>
+                            <div>
+                                <strong>Email</strong><br>
+                                <span class="text-muted">support@medisync.com</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-globe fa-2x text-warning"></i>
+                            </div>
+                            <div>
+                                <strong>Website</strong><br>
+                                <span class="text-muted">www.medisync.com</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <div class="bg-dark bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-clock fa-2x text-dark"></i>
+                            </div>
+                            <div>
+                                <strong>Business Hours</strong><br>
+                                <span class="text-muted">Monday - Friday: 8:00 AM - 5:00 PM<br>Saturday: 9:00 AM - 12:00 PM</span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="fw-bold mb-3 login-brand-title">
-                            Get In<br>Touch
-                        </h2>
-                        <p class="opacity-75 mb-0 login-brand-text">
-                            Have a question or business inquiry? We would love to hear from you.
-                        </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-question-circle"></i> Frequently Asked Questions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How do I reset my password?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body small">
+                                    Go to Profile Settings and use the "Change Password" option. You need to enter your current password first.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    How do I add a new doctor?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body small">
+                                    Only Directors can add doctors. Go to Staff → Doctors → Create Doctor. A user account will be automatically generated.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    How are bills generated?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body small">
+                                    Bills are automatically generated when a doctor creates a prescription. Receptionists can add additional charges like lab tests.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    Can a patient have multiple appointments?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body small">
+                                    Yes, patients can book multiple appointments. Each appointment is independent and can be with different doctors on different dates.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Form panel -->
-            <div class="col-md-8">
-                <div class="p-4 p-lg-5">
-                    <div class="text-center mb-4">
-                        <div class="d-md-none mb-3">
-                            <?= Html::img(
-                                Yii::getAlias('@web/images/yii3_full_black_for_light.svg'),
-                                [
-                                    'alt' => 'Yii Framework',
-                                    'class' => 'login-mobile-logo',
-                                    'height' => 36,
-                                ]
-                            ) ?>
-                        </div>
-                        <h1 class="h3 fw-bold mb-1"><?= Html::encode($this->title) ?></h1>
-                        <p class="text-body-secondary small">Fill out the form below and we will get back to you</p>
-                    </div>
-
-                    <?php $form = ActiveForm::begin(['id' => 'contact-form']); ?>
-
-                    <div class="row">
-                        <div class="col-sm-6 mb-3">
-                            <?= $form->field($model, 'name', [
-                                'options' => ['class' => 'mb-0'],
-                                'template' => sprintf($htmlIcon, '&#128100;'),
-                                'inputOptions' => [
-                                    'class' => 'form-control',
-                                    'placeholder' => 'Name',
-                                    'autofocus' => true,
-                                ],
-                            ])->label('Your Name', $labelOptions) ?>
-                        </div>
-
-                        <div class="col-sm-6 mb-3">
-                            <?= $form->field($model, 'email', [
-                                'options' => ['class' => 'mb-0'],
-                                'template' => sprintf($htmlIcon, '&#9993;'),
-                                'inputOptions' => [
-                                    'class' => 'form-control',
-                                    'placeholder' => 'email@example.com',
-                                ],
-                            ])->label('Your Email', $labelOptions) ?>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <?= $form->field($model, 'subject', [
-                            'options' => ['class' => 'mb-0'],
-                            'template' => sprintf($htmlIcon, '&#128172;'),
-                            'inputOptions' => [
-                                'class' => 'form-control',
-                                'placeholder' => 'Subject',
-                            ],
-                        ])->label('Subject', $labelOptions) ?>
-                    </div>
-
-                    <div class="mb-3">
-                        <?= $form->field($model, 'body', [
-                            'options' => ['class' => 'mb-0'],
-                            'template' => '{label}{input}{error}{hint}',
-                            'inputOptions' => [
-                                'class' => 'form-control',
-                                'placeholder' => 'Your message...',
-                            ],
-                        ])->textarea()->label('Message', $labelOptions) ?>
-                    </div>
-
-                    <div class="d-flex align-items-center gap-3 flex-wrap">
-                        <?= $form->field($model, 'verifyCode', [
-                            'enableLabel' => false,
-                            'options' => ['class' => ''],
-                            'inputOptions' => ['aria-label' => 'Verification code'],
-                        ])->widget(Captcha::class, [
-                            'template' => '<div class="d-flex align-items-center gap-2">{image}{input}</div>',
-                        ]) ?>
-
-                        <?= Html::submitButton(
-                            'Submit',
-                            [
-                                'class' => 'btn login-btn text-white px-4 ms-auto',
-                                'name' => 'contact-button',
-                            ],
-                        ) ?>
-                    </div>
-
-                    <?php ActiveForm::end(); ?>
-
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-life-ring"></i> Technical Support</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small">For technical issues or system bugs, please contact the IT department:</p>
+                    <ul class="small mb-0">
+                        <li>Email: it@medisync.com</li>
+                        <li>Internal Extension: 888</li>
+                        <li>Submit a ticket through the help desk system</li>
+                    </ul>
                 </div>
             </div>
-
         </div>
     </div>
+
 </div>

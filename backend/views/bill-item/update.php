@@ -3,11 +3,18 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblBillItem $model */
+/** @var common\models\TblBillItem $model */
+/** @var array|null $bill */
 
-$this->title = 'Update Tbl Bill Item: ' . $model->bill_item_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Bill Items', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->bill_item_id, 'url' => ['view', 'bill_item_id' => $model->bill_item_id]];
+$billId = '';
+if ($bill) {
+    $billId = is_array($bill) ? ($bill['bill_id'] ?? '') : ($bill->bill_id ?? '');
+}
+$this->title = 'Update Charge #' . $model->bill_item_id;
+$this->params['breadcrumbs'][] = ['label' => 'Bills', 'url' => ['bill/index']];
+if ($bill && $billId) {
+    $this->params['breadcrumbs'][] = ['label' => 'Bill #' . $billId, 'url' => ['bill/view', 'bill_id' => $billId]];
+}
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="tbl-bill-item-update">
@@ -16,6 +23,7 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'bill' => $bill,
     ]) ?>
 
 </div>

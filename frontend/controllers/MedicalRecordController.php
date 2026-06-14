@@ -2,19 +2,30 @@
 
 namespace frontend\controllers;
 
-use common\models\TblMedicalRecord;
-use common\models\MedicalRecordSearch;
+use common\repositories\MedicalRecordRepository;
+use common\repositories\PatientRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
- * MedicalRecordController - Patient VIEW ONLY
+ * MedicalRecordController - Patient VIEW ONLY (Frontend)
  */
 class MedicalRecordController extends Controller
 {
+    private MedicalRecordRepository $recordRepo;
+    private PatientRepository $patientRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->recordRepo = new MedicalRecordRepository();
+        $this->patientRepo = new PatientRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -35,48 +46,45 @@ class MedicalRecordController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
-    public function actionIndex()
+    private function getPatientId(): ?int
     {
         $user = Yii::$app->user->identity;
-        $patientId = $user->patient_id;
+        if (!empty($user->patient_id)) return $user->patient_id;
         
-        $searchModel = new MedicalRecordSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->joinWith('appointment')
-            ->andWhere(['tbl_appointment.patient_id' => $patientId]);
-        $dataProvider->query->orderBy(['record_date' => SORT_DESC]);
+        if (!empty($user->email)) {
+            $patient = $this->patientRepo->findByEmail($user->email);
+            if ($patient) { $user->patient_id = $patient['patient_id']; return $patient['patient_id']; }
+        }
+        
+        return null;
+    }
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+    public function actionIndex()
+    {
+        $patientId = $this->getPatientId();
+        if (!$patientId) { Yii::$app->session->setFlash('warning', 'Please complete your profile first.'); return $this->redirect(['profile/index']); }
+        
+        $records = $this->recordRepo->findByPatient($patientId);
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $records,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     public function actionView($record_id)
     {
-        $model = $this->findModel($record_id);
-        $user = Yii::$app->user->identity;
+        $model = $this->recordRepo->findById($record_id);
+        if (!$model) throw new NotFoundHttpException('Medical record not found.');
         
-        if (!$model->appointment || $model->appointment->patient_id !== $user->patient_id) {
-            throw new \yii\web\ForbiddenHttpException('You can only view your own medical records.');
-        }
-        
-        return $this->render('view', ['model' => $model]);
-    }
-
-    protected function findModel($record_id)
-    {
-        if (($model = TblMedicalRecord::findOne(['record_id' => $record_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
+        return $this->render('view', ['model' => (object) $model]);
     }
 }

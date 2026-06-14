@@ -2,29 +2,52 @@
 
 namespace backend\controllers;
 
-use common\models\TblBill;
-use common\models\TblBillItem;
-use common\models\TblAppointment;
-use common\models\TblDoctor;
-use common\models\TblPrescription;
-use common\models\TblMedline;
-use common\models\TblMedicine;
-use common\models\TblLabTest;
-use common\models\BillSearch;
+use common\repositories\BillRepository;
+use common\repositories\BillItemRepository;
+use common\repositories\AppointmentRepository;
+use common\repositories\PrescriptionRepository;
+use common\repositories\LabTestRepository;
+use common\repositories\DoctorRepository;
+use common\repositories\MedicineRepository;
+use common\repositories\MedlineRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
- * BillController - Bills are AUTO-GENERATED when doctor prescribes
- * Receptionist: View bills, Process payments (mark as paid), Print receipts
+ * BillController - Bills are AUTO-GENERATED
+ * Receptionist: View bills, Process payments, Print receipts
  * Director: Full access
  * Doctor: View only
+ * Uses raw SQL via repositories
  */
 class BillController extends Controller
 {
+    private BillRepository $billRepo;
+    private BillItemRepository $billItemRepo;
+    private AppointmentRepository $appointmentRepo;
+    private PrescriptionRepository $prescriptionRepo;
+    private LabTestRepository $labTestRepo;
+    private DoctorRepository $doctorRepo;
+    private MedicineRepository $medicineRepo;
+    private MedlineRepository $medlineRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->billRepo = new BillRepository();
+        $this->billItemRepo = new BillItemRepository();
+        $this->appointmentRepo = new AppointmentRepository();
+        $this->prescriptionRepo = new PrescriptionRepository();
+        $this->labTestRepo = new LabTestRepository();
+        $this->doctorRepo = new DoctorRepository();
+        $this->medicineRepo = new MedicineRepository();
+        $this->medlineRepo = new MedlineRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -63,13 +86,84 @@ class BillController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                        'mark-paid' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST'], 'mark-paid' => ['POST']],
                 ],
             ]
         );
+    }
+
+    /**
+     * Lists all bills
+     */
+    public function actionIndex()
+    {
+        $bills = $this->billRepo->findAll();
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $bills,
+            'pagination' => ['pageSize' => 20],
+        ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
+    }
+
+    /**
+     * Displays a single bill with all items
+     */
+    public function actionView($bill_id)
+    {
+        $model = $this->billRepo->findById($bill_id);
+        if (!$model) throw new NotFoundHttpException('Bill not found.');
+        
+        $billItems = $this->billItemRepo->findByBill($bill_id);
+
+        return $this->render('view', [
+            'model' => (object) $model,
+            'billItems' => $billItems,
+        ]);
+    }
+
+    /**
+     * Print bill as PDF receipt
+     */
+    public function actionPrint($bill_id)
+    {
+        $model = $this->billRepo->findById($bill_id);
+        if (!$model) throw new NotFoundHttpException('Bill not found.');
+        
+        $billItems = $this->billItemRepo->findByBill($bill_id);
+        $appointment = $this->appointmentRepo->findById($model['appt_id']);
+        $prescription = $this->prescriptionRepo->findByAppointment($model['appt_id']);
+        $labTests = $this->labTestRepo->findByAppointment($model['appt_id']);
+        
+        $content = $this->renderPartial('print', [
+            'model' => (object) $model,
+            'billItems' => $billItems,
+            'patient' => $appointment ? (object) $appointment : null,
+            'doctor' => $appointment ? (object) $appointment : null,
+            'appointment' => $appointment ? (object) $appointment : null,
+            'prescription' => $prescription ? (object) $prescription : null,
+            'labTests' => $labTests,
+        ]);
+        
+        $tmpDir = Yii::getAlias('@runtime/mpdf');
+        if (!is_dir($tmpDir)) mkdir($tmpDir, 0775, true);
+        
+        $pdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8', 'format' => 'A4',
+            'margin_left' => 10, 'margin_right' => 10,
+            'margin_top' => 10, 'margin_bottom' => 10,
+            'tempDir' => $tmpDir,
+        ]);
+        
+        $pdf->SetWatermarkText('MediSync', 0.04);
+        $pdf->showWatermarkText = true;
+        $pdf->watermarkTextAlpha = 0.04;
+        $pdf->SetTitle('Receipt - Bill #' . $model['bill_id'] . ' - MediSync');
+        $pdf->SetAuthor('MediSync Hospital');
+        $pdf->WriteHTML($content);
+        $pdf->Output('Receipt_Bill_' . $model['bill_id'] . '.pdf', 'I');
+        exit;
     }
 
     /**
@@ -79,22 +173,20 @@ class BillController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         
-        $appointment = TblAppointment::findOne($appt_id);
-        if (!$appointment) {
-            return ['success' => false];
-        }
+        $appointment = $this->appointmentRepo->findById($appt_id);
+        if (!$appointment) return ['success' => false];
         
-        $doctor = $appointment->doctor;
-        $dr_fee = $doctor ? $doctor->dr_fee : 0;
+        $doctor = $this->doctorRepo->findById($appointment['dr_id']);
+        $dr_fee = $doctor ? $doctor['dr_fee'] : 0;
         
         $medicine_total = 0;
-        $prescriptions = TblPrescription::find()->where(['appt_id' => $appt_id])->all();
-        foreach ($prescriptions as $prescription) {
-            $medlines = TblMedline::find()->where(['prescription_id' => $prescription->prescription_id])->all();
+        $prescriptions = $this->prescriptionRepo->findByAppointment($appt_id);
+        if ($prescriptions) {
+            $medlines = $this->medlineRepo->findByPrescription($prescriptions['prescription_id']);
             foreach ($medlines as $medline) {
-                $medicine = TblMedicine::findOne($medline->med_id);
-                if ($medicine) {
-                    $medicine_total += ($medicine->med_price * $medline->qty);
+                $med = $this->medicineRepo->findById($medline['med_id']);
+                if ($med) {
+                    $medicine_total += ($med['med_price'] * $medline['qty']);
                 }
             }
         }
@@ -108,122 +200,31 @@ class BillController extends Controller
     }
 
     /**
-     * Lists all bills
-     */
-    public function actionIndex()
-    {
-        $searchModel = new BillSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        $dataProvider->query->orderBy(['bill_date' => SORT_DESC]);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single bill with all its items
-     */
-    public function actionView($bill_id)
-    {
-        $model = $this->findModel($bill_id);
-        
-        $billItems = TblBillItem::find()
-            ->where(['bill_id' => $bill_id])
-            ->orderBy(['item_type' => SORT_ASC])
-            ->all();
-
-        return $this->render('view', [
-            'model' => $model,
-            'billItems' => $billItems,
-        ]);
-    }
-
-   /**
- * Print bill as PDF receipt
- */
-public function actionPrint($bill_id)
-{
-    $model = $this->findModel($bill_id);
-    
-    $billItems = TblBillItem::find()
-        ->where(['bill_id' => $bill_id])
-        ->orderBy(['item_type' => SORT_ASC])
-        ->all();
-    
-    $appointment = TblAppointment::findOne($model->appt_id);
-    $patient = $appointment ? $appointment->patient : null;
-    $doctor = $appointment ? $appointment->doctor : null;
-    
-    $prescription = TblPrescription::find()
-        ->where(['appt_id' => $model->appt_id])
-        ->one();
-    
-    $labTests = TblLabTest::find()
-        ->where(['appt_id' => $model->appt_id])
-        ->all();
-    
-    $content = $this->renderPartial('print', [
-        'model' => $model,
-        'billItems' => $billItems,
-        'patient' => $patient,
-        'doctor' => $doctor,
-        'appointment' => $appointment,
-        'prescription' => $prescription,
-        'labTests' => $labTests,
-    ]);
-    
-    // Create writable temp directory
-    $tmpDir = Yii::getAlias('@runtime/mpdf');
-    if (!is_dir($tmpDir)) {
-        mkdir($tmpDir, 0775, true);
-    }
-    
-    $pdf = new \Mpdf\Mpdf([
-        'mode' => 'utf-8',
-        'format' => 'A4',
-        'margin_left' => 10,
-        'margin_right' => 10,
-        'margin_top' => 10,
-        'margin_bottom' => 10,
-        'tempDir' => $tmpDir,
-    ]);
-    
-    // Set watermark using mPDF's built-in method
-    $pdf->SetWatermarkText('MediSync', 0.04);  // 0.04 = very light (0-1 scale)
-    $pdf->showWatermarkText = true;
-    $pdf->watermarkTextAlpha = 0.04;            // Alpha transparency
-    
-    // Use a very light gray color for the watermark
-    $pdf->watermark_font = 'Helvetica';
-    $pdf->watermarkTextAlpha = 0.04;
-    
-    $pdf->SetTitle('Receipt - Bill #' . $model->bill_id . ' - MediSync');
-    $pdf->SetAuthor('MediSync Hospital');
-    $pdf->WriteHTML($content);
-    $pdf->Output('Receipt_Bill_' . $model->bill_id . '.pdf', 'I');
-    exit;
-}
-
-    /**
      * Creates a bill manually (Director only)
+     * SQL: INSERT INTO tbl_bill (...) VALUES (...)
      */
     public function actionCreate()
     {
-        $model = new TblBill();
+        $model = new \common\models\TblBill();
         $model->payment_status = 'pending';
         $model->bill_date = date('Y-m-d H:i:s');
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->bill_date = date('Y-m-d H:i:s');
-                $model->total_amount = 0;
-                
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', '✅ Bill created. Add charges to this bill.');
-                    return $this->redirect(['view', 'bill_id' => $model->bill_id]);
-                }
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblBill', []);
+            $post['bill_date'] = date('Y-m-d H:i:s');
+            $post['payment_status'] = $post['payment_status'] ?? 'pending';
+            $post['dr_fee'] = $post['dr_fee'] ?? 0;
+            $post['totalm_price'] = $post['totalm_price'] ?? 0;
+            $post['total_amount'] = ($post['dr_fee'] ?? 0) + ($post['totalm_price'] ?? 0);
+            
+            // SQL: INSERT INTO tbl_bill (...) VALUES (...)
+            $id = $this->billRepo->create($post);
+            
+            if ($id) {
+                Yii::$app->session->setFlash('success', '✅ Bill #' . $id . ' created successfully. You can now add charges to this bill.');
+                return $this->redirect(['view', 'bill_id' => $id]);
+            } else {
+                Yii::$app->session->setFlash('error', '❌ Failed to create bill.');
             }
         }
 
@@ -232,14 +233,25 @@ public function actionPrint($bill_id)
 
     /**
      * Updates a bill (Director only)
+     * SQL: UPDATE tbl_bill SET ... WHERE bill_id = :id
      */
     public function actionUpdate($bill_id)
     {
-        $model = $this->findModel($bill_id);
+        $bill = $this->billRepo->findById($bill_id);
+        if (!$bill) throw new NotFoundHttpException('Bill not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', '✅ Bill updated.');
-            return $this->redirect(['view', 'bill_id' => $model->bill_id]);
+        $model = new \common\models\TblBill();
+        $model->attributes = $bill;
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblBill', []);
+            $post['total_amount'] = ($post['dr_fee'] ?? 0) + ($post['totalm_price'] ?? 0);
+            
+            // SQL: UPDATE tbl_bill SET ... WHERE bill_id = :id
+            $this->billRepo->update($bill_id, $post);
+            
+            Yii::$app->session->setFlash('success', '✅ Bill #' . $bill_id . ' updated successfully.');
+            return $this->redirect(['view', 'bill_id' => $bill_id]);
         }
 
         return $this->render('update', ['model' => $model]);
@@ -247,45 +259,46 @@ public function actionPrint($bill_id)
 
     /**
      * Mark bill as paid (Receptionist)
+     * SQL: UPDATE tbl_bill SET payment_status = 'paid', payment_method = :method WHERE bill_id = :id
+     * SQL: UPDATE tbl_appointment SET status = 'completed' WHERE appt_id = :id
      */
     public function actionMarkPaid($bill_id)
     {
-        $model = $this->findModel($bill_id);
+        $bill = $this->billRepo->findById($bill_id);
+        if (!$bill) throw new NotFoundHttpException('Bill not found.');
+        
         $user = Yii::$app->user->identity;
         
         if (!$user->isDirector() && !$user->isReceptionist()) {
-            Yii::$app->session->setFlash('error', 'You do not have permission to process payments.');
-            return $this->redirect(['view', 'bill_id' => $model->bill_id]);
+            Yii::$app->session->setFlash('error', 'You do not have permission.');
+            return $this->redirect(['view', 'bill_id' => $bill_id]);
         }
         
-        if ($model->payment_status === 'pending' || $model->payment_status === 'partial') {
+        if ($bill['payment_status'] === 'pending' || $bill['payment_status'] === 'partial') {
             if (Yii::$app->request->isPost) {
-                $model->payment_status = 'paid';
-                $model->payment_method = Yii::$app->request->post('payment_method', $model->payment_method);
+                $method = Yii::$app->request->post('payment_method', $bill['payment_method']);
                 
-                if ($model->save()) {
-                    $appointment = TblAppointment::findOne($model->appt_id);
-                    if ($appointment && $appointment->status === 'in_progress') {
-                        $appointment->status = 'completed';
-                        $appointment->save();
-                    }
-                    
-                    Yii::$app->session->setFlash('success', 
-                        '✅ Payment processed!<br>' .
-                        'Amount: <strong>₱' . number_format($model->total_amount, 2) . '</strong><br>' .
-                        'Method: <strong>' . ucfirst($model->payment_method) . '</strong>'
-                    );
+                // SQL: UPDATE tbl_bill SET payment_status = 'paid', payment_method = :method WHERE bill_id = :id
+                $this->billRepo->markAsPaid($bill_id, 'paid', $method);
+                
+                // SQL: UPDATE tbl_appointment SET status = 'completed' WHERE appt_id = :id
+                $appointment = $this->appointmentRepo->findById($bill['appt_id']);
+                if ($appointment && $appointment['status'] === 'in_progress') {
+                    $this->appointmentRepo->updateStatus($bill['appt_id'], 'completed');
                 }
+                
+                Yii::$app->session->setFlash('success', '✅ Payment processed! Amount: ₱' . number_format($bill['total_amount'], 2));
             }
         } else {
-            Yii::$app->session->setFlash('warning', 'This bill is already marked as ' . $model->payment_status . '.');
+            Yii::$app->session->setFlash('warning', 'Bill is already marked as ' . $bill['payment_status'] . '.');
         }
         
-        return $this->redirect(['view', 'bill_id' => $model->bill_id]);
+        return $this->redirect(['view', 'bill_id' => $bill_id]);
     }
 
     /**
      * Deletes a bill (Director only)
+     * SQL: DELETE FROM tbl_bill WHERE bill_id = :id
      */
     public function actionDelete($bill_id)
     {
@@ -293,15 +306,11 @@ public function actionPrint($bill_id)
             Yii::$app->session->setFlash('error', 'Only Director can delete bills.');
             return $this->redirect(['index']);
         }
-        $this->findModel($bill_id)->delete();
+        
+        // SQL: DELETE FROM tbl_bill WHERE bill_id = :id
+        $this->billRepo->delete($bill_id);
+        
+        Yii::$app->session->setFlash('success', 'Bill deleted.');
         return $this->redirect(['index']);
-    }
-
-    protected function findModel($bill_id)
-    {
-        if (($model = TblBill::findOne(['bill_id' => $bill_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

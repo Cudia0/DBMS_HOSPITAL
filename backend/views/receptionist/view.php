@@ -4,12 +4,12 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblReceptionist $model */
+/** @var object $model */
 
-$this->title = $model->recep_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Receptionists', 'url' => ['index']];
+$fullName = ($model->first_name ?? '') . ' ' . ($model->last_name ?? '');
+$this->title = 'Receptionist: ' . $fullName;
+$this->params['breadcrumbs'][] = ['label' => 'Receptionists', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="tbl-receptionist-view">
 
@@ -19,10 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Update', ['update', 'recep_id' => $model->recep_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'recep_id' => $model->recep_id], [
             'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
+            'data' => ['confirm' => 'Delete this receptionist?', 'method' => 'post'],
         ]) ?>
     </p>
 
@@ -34,11 +31,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'middle_name',
             'last_name',
             'email:email',
-            'phone_num',
-            'country_code',
-            'director_id',
-            'created_at',
-            'updated_at',
+            [
+                'label' => 'Phone',
+                'value' => ($model->country_code ? $model->country_code . ' ' : '') . ($model->phone_num ?? 'N/A'),
+            ],
+            [
+                'label' => 'Director',
+                'value' => ($model->director_fname ?? '') . ' ' . ($model->director_lname ?? 'N/A'),
+            ],
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

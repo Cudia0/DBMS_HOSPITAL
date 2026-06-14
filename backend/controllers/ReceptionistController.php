@@ -2,21 +2,35 @@
 
 namespace backend\controllers;
 
-use common\models\TblReceptionist;
-use common\models\ReceptionistSearch;
-use common\models\User;
+use common\repositories\ReceptionistRepository;
+use common\repositories\DirectorRepository;
+use common\repositories\UserRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * ReceptionistController - Only Director can manage receptionists
- * When Director creates a receptionist, a user account is auto-created
+ * Auto-creates user account when receptionist is created
+ * Uses raw SQL via repositories
  */
 class ReceptionistController extends Controller
 {
+    private ReceptionistRepository $receptionistRepo;
+    private DirectorRepository $directorRepo;
+    private UserRepository $userRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->receptionistRepo = new ReceptionistRepository();
+        $this->directorRepo = new DirectorRepository();
+        $this->userRepo = new UserRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -36,193 +50,179 @@ class ReceptionistController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
     /**
-     * Lists all TblReceptionist models.
+     * Lists all receptionists
+     * SQL: SELECT r.*, d.first_name AS director_fname, d.last_name AS director_lname FROM tbl_receptionist r LEFT JOIN tbl_director d ON r.director_id = d.director_id ORDER BY r.last_name
      */
     public function actionIndex()
     {
-        $searchModel = new ReceptionistSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        // SQL: SELECT r.*, d.first_name, d.last_name FROM tbl_receptionist r LEFT JOIN tbl_director d ON r.director_id = d.director_id
+        $receptionists = $this->receptionistRepo->findAll();
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $receptionists,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**
-     * Displays a single TblReceptionist model.
+     * Displays a single receptionist
+     * SQL: SELECT r.*, d.first_name, d.last_name FROM tbl_receptionist r LEFT JOIN tbl_director d ON r.director_id = d.director_id WHERE r.recep_id = :id
      */
     public function actionView($recep_id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($recep_id),
-        ]);
+        // SQL: SELECT ... WHERE recep_id = :id
+        $model = $this->receptionistRepo->findById($recep_id);
+        
+        if (!$model) {
+            throw new NotFoundHttpException('Receptionist not found.');
+        }
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
     /**
-     * Creates a new TblReceptionist model.
-     * Also auto-creates a User account for login.
+     * Creates a new receptionist + Auto-creates user account
+     * SQL: INSERT INTO tbl_receptionist (...) VALUES (...)
+     * SQL: INSERT INTO user (...) VALUES (...)
      */
     public function actionCreate()
     {
-        $model = new TblReceptionist();
+        $model = new \common\models\TblReceptionist();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    if ($model->save()) {
-                        // Auto-create user account for receptionist
-                        if ($model->email) {
-                            $existingUser = User::find()->where(['email' => $model->email])->one();
-                            
-                            if ($existingUser) {
-                                Yii::$app->session->setFlash('warning', 
-                                    'Receptionist saved, but a user account with this email already exists.'
-                                );
-                            } else {
-                                // Generate username: rec.firstname.lastname
-                                $username = $this->generateUsername($model);
-                                
-                                // Generate password: lastname@emailusername
-                                $password = $this->generatePassword($model);
-                                
-                                $user = new User();
-                                $user->username = $username;
-                                $user->email = $model->email;
-                                $user->status = User::STATUS_ACTIVE;
-                                $user->setPassword($password);
-                                $user->generateAuthKey();
-                                $user->generateEmailVerificationToken();
-                                
-                                if ($user->save()) {
-                                    Yii::$app->session->setFlash('success', 
-                                        '✅ Receptionist created successfully!<br><br>' .
-                                        '<div class="alert alert-info">' .
-                                        '<strong>📋 Login Credentials:</strong><br>' .
-                                        'Username: <strong>' . $user->username . '</strong><br>' .
-                                        'Password: <strong>' . $password . '</strong><br>' .
-                                        'Role: <strong>Receptionist</strong><br>' .
-                                        '<small class="text-danger">⚠️ Please save these credentials. Share them securely with the receptionist.</small>' .
-                                        '</div>'
-                                    );
-                                } else {
-                                    $errors = implode(', ', $user->getFirstErrors());
-                                    Yii::$app->session->setFlash('error', 
-                                        'Receptionist saved, but failed to create user account: ' . $errors
-                                    );
-                                }
-                            }
-                        } else {
-                            Yii::$app->session->setFlash('warning', 
-                                '⚠️ Receptionist created, but no email was provided. User account NOT created.'
-                            );
-                        }
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblReceptionist', []);
+            
+            // SQL: INSERT INTO tbl_receptionist (...) VALUES (...)
+            $recepId = $this->receptionistRepo->create($post);
+            
+            if ($recepId) {
+                // Auto-create user account if email provided
+                if (!empty($post['email'])) {
+                    // SQL: SELECT * FROM user WHERE email = :email
+                    $existingUser = $this->userRepo->findByEmail($post['email']);
+                    
+                    if ($existingUser) {
+                        Yii::$app->session->setFlash('warning', 'Receptionist saved, but a user account with this email already exists.');
+                    } else {
+                        $username = $this->generateUsername($post);
+                        $password = $this->generatePassword($post);
                         
-                        $transaction->commit();
-                        return $this->redirect(['view', 'recep_id' => $model->recep_id]);
+                        // SQL: INSERT INTO user (...) VALUES (...)
+                        $this->userRepo->create([
+                            'username' => $username,
+                            'auth_key' => Yii::$app->security->generateRandomString(),
+                            'password_hash' => Yii::$app->security->generatePasswordHash($password),
+                            'email' => $post['email'],
+                            'status' => 10,
+                            'verification_token' => Yii::$app->security->generateRandomString() . '_' . time(),
+                            'created_at' => time(),
+                            'updated_at' => time(),
+                        ]);
+                        
+                        Yii::$app->session->setFlash('success', 
+                            '✅ Receptionist created!<br>Username: <strong>' . $username . '</strong><br>Password: <strong>' . $password . '</strong>'
+                        );
+                        return $this->redirect(['view', 'recep_id' => $recepId]);
                     }
-                    $transaction->rollBack();
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                    Yii::$app->session->setFlash('error', '❌ Error: ' . $e->getMessage());
                 }
+                
+                Yii::$app->session->setFlash('success', '✅ Receptionist created successfully.');
+                return $this->redirect(['view', 'recep_id' => $recepId]);
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', ['model' => $model]);
     }
 
     /**
-     * Updates an existing TblReceptionist model.
+     * Updates a receptionist
+     * SQL: UPDATE tbl_receptionist SET ... WHERE recep_id = :id
      */
     public function actionUpdate($recep_id)
     {
-        $model = $this->findModel($recep_id);
-        $oldEmail = $model->email;
+        $receptionist = $this->receptionistRepo->findById($recep_id);
+        if (!$receptionist) throw new NotFoundHttpException('Receptionist not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                if ($model->save()) {
-                    // If email changed, update the user account
-                    if ($model->email && $model->email !== $oldEmail) {
-                        $user = User::find()->where(['email' => $oldEmail])->one();
-                        if ($user) {
-                            $user->email = $model->email;
-                            $user->setPassword($this->generatePassword($model));
-                            $user->save();
-                            Yii::$app->session->setFlash('info', 'User account email and password updated to match.');
-                        }
-                    }
-                    
-                    $transaction->commit();
-                    Yii::$app->session->setFlash('success', '✅ Receptionist updated successfully.');
-                    return $this->redirect(['view', 'recep_id' => $model->recep_id]);
+        $model = new \common\models\TblReceptionist();
+        $model->attributes = $receptionist;
+        $oldEmail = $receptionist['email'];
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblReceptionist', []);
+            
+            // SQL: UPDATE tbl_receptionist SET ... WHERE recep_id = :id
+            $this->receptionistRepo->update($recep_id, $post);
+            
+            // If email changed, update user account
+            if (!empty($post['email']) && $post['email'] !== $oldEmail) {
+                // SQL: SELECT * FROM user WHERE email = :email
+                $user = $this->userRepo->findByEmail($oldEmail);
+                if ($user) {
+                    $password = $this->generatePassword($post);
+                    $this->userRepo->update($user['id'], [
+                        'username' => $this->generateUsername($post),
+                        'email' => $post['email'],
+                        'updated_at' => time(),
+                    ]);
+                    $this->userRepo->updatePassword($user['id'], Yii::$app->security->generatePasswordHash($password), time());
+                    Yii::$app->session->setFlash('info', 'User account updated with new email and password.');
                 }
-                $transaction->rollBack();
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                Yii::$app->session->setFlash('error', '❌ Error: ' . $e->getMessage());
             }
+            
+            Yii::$app->session->setFlash('success', '✅ Receptionist updated successfully.');
+            return $this->redirect(['view', 'recep_id' => $recep_id]);
         }
 
         return $this->render('update', ['model' => $model]);
     }
 
     /**
-     * Deletes an existing TblReceptionist model.
-     * Also removes the associated user account.
+     * Deletes a receptionist + associated user account
+     * SQL: DELETE FROM tbl_receptionist WHERE recep_id = :id
+     * SQL: DELETE FROM user WHERE email = :email
      */
     public function actionDelete($recep_id)
     {
-        $model = $this->findModel($recep_id);
-        $email = $model->email;
-        $name = $model->first_name . ' ' . $model->last_name;
+        $receptionist = $this->receptionistRepo->findById($recep_id);
+        if (!$receptionist) throw new NotFoundHttpException('Receptionist not found.');
         
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            if ($email) {
-                $user = User::find()->where(['email' => $email])->one();
-                if ($user) {
-                    $user->delete();
-                }
+        $name = $receptionist['first_name'] . ' ' . $receptionist['last_name'];
+        $email = $receptionist['email'];
+        
+        // SQL: DELETE FROM user WHERE email = :email
+        if ($email) {
+            $user = $this->userRepo->findByEmail($email);
+            if ($user) {
+                $this->userRepo->delete($user['id']);
             }
-            
-            $model->delete();
-            $transaction->commit();
-            
-            Yii::$app->session->setFlash('success', '✅ ' . $name . ' and associated account deleted.');
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            Yii::$app->session->setFlash('error', '❌ Failed to delete: ' . $e->getMessage());
         }
-
+        
+        // SQL: DELETE FROM tbl_receptionist WHERE recep_id = :id
+        $this->receptionistRepo->delete($recep_id);
+        
+        Yii::$app->session->setFlash('success', '✅ ' . $name . ' and associated account deleted.');
         return $this->redirect(['index']);
     }
 
     /**
-     * Generate a unique username for the receptionist
-     * Format: rec.firstname.lastname
+     * Generate username: rec.firstname.lastname
      */
-    protected function generateUsername($model)
+    private function generateUsername(array $data): string
     {
-        $base = 'rec.' . strtolower($model->first_name . '.' . $model->last_name);
-        $base = preg_replace('/[^a-z0-9.]/', '', $base);
+        $base = 'rec.' . strtolower(preg_replace('/[^a-z0-9]/', '', $data['first_name'] . '.' . $data['last_name']));
         $username = $base;
         $count = 1;
         
-        while (User::findByUsername($username)) {
+        while ($this->userRepo->usernameExists($username)) {
             $username = $base . $count;
             $count++;
         }
@@ -231,35 +231,14 @@ class ReceptionistController extends Controller
     }
 
     /**
-     * Generate password for receptionist
-     * Format: lastname@emailusername
-     * Example: email = johndoe@gmail.com, lastname = Santos → Santos@johndoe
+     * Generate password: Lastname@emailusername
      */
-    protected function generatePassword($model)
+    private function generatePassword(array $data): string
     {
-        // Get lastname with first letter capitalized
-        $lastname = ucfirst(strtolower($model->last_name));
-        $lastname = preg_replace('/[^a-zA-Z]/', '', $lastname);
+        $lastname = ucfirst(strtolower(preg_replace('/[^a-zA-Z]/', '', $data['last_name'])));
+        $emailParts = explode('@', $data['email']);
+        $emailUsername = strtolower(preg_replace('/[^a-z0-9]/', '', $emailParts[0] ?? 'user'));
         
-        // Get email username (part before @)
-        $emailParts = explode('@', $model->email);
-        $emailUsername = isset($emailParts[0]) ? $emailParts[0] : 'user';
-        $emailUsername = strtolower($emailUsername);
-        $emailUsername = preg_replace('/[^a-z0-9]/', '', $emailUsername);
-        
-        $password = $lastname . '@' . $emailUsername;
-        
-        return $password;
-    }
-
-    /**
-     * Finds the TblReceptionist model based on its primary key value.
-     */
-    protected function findModel($recep_id)
-    {
-        if (($model = TblReceptionist::findOne(['recep_id' => $recep_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
+        return $lastname . '@' . $emailUsername;
     }
 }

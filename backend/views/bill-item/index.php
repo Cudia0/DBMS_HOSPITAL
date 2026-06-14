@@ -4,12 +4,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use common\models\TblBillItem;
-use common\models\TblBill;
 
 /** @var yii\web\View $this */
-/** @var common\models\BillItemSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var yii\data\ArrayDataProvider $dataProvider */
 
 $this->title = 'Bill Items';
 $this->params['breadcrumbs'][] = $this->title;
@@ -28,27 +25,14 @@ $isDirector = $user && $user->isDirector();
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'tableOptions' => ['class' => 'table table-striped table-hover'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            
             'bill_item_id',
-            [
-                'attribute' => 'bill_id',
-                'label' => 'Bill',
-                'format' => 'raw',
-                'value' => function($model) {
-                    $bill = TblBill::findOne($model->bill_id);
-                    $status = $bill ? $bill->payment_status : 'unknown';
-                    $statusColors = ['pending' => 'warning', 'paid' => 'success'];
-                    $color = $statusColors[$status] ?? 'secondary';
-                    return Html::a('Bill #' . $model->bill_id, ['bill/view', 'bill_id' => $model->bill_id]) . 
-                           ' <span class="badge bg-' . $color . '">' . ucfirst($status) . '</span>';
-                },
-            ],
+            'bill_id',
             [
                 'attribute' => 'item_type',
+                'label' => 'Type',
                 'format' => 'raw',
                 'value' => function($model) {
                     $labels = [
@@ -58,29 +42,24 @@ $isDirector = $user && $user->isDirector();
                         'procedure' => '<span class="badge bg-info">Procedure</span>',
                         'other' => '<span class="badge bg-secondary">Other</span>',
                     ];
-                    return $labels[$model->item_type] ?? $model->item_type;
+                    return $labels[$model['item_type']] ?? $model['item_type'];
                 },
-                'filter' => [
-                    'consultation' => 'Consultation',
-                    'medicine' => 'Medicine',
-                    'lab_test' => 'Lab Test',
-                    'procedure' => 'Procedure',
-                    'other' => 'Other',
-                ],
             ],
             'description',
             'quantity',
             [
                 'attribute' => 'unit_price',
+                'label' => 'Unit Price',
                 'value' => function($model) {
-                    return '₱' . number_format($model->unit_price, 2);
+                    return '₱' . number_format($model['unit_price'], 2);
                 },
             ],
             [
                 'attribute' => 'total_price',
+                'label' => 'Total',
                 'format' => 'raw',
                 'value' => function($model) {
-                    return '<strong>₱' . number_format($model->total_price, 2) . '</strong>';
+                    return '<strong>₱' . number_format($model['total_price'], 2) . '</strong>';
                 },
             ],
             'created_at:datetime',
@@ -95,8 +74,22 @@ $isDirector = $user && $user->isDirector();
                         return $user && $user->isDirector();
                     },
                 ],
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-eye"></i>', $url, ['title' => 'View', 'class' => 'btn btn-primary btn-sm']);
+                    },
+                    'update' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-edit"></i>', $url, ['title' => 'Edit', 'class' => 'btn btn-info btn-sm']);
+                    },
+                    'delete' => function ($url, $model) {
+                        return Html::a('<i class="fas fa-trash"></i>', $url, [
+                            'title' => 'Delete', 'class' => 'btn btn-danger btn-sm',
+                            'data' => ['confirm' => 'Delete?', 'method' => 'post'],
+                        ]);
+                    },
+                ],
                 'urlCreator' => function ($action, $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'bill_item_id' => $model->bill_item_id]);
+                    return Url::toRoute([$action, 'bill_item_id' => $model['bill_item_id']]);
                 },
             ],
         ],

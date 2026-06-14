@@ -2,37 +2,31 @@
 
 namespace frontend\controllers;
 
-use common\models\TblAppointment;
-use common\models\TblDoctor;
-use common\models\TblPatient;
-use common\models\AppointmentSearch;
+use common\repositories\AppointmentRepository;
+use common\repositories\DoctorRepository;
+use common\repositories\PatientRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
- * AppointmentController - Patient's appointment management
- * Patients can: index (view own), view, create (book)
+ * AppointmentController - Patient's appointment management (Frontend)
  */
 class AppointmentController extends Controller
 {
-    public function actionGetDetails($id)
+    private AppointmentRepository $appointmentRepo;
+    private DoctorRepository $doctorRepo;
+    private PatientRepository $patientRepo;
+
+    public function __construct($id, $module, $config = [])
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $appointment = TblAppointment::findOne($id);
-        if ($appointment) {
-            return [
-                'success' => true,
-                'patient_id' => $appointment->patient_id,
-                'dr_id' => $appointment->dr_id,
-                'status' => $appointment->status,
-                'appointment_date' => $appointment->appointment_date,
-                'appointment_time' => $appointment->appointment_time
-            ];
-        }
-        return ['success' => false];
+        parent::__construct($id, $module, $config);
+        $this->appointmentRepo = new AppointmentRepository();
+        $this->doctorRepo = new DoctorRepository();
+        $this->patientRepo = new PatientRepository();
     }
 
     public function behaviors()
@@ -55,79 +49,125 @@ class AppointmentController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
-    public function actionIndex()
+    /**
+     * Get patient ID from logged-in user
+     * Tries multiple methods to find the patient
+     */
+    private function getPatientId(): ?int
     {
         $user = Yii::$app->user->identity;
-        $patientId = $user->patient_id;
         
-        $searchModel = new AppointmentSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->andWhere(['patient_id' => $patientId]);
-        $dataProvider->query->orderBy(['appointment_date' => SORT_DESC, 'appointment_time' => SORT_DESC]);
+        // Method 1: Use patient_id from user object (set by detectRole)
+        if (!empty($user->patient_id)) {
+            return $user->patient_id;
+        }
+        
+        // Method 2: Find patient by email
+        if (!empty($user->email)) {
+            // SQL: SELECT * FROM tbl_patient WHERE email = :email
+            $patient = $this->patientRepo->findByEmail($user->email);
+            if ($patient) {
+                // Update user's patient_id for future use
+                $user->patient_id = $patient['patient_id'];
+                return $patient['patient_id'];
+            }
+        }
+        
+        // Method 3: Find patient by username (firstname.lastname format)
+        if (!empty($user->username)) {
+            $parts = explode('.', $user->username);
+            if (count($parts) >= 2) {
+                $firstName = $parts[0];
+                $lastName = $parts[1];
+                // SQL: SELECT * FROM tbl_patient WHERE first_name LIKE :fn AND last_name LIKE :ln
+                $patients = $this->patientRepo->search($firstName . ' ' . $lastName);
+                if (!empty($patients)) {
+                    $user->patient_id = $patients[0]['patient_id'];
+                    return $patients[0]['patient_id'];
+                }
+            }
+        }
+        
+        return null;
+    }
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+    public function actionIndex()
+    {
+        $patientId = $this->getPatientId();
+        
+        if (!$patientId) {
+            Yii::$app->session->setFlash('warning', 'Please complete your patient profile first.');
+            return $this->redirect(['profile/index']);
+        }
+        
+        // SQL: SELECT a.*, d.first_name, d.last_name FROM tbl_appointment a LEFT JOIN tbl_doctor d ON a.dr_id = d.dr_id WHERE a.patient_id = :patient_id
+        $appointments = $this->appointmentRepo->findByPatient($patientId);
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $appointments,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     public function actionView($appt_id)
     {
-        $model = $this->findModel($appt_id);
-        $user = Yii::$app->user->identity;
+        $model = $this->appointmentRepo->findById($appt_id);
         
-        if ($model->patient_id !== $user->patient_id) {
+        if (!$model) throw new NotFoundHttpException('Appointment not found.');
+        
+        $patientId = $this->getPatientId();
+        
+        if (!$patientId || $model['patient_id'] != $patientId) {
             throw new \yii\web\ForbiddenHttpException('You can only view your own appointments.');
         }
-        
-        return $this->render('view', ['model' => $model]);
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
     public function actionCreate()
-    {
-        $model = new TblAppointment();
-        $user = Yii::$app->user->identity;
-        $patient = TblPatient::findOne($user->patient_id);
+{
+    $model = new \common\models\TblAppointment();
+    $patientId = $this->getPatientId();
+    
+    if (!$patientId) {
+        Yii::$app->session->setFlash('warning', 'Please complete your patient profile before booking an appointment.');
+        return $this->redirect(['profile/index']);
+    }
+    
+    // SQL: SELECT * FROM tbl_patient WHERE patient_id = :id
+    $patient = $this->patientRepo->findById($patientId);
+    
+    if (!$patient) {
+        Yii::$app->session->setFlash('error', 'Patient profile not found.');
+        return $this->redirect(['site/index']);
+    }
+
+    if (Yii::$app->request->isPost) {
+        $post = Yii::$app->request->post('TblAppointment', []);
+        $post['patient_id'] = $patientId;
+        $post['status'] = null;
+        $post['recep_id'] = null;
+        $post['appointment_date'] = null;
+        $post['appointment_time'] = null;
         
-        if (!$patient) {
-            Yii::$app->session->setFlash('error', 'Patient profile not found.');
-            return $this->redirect(['site/index']);
+        // SQL: INSERT INTO tbl_appointment (...) VALUES (...)
+        $id = $this->appointmentRepo->create($post);
+        
+        if ($id) {
+            Yii::$app->session->setFlash('success', '✅ Appointment request submitted! The receptionist will schedule your appointment.');
+            return $this->redirect(['view', 'appt_id' => $id]);
         }
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->patient_id = $user->patient_id;
-                $model->status = null;
-                $model->recep_id = null;
-                $model->appointment_date = null;
-                $model->appointment_time = null;
-                
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', '✅ Appointment request submitted! The receptionist will schedule your appointment.');
-                    return $this->redirect(['view', 'appt_id' => $model->appt_id]);
-                }
-            }
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-            'patient' => $patient,
-        ]);
     }
 
-    protected function findModel($appt_id)
-    {
-        if (($model = TblAppointment::findOne(['appt_id' => $appt_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
+    // Pass patient as array, not object
+    return $this->render('create', ['model' => $model, 'patient' => $patient]);
+}
 }

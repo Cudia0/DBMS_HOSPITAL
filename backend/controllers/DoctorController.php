@@ -2,21 +2,35 @@
 
 namespace backend\controllers;
 
-use common\models\TblDoctor;
-use common\models\DoctorSearch;
-use common\models\User;
+use common\repositories\DoctorRepository;
+use common\repositories\DepartmentRepository;
+use common\repositories\UserRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * DoctorController - Only Director can manage doctors
- * When Director creates a doctor, a user account is auto-created
+ * Auto-creates user account when doctor is created
+ * Uses raw SQL via repositories
  */
 class DoctorController extends Controller
 {
+    private DoctorRepository $doctorRepo;
+    private DepartmentRepository $deptRepo;
+    private UserRepository $userRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->doctorRepo = new DoctorRepository();
+        $this->deptRepo = new DepartmentRepository();
+        $this->userRepo = new UserRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -36,193 +50,179 @@ class DoctorController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
     /**
-     * Lists all TblDoctor models.
+     * Lists all doctors
+     * SQL: SELECT d.*, dept.dept_name FROM tbl_doctor d LEFT JOIN tbl_department dept ON d.dept_id = dept.dept_id ORDER BY d.last_name
      */
     public function actionIndex()
     {
-        $searchModel = new DoctorSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        // SQL: SELECT d.*, dept.dept_name FROM tbl_doctor d LEFT JOIN tbl_department dept ON d.dept_id = dept.dept_id
+        $doctors = $this->doctorRepo->findAll();
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $doctors,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**
-     * Displays a single TblDoctor model.
+     * Displays a single doctor
+     * SQL: SELECT d.*, dept.dept_name FROM tbl_doctor d LEFT JOIN tbl_department dept ON d.dept_id = dept.dept_id WHERE d.dr_id = :id
      */
     public function actionView($dr_id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($dr_id),
-        ]);
+        // SQL: SELECT ... WHERE dr_id = :id
+        $model = $this->doctorRepo->findById($dr_id);
+        
+        if (!$model) {
+            throw new NotFoundHttpException('Doctor not found.');
+        }
+
+        return $this->render('view', ['model' => (object) $model]);
     }
 
     /**
-     * Creates a new TblDoctor model.
-     * Also auto-creates a User account for login.
+     * Creates a new doctor + Auto-creates user account
+     * SQL: INSERT INTO tbl_doctor (...) VALUES (...)
+     * SQL: INSERT INTO user (...) VALUES (...)
      */
     public function actionCreate()
     {
-        $model = new TblDoctor();
+        $model = new \common\models\TblDoctor();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    if ($model->save()) {
-                        // Auto-create user account for doctor
-                        if ($model->email) {
-                            $existingUser = User::find()->where(['email' => $model->email])->one();
-                            
-                            if ($existingUser) {
-                                Yii::$app->session->setFlash('warning', 
-                                    'Doctor saved, but a user account with this email already exists.'
-                                );
-                            } else {
-                                // Generate username: dr.firstname.lastname
-                                $username = $this->generateUsername($model);
-                                
-                                // Generate password: Lastname@emailusername
-                                $password = $this->generatePassword($model);
-                                
-                                $user = new User();
-                                $user->username = $username;
-                                $user->email = $model->email;
-                                $user->status = User::STATUS_ACTIVE;
-                                $user->setPassword($password);
-                                $user->generateAuthKey();
-                                $user->generateEmailVerificationToken();
-                                
-                                if ($user->save()) {
-                                    Yii::$app->session->setFlash('success', 
-                                        '✅ Doctor created successfully!<br><br>' .
-                                        '<div class="alert alert-info">' .
-                                        '<strong>📋 Login Credentials:</strong><br>' .
-                                        'Username: <strong>' . $user->username . '</strong><br>' .
-                                        'Password: <strong>' . $password . '</strong><br>' .
-                                        'Role: <strong>Doctor</strong><br>' .
-                                        '<small class="text-danger">⚠️ Please save these credentials. Share them securely with the doctor.</small>' .
-                                        '</div>'
-                                    );
-                                } else {
-                                    $errors = implode(', ', $user->getFirstErrors());
-                                    Yii::$app->session->setFlash('error', 
-                                        'Doctor saved, but failed to create user account: ' . $errors
-                                    );
-                                }
-                            }
-                        } else {
-                            Yii::$app->session->setFlash('warning', 
-                                '⚠️ Doctor created, but no email was provided. User account NOT created.'
-                            );
-                        }
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblDoctor', []);
+            
+            // SQL: INSERT INTO tbl_doctor (...) VALUES (...)
+            $doctorId = $this->doctorRepo->create($post);
+            
+            if ($doctorId) {
+                // Auto-create user account if email provided
+                if (!empty($post['email'])) {
+                    // SQL: SELECT * FROM user WHERE email = :email
+                    $existingUser = $this->userRepo->findByEmail($post['email']);
+                    
+                    if ($existingUser) {
+                        Yii::$app->session->setFlash('warning', 'Doctor saved, but a user account with this email already exists.');
+                    } else {
+                        $username = $this->generateUsername($post);
+                        $password = $this->generatePassword($post);
                         
-                        $transaction->commit();
-                        return $this->redirect(['view', 'dr_id' => $model->dr_id]);
+                        // SQL: INSERT INTO user (...) VALUES (...)
+                        $this->userRepo->create([
+                            'username' => $username,
+                            'auth_key' => Yii::$app->security->generateRandomString(),
+                            'password_hash' => Yii::$app->security->generatePasswordHash($password),
+                            'email' => $post['email'],
+                            'status' => 10,
+                            'verification_token' => Yii::$app->security->generateRandomString() . '_' . time(),
+                            'created_at' => time(),
+                            'updated_at' => time(),
+                        ]);
+                        
+                        Yii::$app->session->setFlash('success', 
+                            '✅ Doctor created!<br>Username: <strong>' . $username . '</strong><br>Password: <strong>' . $password . '</strong>'
+                        );
+                        return $this->redirect(['view', 'dr_id' => $doctorId]);
                     }
-                    $transaction->rollBack();
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                    Yii::$app->session->setFlash('error', '❌ Error: ' . $e->getMessage());
                 }
+                
+                Yii::$app->session->setFlash('success', '✅ Doctor created successfully.');
+                return $this->redirect(['view', 'dr_id' => $doctorId]);
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', ['model' => $model]);
     }
 
     /**
-     * Updates an existing TblDoctor model.
+     * Updates a doctor
+     * SQL: UPDATE tbl_doctor SET ... WHERE dr_id = :id
      */
     public function actionUpdate($dr_id)
     {
-        $model = $this->findModel($dr_id);
-        $oldEmail = $model->email;
+        $doctor = $this->doctorRepo->findById($dr_id);
+        if (!$doctor) throw new NotFoundHttpException('Doctor not found.');
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                if ($model->save()) {
-                    // If email changed, update the user account
-                    if ($model->email && $model->email !== $oldEmail) {
-                        $user = User::find()->where(['email' => $oldEmail])->one();
-                        if ($user) {
-                            $user->email = $model->email;
-                            $user->setPassword($this->generatePassword($model));
-                            $user->save();
-                            Yii::$app->session->setFlash('info', 'User account email and password updated to match.');
-                        }
-                    }
-                    
-                    $transaction->commit();
-                    Yii::$app->session->setFlash('success', '✅ Doctor updated successfully.');
-                    return $this->redirect(['view', 'dr_id' => $model->dr_id]);
+        $model = new \common\models\TblDoctor();
+        $model->attributes = $doctor;
+        $oldEmail = $doctor['email'];
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post('TblDoctor', []);
+            
+            // SQL: UPDATE tbl_doctor SET ... WHERE dr_id = :id
+            $this->doctorRepo->update($dr_id, $post);
+            
+            // If email changed, update user account
+            if (!empty($post['email']) && $post['email'] !== $oldEmail) {
+                // SQL: SELECT * FROM user WHERE email = :email
+                $user = $this->userRepo->findByEmail($oldEmail);
+                if ($user) {
+                    $password = $this->generatePassword($post);
+                    $this->userRepo->update($user['id'], [
+                        'username' => $this->generateUsername($post),
+                        'email' => $post['email'],
+                        'updated_at' => time(),
+                    ]);
+                    $this->userRepo->updatePassword($user['id'], Yii::$app->security->generatePasswordHash($password), time());
+                    Yii::$app->session->setFlash('info', 'User account updated with new email and password.');
                 }
-                $transaction->rollBack();
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                Yii::$app->session->setFlash('error', '❌ Error: ' . $e->getMessage());
             }
+            
+            Yii::$app->session->setFlash('success', '✅ Doctor updated successfully.');
+            return $this->redirect(['view', 'dr_id' => $dr_id]);
         }
 
         return $this->render('update', ['model' => $model]);
     }
 
     /**
-     * Deletes an existing TblDoctor model.
-     * Also removes the associated user account.
+     * Deletes a doctor + associated user account
+     * SQL: DELETE FROM tbl_doctor WHERE dr_id = :id
+     * SQL: DELETE FROM user WHERE email = :email
      */
     public function actionDelete($dr_id)
     {
-        $model = $this->findModel($dr_id);
-        $email = $model->email;
-        $name = 'Dr. ' . $model->first_name . ' ' . $model->last_name;
+        $doctor = $this->doctorRepo->findById($dr_id);
+        if (!$doctor) throw new NotFoundHttpException('Doctor not found.');
         
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            if ($email) {
-                $user = User::find()->where(['email' => $email])->one();
-                if ($user) {
-                    $user->delete();
-                }
+        $name = 'Dr. ' . $doctor['first_name'] . ' ' . $doctor['last_name'];
+        $email = $doctor['email'];
+        
+        // SQL: DELETE FROM user WHERE email = :email
+        if ($email) {
+            $user = $this->userRepo->findByEmail($email);
+            if ($user) {
+                $this->userRepo->delete($user['id']);
             }
-            
-            $model->delete();
-            $transaction->commit();
-            
-            Yii::$app->session->setFlash('success', '✅ ' . $name . ' and associated account deleted.');
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            Yii::$app->session->setFlash('error', '❌ Failed to delete: ' . $e->getMessage());
         }
-
+        
+        // SQL: DELETE FROM tbl_doctor WHERE dr_id = :id
+        $this->doctorRepo->delete($dr_id);
+        
+        Yii::$app->session->setFlash('success', '✅ ' . $name . ' and associated account deleted.');
         return $this->redirect(['index']);
     }
 
     /**
-     * Generate a unique username for the doctor
-     * Format: dr.firstname.lastname
+     * Generate username: dr.firstname.lastname
      */
-    protected function generateUsername($model)
+    private function generateUsername(array $data): string
     {
-        $base = 'dr.' . strtolower($model->first_name . '.' . $model->last_name);
-        $base = preg_replace('/[^a-z0-9.]/', '', $base);
+        $base = 'dr.' . strtolower(preg_replace('/[^a-z0-9]/', '', $data['first_name'] . '.' . $data['last_name']));
         $username = $base;
         $count = 1;
         
-        while (User::findByUsername($username)) {
+        while ($this->userRepo->usernameExists($username)) {
             $username = $base . $count;
             $count++;
         }
@@ -231,30 +231,14 @@ class DoctorController extends Controller
     }
 
     /**
-     * Generate password for doctor
-     * Format: Lastname@emailusername
+     * Generate password: Lastname@emailusername
      */
-    protected function generatePassword($model)
+    private function generatePassword(array $data): string
     {
-        $lastname = ucfirst(strtolower($model->last_name));
-        $lastname = preg_replace('/[^a-zA-Z]/', '', $lastname);
-        
-        $emailParts = explode('@', $model->email);
-        $emailUsername = isset($emailParts[0]) ? $emailParts[0] : 'user';
-        $emailUsername = strtolower($emailUsername);
-        $emailUsername = preg_replace('/[^a-z0-9]/', '', $emailUsername);
+        $lastname = ucfirst(strtolower(preg_replace('/[^a-zA-Z]/', '', $data['last_name'])));
+        $emailParts = explode('@', $data['email']);
+        $emailUsername = strtolower(preg_replace('/[^a-z0-9]/', '', $emailParts[0] ?? 'user'));
         
         return $lastname . '@' . $emailUsername;
-    }
-
-    /**
-     * Finds the TblDoctor model
-     */
-    protected function findModel($dr_id)
-    {
-        if (($model = TblDoctor::findOne(['dr_id' => $dr_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

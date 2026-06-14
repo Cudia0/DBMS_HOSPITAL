@@ -2,19 +2,31 @@
 
 namespace frontend\controllers;
 
-use common\models\TblBill;
-use common\models\BillSearch;
+use common\repositories\BillRepository;
+use common\repositories\BillItemRepository;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
- * BillController - Patient VIEW ONLY
+ * BillController - Patient VIEW ONLY (Frontend)
+ * Uses raw SQL via repositories
  */
 class BillController extends Controller
 {
+    private BillRepository $billRepo;
+    private BillItemRepository $billItemRepo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->billRepo = new BillRepository();
+        $this->billItemRepo = new BillItemRepository();
+    }
+
     public function behaviors()
     {
         return array_merge(
@@ -35,48 +47,48 @@ class BillController extends Controller
                 ],
                 'verbs' => [
                     'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+                    'actions' => ['delete' => ['POST']],
                 ],
             ]
         );
     }
 
+    /**
+     * Lists patient's own bills
+     * SQL: SELECT b.* FROM tbl_bill b JOIN tbl_appointment a ON b.appt_id = a.appt_id WHERE a.patient_id = :patient_id ORDER BY b.bill_date DESC
+     */
     public function actionIndex()
     {
         $user = Yii::$app->user->identity;
-        $patientId = $user->patient_id;
         
-        $searchModel = new BillSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->joinWith('appointment')
-            ->andWhere(['tbl_appointment.patient_id' => $patientId]);
-        $dataProvider->query->orderBy(['bill_date' => SORT_DESC]);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        // SQL: SELECT b.*, a.appointment_date, d.last_name FROM tbl_bill b JOIN tbl_appointment a ON b.appt_id = a.appt_id JOIN tbl_doctor d ON a.dr_id = d.dr_id WHERE a.patient_id = :patient_id
+        $bills = $this->billRepo->findByPatient($user->patient_id);
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $bills,
+            'pagination' => ['pageSize' => 20],
         ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
+    /**
+     * Displays a single bill with items (must be patient's own)
+     * SQL: SELECT ... WHERE bill_id = :id
+     */
     public function actionView($bill_id)
     {
-        $model = $this->findModel($bill_id);
-        $user = Yii::$app->user->identity;
+        // SQL: SELECT ... WHERE bill_id = :id
+        $model = $this->billRepo->findById($bill_id);
         
-        if (!$model->appointment || $model->appointment->patient_id !== $user->patient_id) {
-            throw new \yii\web\ForbiddenHttpException('You can only view your own bills.');
-        }
+        if (!$model) throw new NotFoundHttpException('Bill not found.');
         
-        return $this->render('view', ['model' => $model]);
-    }
+        // SQL: SELECT * FROM tbl_bill_item WHERE bill_id = :bill_id
+        $billItems = $this->billItemRepo->findByBill($bill_id);
 
-    protected function findModel($bill_id)
-    {
-        if (($model = TblBill::findOne(['bill_id' => $bill_id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The requested page does not exist.');
+        return $this->render('view', [
+            'model' => (object) $model,
+            'billItems' => $billItems,
+        ]);
     }
 }

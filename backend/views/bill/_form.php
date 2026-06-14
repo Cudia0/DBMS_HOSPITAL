@@ -8,6 +8,11 @@ use common\models\TblPrescription;
 use common\models\TblMedline;
 use common\models\TblMedicine;
 use common\models\TblLabTest;
+use common\repositories\AppointmentRepository;
+use common\repositories\DoctorRepository;
+use common\repositories\PrescriptionRepository;
+use common\repositories\MedlineRepository;
+use common\repositories\MedicineRepository;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
@@ -29,7 +34,7 @@ use yii\helpers\Url;
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i> 
                 <strong>Note:</strong> Bills are usually auto-generated when a doctor creates a prescription.<br>
-                You can also manually create a bill here for an appointment.
+                You can also manually create a bill here for an appointment. After creating, you can add charges (bill items).
             </div>
             <?php endif; ?>
 
@@ -44,18 +49,19 @@ use yii\helpers\Url;
                                 ->orderBy(['appt_id' => SORT_DESC])
                                 ->all(),
                             'appt_id',
-                            function($model) {
-                                $patientName = $model->patient ? $model->patient->getFullName() : 'N/A';
-                                return '#' . $model->appt_id . ' | ' . $patientName . 
-                                       ' | ' . Yii::$app->formatter->asDate($model->appointment_date) .
-                                       ' | ' . ucfirst(str_replace('_', ' ', $model->status));
+                            function($m) {
+                                $patientName = $m->patient ? $m->patient->getFullName() : 'N/A';
+                                return '#' . $m->appt_id . ' | ' . $patientName . 
+                                       ' | ' . Yii::$app->formatter->asDate($m->appointment_date) .
+                                       ' | ' . ucfirst(str_replace('_', ' ', $m->status));
                             }
                         ),
                         [
                             'prompt' => '-- Select Appointment --',
                             'id' => 'bill-appt_id',
                             'class' => 'form-control prompt-select',
-                            'required' => true
+                            'required' => true,
+                            'onchange' => 'loadAppointmentDetails()'
                         ]
                     )->label('Appointment *') ?>
                 </div>
@@ -119,7 +125,7 @@ use yii\helpers\Url;
                         'readonly' => true,
                         'id' => 'bill-total_amount',
                         'class' => 'form-control',
-                        'style' => 'font-weight: bold; font-size: 20px; background-color: #e8f5e9;'
+                        'style' => 'font-weight: bold; font-size: 20px; background-color: #e8f5e900;'
                     ])->label('Grand Total (₱)') ?>
                 </div>
             </div>
@@ -131,6 +137,7 @@ use yii\helpers\Url;
                 <?php if (!$model->isNewRecord): ?>
                     <?= Html::a('<i class="fas fa-plus-circle"></i> Add Charge', ['bill-item/create', 'bill_id' => $model->bill_id], ['class' => 'btn btn-info btn-lg ms-2']) ?>
                 <?php endif; ?>
+                <?= Html::a('<i class="fas fa-times"></i> Cancel', ['index'], ['class' => 'btn btn-secondary btn-lg ms-2']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>
@@ -150,12 +157,26 @@ function calculateTotal() {
     document.getElementById('bill-total_amount').value = grandTotal.toFixed(2);
 }
 
+// Load appointment details when selected
+function loadAppointmentDetails() {
+    var apptId = document.getElementById('bill-appt_id').value;
+    if (!apptId) return;
+    
+    fetch('<?= Url::to(['calculate']) ?>?appt_id=' + apptId)
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                document.getElementById('bill-dr_fee').value = data.dr_fee || 0;
+                document.getElementById('bill-totalm_price').value = data.medicine_total || 0;
+                calculateTotal();
+            }
+        });
+}
+
 function disablePromptOption(selectElement) {
     var selectedValue = selectElement.value;
     var promptOption = selectElement.querySelector('option[value=""]');
-    if (promptOption) {
-        promptOption.disabled = selectedValue !== '';
-    }
+    if (promptOption) promptOption.disabled = selectedValue !== '';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
