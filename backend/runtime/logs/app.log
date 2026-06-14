@@ -56562,3 +56562,143 @@ $_SERVER = [
     'REQUEST_TIME_FLOAT' => 1781450723.6773
     'REQUEST_TIME' => 1781450723
 ]
+2026-06-14 17:42:53 [127.0.0.1][-][-][error][yii\web\HttpException:404] yii\base\InvalidRouteException: Unable to resolve the request: site/signup in /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php:153
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#3 /var/www/html/hospital_system/backend/web/index.php(20): yii\base\Application->run()
+#4 {main}
+
+Next yii\web\NotFoundHttpException: Page not found. in /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php:117
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#1 /var/www/html/hospital_system/backend/web/index.php(20): yii\base\Application->run()
+#2 {main}
+2026-06-14 17:42:53 [127.0.0.1][-][-][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    '_csrf-backend' => 'de5990582ac8295e302212a94170af42d80107ce9587c0f5ebff31e5ac247d67a:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"zwWT4I8D8R4NjFM9NvO7uLK7x4V2Ie4X\";}'
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/site/signup'
+    'PATH_INFO' => '/site/signup'
+    'SCRIPT_NAME' => '/backend/index.php'
+    'REQUEST_URI' => '/backend/index.php/site/signup'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '48298'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/backend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/backend/web/'
+    'CONTEXT_PREFIX' => '/backend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => '_csrf-backend=de5990582ac8295e302212a94170af42d80107ce9587c0f5ebff31e5ac247d67a%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22zwWT4I8D8R4NjFM9NvO7uLK7x4V2Ie4X%22%3B%7D'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/backend/index.php/site/login'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_DNT' => '1'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7oHa2fIMZrHI8fNrdAigAAAJU'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/backend/index.php/site/signup'
+    'REQUEST_TIME_FLOAT' => 1781458973.1744
+    'REQUEST_TIME' => 1781458973
+]
+2026-06-14 17:50:26 [127.0.0.1][24][8894ad93da297a2761ac68a62157c585][error][yii\web\HttpException:403] yii\web\ForbiddenHttpException: You are not allowed to perform this action. in /var/www/html/hospital_system/vendor/yiisoft/yii2/filters/AccessControl.php:158
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/filters/AccessControl.php(140): yii\filters\AccessControl->denyAccess()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/ActionFilter.php(80): yii\filters\AccessControl->beforeAction()
+#2 [internal function]: yii\base\ActionFilter->beforeFilter()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Component.php(648): call_user_func()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(310): yii\base\Component->trigger()
+#5 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Controller.php(334): yii\base\Controller->beforeAction()
+#6 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(180): yii\web\Controller->beforeAction()
+#7 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#8 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#9 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#10 /var/www/html/hospital_system/backend/web/index.php(20): yii\base\Application->run()
+#11 {main}
+2026-06-14 17:50:26 [127.0.0.1][24][8894ad93da297a2761ac68a62157c585][info][application] $_GET = [
+    'appt_id' => '15'
+]
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    'advanced-backend' => '8894ad93da297a2761ac68a62157c585'
+    '_identity-backend' => '03e211ac95ac64895b1985263b72b10d869e3fbb10e4318c4238ce46b6581bf4a:2:{i:0;s:17:\"_identity-backend\";i:1;s:47:\"[24,\"Zwrn3MVKX8KAVGrQVxNaUmRDpK5EzEpx\",2592000]\";}'
+    '_csrf-backend' => 'db95935f629b76307c4ad73ede15a363e178a1578cafc5e78ccd850011c5052aa:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"HM2T7CJp6gVJB4QYPYF7UabpF2-JjXww\";}'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 24
+    '__authKey' => 'Zwrn3MVKX8KAVGrQVxNaUmRDpK5EzEpx'
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/bill/create'
+    'PATH_INFO' => '/bill/create'
+    'SCRIPT_NAME' => '/backend/index.php'
+    'REQUEST_URI' => '/backend/index.php/bill/create?appt_id=15'
+    'QUERY_STRING' => 'appt_id=15'
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '59074'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/backend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html/hospital_system/backend/web/'
+    'CONTEXT_PREFIX' => '/backend'
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_NAME' => 'vince.com'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => 'advanced-backend=8894ad93da297a2761ac68a62157c585; _identity-backend=03e211ac95ac64895b1985263b72b10d869e3fbb10e4318c4238ce46b6581bf4a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A47%3A%22%5B24%2C%22Zwrn3MVKX8KAVGrQVxNaUmRDpK5EzEpx%22%2C2592000%5D%22%3B%7D; _csrf-backend=db95935f629b76307c4ad73ede15a363e178a1578cafc5e78ccd850011c5052aa%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22HM2T7CJp6gVJB4QYPYF7UabpF2-JjXww%22%3B%7D'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://vince.com/backend/index.php/appointment/view?appt_id=15'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => 'vince.com'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai7p4tmPF9GSOyf3n7VPJwAAAMM'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/backend/index.php/bill/create'
+    'REQUEST_TIME_FLOAT' => 1781459426.8466
+    'REQUEST_TIME' => 1781459426
+]

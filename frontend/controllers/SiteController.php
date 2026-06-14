@@ -69,66 +69,43 @@ class SiteController extends Controller
     public function actions(): array
     {
         return [
-            'error' => [
-                'class' => ErrorAction::class,
-            ],
-            'captcha' => [
-                'class' => CaptchaAction::class,
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
+            'error' => ['class' => ErrorAction::class],
+            'captcha' => ['class' => CaptchaAction::class, 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null],
         ];
     }
 
-    /**
-     * Homepage for patients
-     */
     public function actionIndex(): string
     {
         $user = Yii::$app->user->identity;
-        
-        return $this->render('index', [
-            'user' => $user,
-        ]);
+        return $this->render('index', ['user' => $user]);
     }
 
-    /**
-     * Login - Frontend only for patients
-     */
     public function actionLogin(): string|Response
     {
         if (!Yii::$app->user->isGuest) {
             $user = Yii::$app->user->identity;
-            
-            // If staff logged in to frontend, log them out and redirect to backend
             if ($user->canAccessBackend()) {
                 Yii::$app->user->logout();
                 Yii::$app->session->setFlash('info', 'Staff members must use the backend portal.');
                 return $this->redirect(Yii::$app->params['backendUrl'] ?? 'http://vince.com/backend/web/index.php?r=site/login');
             }
-            
             return $this->goHome();
         }
 
         $model = new LoginForm();
-
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             $user = Yii::$app->user->identity;
-            
             if ($user->canAccessBackend()) {
                 Yii::$app->user->logout();
                 Yii::$app->session->setFlash('info', 'Staff members must use the backend portal.');
                 return $this->redirect(Yii::$app->params['backendUrl'] ?? 'http://vince.com/backend/web/index.php?r=site/login');
             }
-            
             Yii::$app->session->setFlash('success', 'Welcome, ' . $user->getFullName() . '!');
             return $this->goBack();
         }
 
         $model->password = '';
-
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        return $this->render('login', ['model' => $model]);
     }
 
     public function actionLogout(): Response
@@ -137,36 +114,22 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Patient Registration
-     */
     public function actionSignup(): string|Response
     {
         $model = new SignupForm();
-
         if ($model->load(Yii::$app->request->post())) {
             $user = $model->signup();
-            
             if ($user) {
                 $emailSent = $model->sendEmail($user);
-                
                 if ($emailSent) {
-                    Yii::$app->session->setFlash('success', 
-                        '✅ Registration successful!<br><br>' .
-                        'Thank you for registering. <strong>Please check your email</strong> (' . Html::encode($model->email) . ') ' .
-                        'and click the verification link to activate your account.'
-                    );
+                    Yii::$app->session->setFlash('success', '✅ Registration successful! Please check your email (' . Html::encode($model->email) . ') to verify your account.');
                 } else {
-                    Yii::$app->session->setFlash('warning', 
-                        '⚠️ Registration completed. Please check your email to verify your account.'
-                    );
+                    Yii::$app->session->setFlash('warning', '⚠️ Registration completed. Please check your email to verify your account.');
                 }
                 return $this->goHome();
             }
-            
             Yii::$app->session->setFlash('error', 'Registration failed. Please check the errors below.');
         }
-
         return $this->render('signup', ['model' => $model]);
     }
 

@@ -4,18 +4,15 @@
 /** @var common\models\User|null $user */
 
 use yii\helpers\Html;
-use yii\helpers\Url;
 use common\models\TblAppointment;
 use common\models\TblMedicalRecord;
-use common\models\TblPrescription;
 use common\models\TblBill;
 
 $this->title = 'MediSync - Patient Portal';
 
 $isGuest = Yii::$app->user->isGuest;
-$patientId = !$isGuest ? $user->patient_id : null;
+$patientId = !$isGuest && $user ? $user->patient_id : null;
 
-// Get patient stats if logged in
 $upcomingAppointments = 0;
 $recentRecords = [];
 $pendingBills = 0;
@@ -45,7 +42,6 @@ if (!$isGuest && $patientId) {
 <div class="site-index">
 
     <?php if ($isGuest): ?>
-    <!-- ========== GUEST VIEW ========== -->
     <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
             <div class="card shadow-lg border-0">
@@ -65,7 +61,6 @@ if (!$isGuest && $patientId) {
         </div>
     </div>
 
-    <!-- Features -->
     <div class="row mt-5 text-center">
         <div class="col-md-4 mb-4">
             <div class="card h-100 border-0 shadow-sm">
@@ -97,7 +92,6 @@ if (!$isGuest && $patientId) {
     </div>
 
     <?php else: ?>
-    <!-- ========== PATIENT DASHBOARD ========== -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card bg-primary text-white">
@@ -109,19 +103,13 @@ if (!$isGuest && $patientId) {
         </div>
     </div>
 
-    <!-- Quick Stats -->
     <div class="row mb-4">
         <div class="col-md-4 mb-3">
             <div class="card border-start border-primary border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Upcoming Appointments</h6>
-                            <h2 class="mb-0"><?= $upcomingAppointments ?></h2>
-                        </div>
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-calendar-check fa-2x text-primary"></i>
-                        </div>
+                        <div><h6 class="text-muted mb-1">Upcoming Appointments</h6><h2 class="mb-0"><?= $upcomingAppointments ?></h2></div>
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3"><i class="fas fa-calendar-check fa-2x text-primary"></i></div>
                     </div>
                 </div>
             </div>
@@ -130,13 +118,8 @@ if (!$isGuest && $patientId) {
             <div class="card border-start border-warning border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Pending Bills</h6>
-                            <h2 class="mb-0"><?= $pendingBills ?></h2>
-                        </div>
-                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-file-invoice fa-2x text-warning"></i>
-                        </div>
+                        <div><h6 class="text-muted mb-1">Pending Bills</h6><h2 class="mb-0"><?= $pendingBills ?></h2></div>
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-3"><i class="fas fa-file-invoice fa-2x text-warning"></i></div>
                     </div>
                 </div>
             </div>
@@ -145,26 +128,18 @@ if (!$isGuest && $patientId) {
             <div class="card border-start border-success border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Medical Records</h6>
-                            <h2 class="mb-0"><?= count($recentRecords) ?></h2>
-                        </div>
-                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-notes-medical fa-2x text-success"></i>
-                        </div>
+                        <div><h6 class="text-muted mb-1">Medical Records</h6><h2 class="mb-0"><?= count($recentRecords) ?></h2></div>
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3"><i class="fas fa-notes-medical fa-2x text-success"></i></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Quick Actions -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
-                </div>
+                <div class="card-header bg-dark text-white"><h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5></div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 col-6 mb-2">
@@ -185,34 +160,22 @@ if (!$isGuest && $patientId) {
         </div>
     </div>
 
-    <!-- Recent Medical Records -->
     <?php if (!empty($recentRecords)): ?>
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="fas fa-clock"></i> Recent Medical Records</h5>
-                </div>
+                <div class="card-header bg-info text-white"><h5 class="mb-0"><i class="fas fa-clock"></i> Recent Medical Records</h5></div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Doctor</th>
-                                    <th>Diagnosis</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>Date</th><th>Doctor</th><th>Diagnosis</th><th>Action</th></tr></thead>
                             <tbody>
                                 <?php foreach ($recentRecords as $record): ?>
                                 <tr>
                                     <td><?= Yii::$app->formatter->asDate($record->record_date, 'medium') ?></td>
                                     <td><?= $record->doctor ? 'Dr. ' . Html::encode($record->doctor->last_name) : 'N/A' ?></td>
                                     <td><?= Html::encode(substr($record->diagnosis ?? 'No diagnosis', 0, 50)) ?>...</td>
-                                    <td>
-                                        <?= Html::a('<i class="fas fa-eye"></i> View', ['medical-record/view', 'record_id' => $record->record_id], ['class' => 'btn btn-sm btn-primary']) ?>
-                                    </td>
+                                    <td><?= Html::a('<i class="fas fa-eye"></i> View', ['medical-record/view', 'record_id' => $record->record_id], ['class' => 'btn btn-sm btn-primary']) ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -223,7 +186,6 @@ if (!$isGuest && $patientId) {
         </div>
     </div>
     <?php endif; ?>
-
     <?php endif; ?>
 
 </div>

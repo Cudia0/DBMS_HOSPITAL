@@ -18,15 +18,13 @@ $roleLabel = $isGuest ? '' : $user->getRoleLabel();
 // Define menu items based on role
 $menuItems = [];
 
-// HOME - Available to all
+// HOME
 $menuItems[] = [
     'label' => '<i class="fas fa-home"></i> Home',
     'url' => ['/site/index'],
 ];
 
-// ============================================
-// DIRECTOR MENU (Full Access)
-// ============================================
+// DIRECTOR MENU
 if ($role === 'director') {
     $menuItems[] = [
         'label' => '<i class="fas fa-cog"></i> Master Data',
@@ -43,14 +41,8 @@ if ($role === 'director') {
             ['label' => '<i class="fas fa-user"></i> Receptionists', 'url' => ['/receptionist/index']],
         ],
     ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-procedures"></i> Patients',
-        'url' => ['/patient/index'],
-    ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-calendar-alt"></i> Appointments',
-        'url' => ['/appointment/index'],
-    ];
+    $menuItems[] = ['label' => '<i class="fas fa-procedures"></i> Patients', 'url' => ['/patient/index']];
+    $menuItems[] = ['label' => '<i class="fas fa-calendar-alt"></i> Appointments', 'url' => ['/appointment/index']];
     $menuItems[] = [
         'label' => '<i class="fas fa-clipboard-list"></i> Clinical',
         'items' => [
@@ -67,20 +59,19 @@ if ($role === 'director') {
             ['label' => '<i class="fas fa-list-alt"></i> Bill Items', 'url' => ['/bill-item/index']],
         ],
     ];
+    $menuItems[] = [
+        'label' => '<i class="fas fa-shield-alt"></i> System',
+        'items' => [
+            ['label' => '<i class="fas fa-users-cog"></i> User Management', 'url' => ['/user/index']],
+            ['label' => '<i class="fas fa-cogs"></i> System Configuration', 'url' => ['/settings/index']],
+            ['label' => '<i class="fas fa-database"></i> SQL Monitor', 'url' => ['/sql/index']],
+        ],
+    ];
 }
-
-// ============================================
 // RECEPTIONIST MENU
-// ============================================
 elseif ($role === 'receptionist') {
-    $menuItems[] = [
-        'label' => '<i class="fas fa-procedures"></i> Patients',
-        'url' => ['/patient/index'],
-    ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-calendar-alt"></i> Appointments',
-        'url' => ['/appointment/index'],
-    ];
+    $menuItems[] = ['label' => '<i class="fas fa-procedures"></i> Patients', 'url' => ['/patient/index']];
+    $menuItems[] = ['label' => '<i class="fas fa-calendar-alt"></i> Appointments', 'url' => ['/appointment/index']];
     $menuItems[] = [
         'label' => '<i class="fas fa-file-invoice"></i> Billing',
         'items' => [
@@ -97,19 +88,10 @@ elseif ($role === 'receptionist') {
         ],
     ];
 }
-
-// ============================================
 // DOCTOR MENU
-// ============================================
 elseif ($role === 'doctor') {
-    $menuItems[] = [
-        'label' => '<i class="fas fa-procedures"></i> Patients',
-        'url' => ['/patient/index'],
-    ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-calendar-alt"></i> Appointments',
-        'url' => ['/appointment/index'],
-    ];
+    $menuItems[] = ['label' => '<i class="fas fa-procedures"></i> Patients', 'url' => ['/patient/index']];
+    $menuItems[] = ['label' => '<i class="fas fa-calendar-alt"></i> Appointments', 'url' => ['/appointment/index']];
     $menuItems[] = [
         'label' => '<i class="fas fa-clipboard-list"></i> Clinical',
         'items' => [
@@ -119,73 +101,34 @@ elseif ($role === 'doctor') {
             ['label' => '<i class="fas fa-tablets"></i> Medline', 'url' => ['/medline/index']],
         ],
     ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-file-invoice-dollar"></i> Bills (View)',
-        'url' => ['/bill/index'],
-    ];
+    $menuItems[] = ['label' => '<i class="fas fa-file-invoice-dollar"></i> Bills (View)', 'url' => ['/bill/index']];
 }
-
-// ============================================
-// PATIENT MENU (Frontend)
-// ============================================
+// PATIENT MENU
 elseif ($role === 'patient') {
-    $menuItems[] = [
-        'label' => '<i class="fas fa-calendar-plus"></i> Book Appointment',
-        'url' => ['/appointment/create'],
-    ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-calendar-check"></i> My Appointments',
-        'url' => ['/appointment/index'],
-    ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-notes-medical"></i> My Medical Records',
-        'url' => ['/medical-record/index'],
-    ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-prescription"></i> My Prescriptions',
-        'url' => ['/prescription/index'],
-    ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-file-invoice-dollar"></i> My Bills',
-        'url' => ['/bill/index'],
-    ];
+    $menuItems[] = ['label' => '<i class="fas fa-calendar-plus"></i> Book Appointment', 'url' => ['/appointment/create']];
+    $menuItems[] = ['label' => '<i class="fas fa-calendar-check"></i> My Appointments', 'url' => ['/appointment/index']];
+    $menuItems[] = ['label' => '<i class="fas fa-notes-medical"></i> My Medical Records', 'url' => ['/medical-record/index']];
+    $menuItems[] = ['label' => '<i class="fas fa-prescription"></i> My Prescriptions', 'url' => ['/prescription/index']];
+    $menuItems[] = ['label' => '<i class="fas fa-file-invoice-dollar"></i> My Bills', 'url' => ['/bill/index']];
     
 }
 
-// ============================================
 // GUEST MENU
-// ============================================
 if ($isGuest) {
-    $menuItems[] = [
-        'label' => '<i class="fas fa-info-circle"></i> About',
-        'url' => ['/site/about'],
-    ];
-    $menuItems[] = [
-        'label' => '<i class="fas fa-envelope"></i> Contact',
-        'url' => ['/site/contact'],
-    ];
+    $menuItems[] = ['label' => '<i class="fas fa-info-circle"></i> About', 'url' => ['/site/about']];
+    $menuItems[] = ['label' => '<i class="fas fa-envelope"></i> Contact', 'url' => ['/site/contact']];
 }
 
-// ============================================
-// USER MENU (Right side)
-// ============================================
-$userMenuItems = [];
-
+// USER ACCOUNT ITEMS (Right side)
 if ($isGuest) {
-    $userMenuItems[] = [
-        'label' => '<i class="fas fa-user-plus"></i> Register',
-        'url' => ['/site/signup'],
-    ];
-    $userMenuItems[] = [
-        'label' => '<i class="fas fa-sign-in-alt"></i> Login',
-        'url' => ['/site/login'],
-    ];
+    $menuItems[] = ['label' => '<i class="fas fa-user-plus"></i> Register', 'url' => ['/site/signup']];
+    $menuItems[] = ['label' => '<i class="fas fa-sign-in-alt"></i> Login', 'url' => ['/site/login']];
 } else {
-    $userMenuItems[] = [
+    $menuItems[] = [
         'label' => '<i class="fas fa-user-circle"></i> ' . Html::encode($fullName) . ' <span class="badge bg-info">' . $roleLabel . '</span>',
         'items' => [
             ['label' => '<i class="fas fa-cog"></i> Profile Settings', 'url' => ['/profile/index']],
-            ['label' => '<i class="fas fa-sign-out-alt"></i> Logout (' . Html::encode($user->username) . ')', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post', 'class' => 'logout']],
+            ['label' => '<i class="fas fa-sign-out-alt"></i> Logout (' . Html::encode($user->username) . ')', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']],
         ],
     ];
 }
@@ -195,40 +138,28 @@ if ($isGuest) {
     <?php NavBar::begin([
         'brandLabel' => Html::img('@web/images/medisync-logo-light.svg', [
                 'alt' => 'MediSync',
-                //'width' => 150,
                 'height' => 40,
-                'class' => 'd-inline-block align-top me-2'
-            ]) . '',
+                'class' => 'd-inline-block align-top me-3'
+            ]) . ' MediSync',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-expand-lg navbar-dark bg-dark fixed-top shadow',
             'id' => 'main-navbar',
         ],
+        'innerContainerOptions' => ['class' => 'container-fluid'],
     ]); ?>
     
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" 
-            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <?= Nav::widget([
+        'options' => ['class' => 'navbar-nav ms-auto'],
+        'encodeLabels' => false,
+        'items' => $menuItems,
+    ]) ?>
     
-    <div class="collapse navbar-collapse" id="navbarContent">
-        <?= Nav::widget([
-            'options' => ['class' => 'navbar-nav me-auto'],
-            'encodeLabels' => false,
-            'items' => $menuItems,
-        ]) ?>
-        
-        <?= Nav::widget([
-            'options' => ['class' => 'navbar-nav ms-auto'],
-            'encodeLabels' => false,
-            'items' => $userMenuItems,
-        ]) ?>
-        
-        <button id="theme-toggle" class="btn btn-link nav-link ms-2 fs-5" 
-                aria-label="Toggle dark mode" title="Toggle dark/light mode">
-            <i class="fas fa-moon" id="theme-icon"></i>
-        </button>
-    </div>
+    <button id="theme-toggle" class="btn btn-link nav-link ms-2 fs-5" 
+            aria-label="Toggle dark mode" title="Toggle dark/light mode"
+            style="border: none; background: transparent;">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
     
     <?php NavBar::end() ?>
 </header>

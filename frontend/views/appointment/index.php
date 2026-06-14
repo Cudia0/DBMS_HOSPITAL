@@ -1,16 +1,15 @@
 <?php
 
-use common\models\TblAppointment;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
-/** @var app\models\AppointmentSearch $searchModel */
+/** @var common\models\AppointmentSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Tbl Appointments';
+$this->title = 'My Appointments';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tbl-appointment-index">
@@ -18,37 +17,59 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Tbl Appointment', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('<i class="fas fa-calendar-plus"></i> Book Appointment', ['create'], ['class' => 'btn btn-primary']) ?>
     </p>
-
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'tableOptions' => ['class' => 'table table-striped table-hover'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
             'appt_id',
-            'dr_id',
-            'patient_id',
-            'recep_id',
-            'symptoms_list:ntext',
-            'appointment_date',
-            'appointment_time',
-            'status',
-            //'created_at',
-            //'updated_at',
             [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, TblAppointment $model, $key, $index, $column) {
+                'label' => 'Doctor',
+                'value' => function($model) {
+                    return $model->doctor ? 'Dr. ' . $model->doctor->first_name . ' ' . $model->doctor->last_name : 'N/A';
+                },
+            ],
+            [
+                'attribute' => 'appointment_date',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return $model->appointment_date ? Yii::$app->formatter->asDate($model->appointment_date, 'medium') : '<span class="text-warning">Pending</span>';
+                },
+            ],
+            [
+                'attribute' => 'appointment_time',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return $model->appointment_time ? Yii::$app->formatter->asTime($model->appointment_time, 'short') : '<span class="text-warning">Pending</span>';
+                },
+            ],
+            [
+                'attribute' => 'status',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return $model->getStatusLabel();
+                },
+                'filter' => [
+                    '' => 'Pending',
+                    'scheduled' => 'Scheduled',
+                    'checked_in' => 'Checked In',
+                    'in_progress' => 'In Progress',
+                    'completed' => 'Completed',
+                    'cancelled' => 'Cancelled',
+                ],
+            ],
+            [
+                'class' => ActionColumn::class,
+                'template' => '{view}',
+                'urlCreator' => function ($action, $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'appt_id' => $model->appt_id]);
-                 }
+                },
             ],
         ],
     ]); ?>
-
-    <?php Pjax::end(); ?>
 
 </div>

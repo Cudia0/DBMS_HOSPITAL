@@ -38,9 +38,6 @@ class ProfileController extends Controller
         ];
     }
 
-    /**
-     * Display profile settings page
-     */
     public function actionIndex()
     {
         $user = Yii::$app->user->identity;
@@ -52,9 +49,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update username
-     */
     public function actionUpdateUsername()
     {
         $user = Yii::$app->user->identity;
@@ -67,14 +61,10 @@ class ProfileController extends Controller
                 return $this->redirect(['index']);
             }
             
-            // Check if username already taken
-            $existingUser = User::find()
-                ->where(['username' => $newUsername])
-                ->andWhere(['!=', 'id', $user->id])
-                ->one();
+            $existingUser = User::find()->where(['username' => $newUsername])->andWhere(['!=', 'id', $user->id])->one();
             
             if ($existingUser) {
-                Yii::$app->session->setFlash('error', 'Username already taken. Please choose another.');
+                Yii::$app->session->setFlash('error', 'Username already taken.');
                 return $this->redirect(['index']);
             }
             
@@ -89,9 +79,6 @@ class ProfileController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Update password
-     */
     public function actionUpdatePassword()
     {
         $user = Yii::$app->user->identity;
@@ -101,7 +88,6 @@ class ProfileController extends Controller
             $newPassword = Yii::$app->request->post('new_password');
             $confirmPassword = Yii::$app->request->post('confirm_password');
             
-            // Validate
             if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
                 Yii::$app->session->setFlash('error', 'All password fields are required.');
                 return $this->redirect(['index']);
@@ -133,9 +119,6 @@ class ProfileController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Update personal information (Patient only - full edit)
-     */
     public function actionUpdatePatientInfo()
     {
         $user = Yii::$app->user->identity;
@@ -153,132 +136,23 @@ class ProfileController extends Controller
         
         if (Yii::$app->request->isPost) {
             $patient->load(Yii::$app->request->post());
-            // Email cannot be changed
-            // Keep the original email
             if ($patient->save()) {
                 Yii::$app->session->setFlash('success', 'Personal information updated successfully.');
             } else {
-                $errors = implode(', ', $patient->getFirstErrors());
-                Yii::$app->session->setFlash('error', 'Failed to update: ' . $errors);
+                Yii::$app->session->setFlash('error', 'Failed to update: ' . implode(', ', $patient->getFirstErrors()));
             }
         }
         
         return $this->redirect(['index']);
     }
 
-    /**
-     * Update doctor name (Doctor only)
-     */
-    public function actionUpdateDoctorInfo()
-    {
-        $user = Yii::$app->user->identity;
-        
-        if (!$user->isDoctor()) {
-            Yii::$app->session->setFlash('error', 'Access denied.');
-            return $this->redirect(['index']);
-        }
-        
-        $doctor = TblDoctor::findOne($user->doctor_id);
-        if (!$doctor) {
-            Yii::$app->session->setFlash('error', 'Doctor record not found.');
-            return $this->redirect(['index']);
-        }
-        
-        if (Yii::$app->request->isPost) {
-            $doctor->first_name = Yii::$app->request->post('first_name');
-            $doctor->middle_name = Yii::$app->request->post('middle_name');
-            $doctor->last_name = Yii::$app->request->post('last_name');
-            
-            if ($doctor->save()) {
-                Yii::$app->session->setFlash('success', 'Name updated successfully.');
-            } else {
-                Yii::$app->session->setFlash('error', 'Failed to update name.');
-            }
-        }
-        
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Update receptionist name (Receptionist only)
-     */
-    public function actionUpdateReceptionistInfo()
-    {
-        $user = Yii::$app->user->identity;
-        
-        if (!$user->isReceptionist()) {
-            Yii::$app->session->setFlash('error', 'Access denied.');
-            return $this->redirect(['index']);
-        }
-        
-        $receptionist = TblReceptionist::findOne($user->receptionist_id);
-        if (!$receptionist) {
-            Yii::$app->session->setFlash('error', 'Receptionist record not found.');
-            return $this->redirect(['index']);
-        }
-        
-        if (Yii::$app->request->isPost) {
-            $receptionist->first_name = Yii::$app->request->post('first_name');
-            $receptionist->middle_name = Yii::$app->request->post('middle_name');
-            $receptionist->last_name = Yii::$app->request->post('last_name');
-            
-            if ($receptionist->save()) {
-                Yii::$app->session->setFlash('success', 'Name updated successfully.');
-            } else {
-                Yii::$app->session->setFlash('error', 'Failed to update name.');
-            }
-        }
-        
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Update director name (Director only)
-     */
-    public function actionUpdateDirectorInfo()
-    {
-        $user = Yii::$app->user->identity;
-        
-        if (!$user->isDirector()) {
-            Yii::$app->session->setFlash('error', 'Access denied.');
-            return $this->redirect(['index']);
-        }
-        
-        $director = TblDirector::findOne($user->director_id);
-        if (!$director) {
-            Yii::$app->session->setFlash('error', 'Director record not found.');
-            return $this->redirect(['index']);
-        }
-        
-        if (Yii::$app->request->isPost) {
-            $director->first_name = Yii::$app->request->post('first_name');
-            $director->middle_name = Yii::$app->request->post('middle_name');
-            $director->last_name = Yii::$app->request->post('last_name');
-            
-            if ($director->save()) {
-                Yii::$app->session->setFlash('success', 'Name updated successfully.');
-            } else {
-                Yii::$app->session->setFlash('error', 'Failed to update name.');
-            }
-        }
-        
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Get the role-specific model for the user
-     */
     private function getRoleModel($user)
     {
         switch ($user->role) {
-            case 'patient':
-                return TblPatient::findOne($user->patient_id);
-            case 'doctor':
-                return TblDoctor::findOne($user->doctor_id);
-            case 'receptionist':
-                return TblReceptionist::findOne($user->receptionist_id);
-            case 'director':
-                return TblDirector::findOne($user->director_id);
+            case 'patient': return TblPatient::findOne($user->patient_id);
+            case 'doctor': return TblDoctor::findOne($user->doctor_id);
+            case 'receptionist': return TblReceptionist::findOne($user->receptionist_id);
+            case 'director': return TblDirector::findOne($user->director_id);
         }
         return null;
     }

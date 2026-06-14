@@ -12,6 +12,10 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use Yii;
 
+/**
+ * AppointmentController - Patient's appointment management
+ * Patients can: index (view own), view, create (book)
+ */
 class AppointmentController extends Controller
 {
     public function actionGetDetails($id)
@@ -67,10 +71,7 @@ class AppointmentController extends Controller
         $searchModel = new AppointmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->andWhere(['patient_id' => $patientId]);
-        $dataProvider->query->orderBy([
-            'appointment_date' => SORT_DESC, 
-            'appointment_time' => SORT_DESC
-        ]);
+        $dataProvider->query->orderBy(['appointment_date' => SORT_DESC, 'appointment_time' => SORT_DESC]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -87,38 +88,30 @@ class AppointmentController extends Controller
             throw new \yii\web\ForbiddenHttpException('You can only view your own appointments.');
         }
         
-        return $this->render('view', [
-            'model' => $model,
-        ]);
+        return $this->render('view', ['model' => $model]);
     }
 
     public function actionCreate()
     {
         $model = new TblAppointment();
-        $model->scenario = 'patient-booking'; // Patient booking scenario
         $user = Yii::$app->user->identity;
         $patient = TblPatient::findOne($user->patient_id);
         
         if (!$patient) {
-            Yii::$app->session->setFlash('error', 'Patient profile not found. Please complete your profile first.');
-            return $this->redirect(['patient/create']);
+            Yii::$app->session->setFlash('error', 'Patient profile not found.');
+            return $this->redirect(['site/index']);
         }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->patient_id = $user->patient_id;
-                $model->status = null; // Pending
+                $model->status = null;
                 $model->recep_id = null;
-                $model->appointment_date = null; // Set by receptionist
-                $model->appointment_time = null; // Set by receptionist
+                $model->appointment_date = null;
+                $model->appointment_time = null;
                 
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 
-                        '✅ Appointment request submitted successfully!<br><br>' .
-                        'Your request has been sent to the receptionist.<br>' .
-                        'You will be notified once your appointment is scheduled.<br>' .
-                        '<strong>Request ID:</strong> ' . $model->appt_id
-                    );
+                    Yii::$app->session->setFlash('success', '✅ Appointment request submitted! The receptionist will schedule your appointment.');
                     return $this->redirect(['view', 'appt_id' => $model->appt_id]);
                 }
             }

@@ -20,23 +20,14 @@ use yii\helpers\ArrayHelper;
             
             <?php $form = ActiveForm::begin(['options' => ['id' => 'appointment-form']]); ?>
 
-            <!-- Patient Information (Read-only) -->
             <div class="alert alert-info">
                 <h5 class="mb-2"><i class="fas fa-user"></i> Patient Information</h5>
                 <div class="row">
-                    <div class="col-md-6">
-                        <strong>Name:</strong> <?= Html::encode($patient->getFullName()) ?>
-                    </div>
-                    <div class="col-md-3">
-                        <strong>Sex:</strong> <?= Html::encode($patient->sex) ?>
-                    </div>
-                    <div class="col-md-3">
-                        <strong>Age:</strong> <?= $patient->getAgeDisplay() ?>
-                    </div>
+                    <div class="col-md-6"><strong>Name:</strong> <?= Html::encode($patient->getFullName()) ?></div>
+                    <div class="col-md-3"><strong>Sex:</strong> <?= Html::encode($patient->sex) ?></div>
+                    <div class="col-md-3"><strong>Age:</strong> <?= $patient->getAgeDisplay() ?></div>
                 </div>
             </div>
-
-            <?= $form->field($model, 'patient_id')->hiddenInput(['value' => $patient->patient_id])->label(false) ?>
 
             <hr>
             <h5 class="text-primary mb-3"><i class="fas fa-user-md"></i> Select Doctor</h5>
@@ -45,10 +36,7 @@ use yii\helpers\ArrayHelper;
                 <div class="col-md-8">
                     <?= $form->field($model, 'dr_id')->dropDownList(
                         ArrayHelper::map(
-                            TblDoctor::find()
-                                ->joinWith('dept')
-                                ->orderBy(['dr_id' => SORT_ASC])
-                                ->all(),
+                            TblDoctor::find()->joinWith('dept')->orderBy(['dr_id' => SORT_ASC])->all(),
                             'dr_id',
                             function($model) {
                                 $deptName = $model->dept ? $model->dept->dept_name : 'General';
@@ -58,12 +46,7 @@ use yii\helpers\ArrayHelper;
                                        ' | Fee: ₱' . number_format($model->dr_fee, 2);
                             }
                         ),
-                        [
-                            'prompt' => '-- Select Doctor --',
-                            'id' => 'appointment-dr_id',
-                            'class' => 'form-control prompt-select',
-                            'required' => true
-                        ]
+                        ['prompt' => '-- Select Doctor --', 'id' => 'appointment-dr_id', 'class' => 'form-control prompt-select', 'required' => true]
                     )->label('Choose Doctor *') ?>
                 </div>
                 <div class="col-md-4">
@@ -71,8 +54,7 @@ use yii\helpers\ArrayHelper;
                         <label class="form-label">Consultation Fee</label>
                         <div class="input-group">
                             <span class="input-group-text">₱</span>
-                            <input type="text" id="doctor-fee-display" class="form-control" readonly 
-                                   placeholder="Select a doctor" style="font-weight: bold; font-size: 18px;">
+                            <input type="text" id="doctor-fee-display" class="form-control" readonly placeholder="Select a doctor" style="font-weight: bold; font-size: 18px;">
                         </div>
                     </div>
                 </div>
@@ -83,19 +65,17 @@ use yii\helpers\ArrayHelper;
 
             <?= $form->field($model, 'symptoms_list')->textarea([
                 'rows' => 5,
-                'placeholder' => 'Please describe your symptoms or reason for consultation...\n\nExample:\n- Fever and cough for 3 days\n- Headache with dizziness\n- Annual checkup',
+                'placeholder' => "Please describe your symptoms or reason for consultation...\n\nExample:\n- Fever and cough for 3 days\n- Headache with dizziness\n- Annual checkup",
                 'required' => true
             ])->label('Symptoms / Reason for Visit *') ?>
 
             <div class="alert alert-warning mt-3">
                 <i class="fas fa-info-circle"></i> 
-                <strong>Note:</strong> Your appointment date and time will be set by the receptionist upon acceptance of your request.
+                <strong>Note:</strong> Your appointment date and time will be set by the receptionist upon acceptance.
             </div>
 
             <div class="form-group mt-4">
-                <?= Html::submitButton('<i class="fas fa-paper-plane"></i> Submit Appointment Request', [
-                    'class' => 'btn btn-primary btn-lg w-100'
-                ]) ?>
+                <?= Html::submitButton('<i class="fas fa-paper-plane"></i> Submit Appointment Request', ['class' => 'btn btn-primary btn-lg w-100']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>
@@ -103,36 +83,27 @@ use yii\helpers\ArrayHelper;
     </div>
 </div>
 
-<?php
-$this->registerJs("
-    function disablePromptOption(selectElement) {
-        var selectedValue = $(selectElement).val();
-        $(selectElement).find('option[value=\"\"]').prop('disabled', selectedValue !== '');
-        if (selectedValue === '') {
-            $(selectElement).find('option[value=\"\"]').prop('disabled', false);
-        }
-    }
-    
-    $(document).on('change', '.prompt-select', function() {
-        disablePromptOption(this);
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.prompt-select').forEach(function(select) {
+        var promptOption = select.querySelector('option[value=""]');
+        if (promptOption) promptOption.disabled = select.value !== '';
+        select.addEventListener('change', function() {
+            if (promptOption) promptOption.disabled = this.value !== '';
+        });
     });
     
-    $('#appointment-dr_id').on('change', function() {
-        var selectedOption = $(this).find('option:selected');
-        var text = selectedOption.text();
-        var feeMatch = text.match(/Fee: ₱([\\d,]+\\.\\d{2})/);
+    document.getElementById('appointment-dr_id').addEventListener('change', function() {
+        var text = this.options[this.selectedIndex].text;
+        var feeMatch = text.match(/Fee: ₱([\d,]+\.\d{2})/);
+        var display = document.getElementById('doctor-fee-display');
         if (feeMatch) {
-            $('#doctor-fee-display').val(feeMatch[1].replace(/,/g, ''));
-            
+            display.value = feeMatch[1].replace(/,/g, '');
+            display.style.backgroundColor = '#d4edda00';
         } else {
-            $('#doctor-fee-display').val('');
-            
+            display.value = '';
+            display.style.backgroundColor = '#ffffff01';
         }
     });
-    
-    $(document).ready(function() {
-        $('.prompt-select').each(function() { disablePromptOption(this); });
-        if ($('#appointment-dr_id').val()) $('#appointment-dr_id').trigger('change');
-    });
-");
-?>
+});
+</script>
