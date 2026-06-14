@@ -4,26 +4,20 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblBillItem $model */
+/** @var common\models\TblBillItem $model */
 
-$this->title = $model->bill_item_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Bill Items', 'url' => ['index']];
+$this->title = 'Bill Item #' . $model->bill_item_id;
+$this->params['breadcrumbs'][] = ['label' => 'Bills', 'url' => ['bill/index']];
+$this->params['breadcrumbs'][] = ['label' => 'Bill #' . $model->bill_id, 'url' => ['bill/view', 'bill_id' => $model->bill_id]];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="tbl-bill-item-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'bill_item_id' => $model->bill_item_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'bill_item_id' => $model->bill_item_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?= Html::a('<i class="fas fa-arrow-left"></i> Back to Bill #' . $model->bill_id, ['bill/view', 'bill_id' => $model->bill_id], ['class' => 'btn btn-secondary']) ?>
+        <?= Html::a('<i class="fas fa-edit"></i> Edit', ['update', 'bill_item_id' => $model->bill_item_id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([
@@ -31,13 +25,22 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'bill_item_id',
             'bill_id',
-            'item_type',
+            [
+                'attribute' => 'item_type',
+                'value' => ucfirst($model->item_type),
+            ],
             'description',
             'reference_id',
             'quantity',
-            'unit_price',
-            'total_price',
-            'created_at',
+            [
+                'attribute' => 'unit_price',
+                'value' => '₱' . number_format($model->unit_price, 2),
+            ],
+            [
+                'attribute' => 'total_price',
+                'value' => '₱' . number_format($model->total_price, 2),
+            ],
+            'created_at:datetime',
         ],
     ]) ?>
 

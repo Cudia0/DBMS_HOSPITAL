@@ -29,6 +29,13 @@ $menuItems[] = [
 // ============================================
 if ($role === 'director') {
     $menuItems[] = [
+    'label' => '<i class="fas fa-shield-alt"></i> System',
+    'items' => [
+        ['label' => '<i class="fas fa-users-cog"></i> User Management', 'url' => ['/user/index']],
+        ['label' => '<i class="fas fa-cogs"></i> System Configuration', 'url' => ['/settings/index']],
+    ],
+];
+    $menuItems[] = [
         'label' => '<i class="fas fa-cog"></i> Master Data',
         'items' => [
             ['label' => '<i class="fas fa-building"></i> Departments', 'url' => ['/department/index']],
@@ -102,6 +109,8 @@ elseif ($role === 'receptionist') {
 // DOCTOR MENU
 // ============================================
 elseif ($role === 'doctor') {
+    // In the DIRECTOR MENU section, add this item:
+
     $menuItems[] = [
         'label' => '<i class="fas fa-procedures"></i> Patients',
         'url' => ['/patient/index'],

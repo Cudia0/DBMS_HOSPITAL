@@ -3,10 +3,10 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblBill $model */
+/** @var common\models\TblBill $model */
 
-$this->title = 'Create Tbl Bill';
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Bills', 'url' => ['index']];
+$this->title = 'Create Bill';
+$this->params['breadcrumbs'][] = ['label' => 'Bills', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tbl-bill-create">

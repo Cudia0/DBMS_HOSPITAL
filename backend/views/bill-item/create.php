@@ -3,11 +3,15 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblBillItem $model */
+/** @var common\models\TblBillItem $model */
+/** @var common\models\TblBill $bill */
 
-$this->title = 'Create Tbl Bill Item';
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Bill Items', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Add Charge to Bill #' . ($bill->bill_id ?? '');
+$this->params['breadcrumbs'][] = ['label' => 'Bills', 'url' => ['bill/index']];
+if (isset($bill)) {
+    $this->params['breadcrumbs'][] = ['label' => 'Bill #' . $bill->bill_id, 'url' => ['bill/view', 'bill_id' => $bill->bill_id]];
+}
+$this->params['breadcrumbs'][] = 'Add Item';
 ?>
 <div class="tbl-bill-item-create">
 
@@ -15,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'bill' => $bill ?? null,
     ]) ?>
 
 </div>

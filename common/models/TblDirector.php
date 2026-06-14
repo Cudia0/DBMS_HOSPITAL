@@ -4,6 +4,21 @@ namespace common\models;
 
 use Yii;
 
+/**
+ * This is the model class for table "tbl_director".
+ *
+ * @property int $director_id
+ * @property string $first_name
+ * @property string|null $middle_name
+ * @property string $last_name
+ * @property string|null $phone_num
+ * @property string|null $country_code
+ * @property string $email
+ * @property string|null $created_at
+ * @property string|null $updated_at
+ *
+ * @property TblReceptionist[] $tblReceptionists
+ */
 class TblDirector extends \yii\db\ActiveRecord
 {
     public static function tableName()
@@ -14,21 +29,15 @@ class TblDirector extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['first_name', 'last_name'], 'required'],
+            [['first_name', 'last_name', 'email'], 'required', 'message' => 'This field cannot be blank.'],
             [['created_at', 'updated_at'], 'safe'],
             [['first_name', 'middle_name', 'last_name'], 'string', 'max' => 100],
             [['phone_num'], 'string', 'max' => 20],
             [['country_code'], 'string', 'max' => 10],
             [['email'], 'string', 'max' => 150],
             [['email'], 'email', 'message' => 'Please enter a valid email address.'],
-            [
-                ['email'], 
-                'match', 
-                'pattern' => '/^[a-zA-Z0-9._%+-]+@gmail\.com$|^N\/A$|^n\/a$/', 
-                'message' => 'Email must be a valid Gmail address or N/A.'
-            ],
-            // Duplicate check
-            [['email', 'phone_num'], 'validateDuplicateDirector', 'skipOnEmpty' => false],
+            [['email'], 'unique', 'message' => 'This email is already registered to another director.'],
+            [['phone_num', 'email'], 'validateDuplicateDirector', 'skipOnEmpty' => false],
         ];
     }
 
@@ -37,7 +46,6 @@ class TblDirector extends \yii\db\ActiveRecord
      */
     public function validateDuplicateDirector($attribute, $params)
     {
-        // Check if phone number is already registered
         if ($this->phone_num && $this->country_code) {
             $existingPhone = self::find()
                 ->where([
@@ -52,8 +60,7 @@ class TblDirector extends \yii\db\ActiveRecord
             }
         }
         
-        // Check if email is already registered
-        if ($this->email && $this->email !== 'N/A' && $this->email !== 'n/a' && $this->email !== '') {
+        if ($this->email) {
             $existingEmail = self::find()
                 ->where(['email' => $this->email])
                 ->andFilterWhere(['!=', 'director_id', $this->director_id])
@@ -64,7 +71,6 @@ class TblDirector extends \yii\db\ActiveRecord
             }
         }
         
-        // Check if director with same full name exists
         if ($this->first_name && $this->last_name) {
             $existingDirector = self::find()
                 ->where([

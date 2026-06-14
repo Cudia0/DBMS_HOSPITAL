@@ -15,7 +15,7 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'language' => 'en-US',
-    'name' => 'MediSync',
+    'name' => '',
     //'homeUrl' => '/web',
     'components' => [
         'request' => [

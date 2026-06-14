@@ -3,6 +3,8 @@
 namespace frontend\controllers;
 
 use common\models\TblAppointment;
+use common\models\TblDoctor;
+use common\models\TblPatient;
 use common\models\AppointmentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -10,15 +12,11 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use Yii;
 
-/**
- * AppointmentController - Frontend (Patient Only)
- */
 class AppointmentController extends Controller
 {
     public function actionGetDetails($id)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        
         $appointment = TblAppointment::findOne($id);
         if ($appointment) {
             return [
@@ -30,13 +28,9 @@ class AppointmentController extends Controller
                 'appointment_time' => $appointment->appointment_time
             ];
         }
-        
         return ['success' => false];
     }
-    
-    /**
-     * @inheritDoc
-     */
+
     public function behaviors()
     {
         return array_merge(
@@ -47,7 +41,7 @@ class AppointmentController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['index', 'view', 'create'], // Patients can view and create
+                            'actions' => ['index', 'view', 'create'],
                             'roles' => ['@'],
                             'matchCallback' => function ($rule, $action) {
                                 return Yii::$app->user->identity->isPatient();
@@ -65,21 +59,18 @@ class AppointmentController extends Controller
         );
     }
 
-    /**
-     * Lists all TblAppointment models (patient sees only their own).
-     *
-     * @return string
-     */
     public function actionIndex()
     {
-        $searchModel = new AppointmentSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $user = Yii::$app->user->identity;
+        $patientId = $user->patient_id;
         
-        // Filter to show only patient's own appointments
-        $patientId = Yii::$app->user->identity->patient_id;
-        if ($patientId) {
-            $dataProvider->query->andWhere(['patient_id' => $patientId]);
-        }
+        $searchModel = new AppointmentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andWhere(['patient_id' => $patientId]);
+        $dataProvider->query->orderBy([
+            'appointment_date' => SORT_DESC, 
+            'appointment_time' => SORT_DESC
+        ]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -87,65 +78,63 @@ class AppointmentController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single TblAppointment model.
-     * @param int $appt_id Appt ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($appt_id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($appt_id),
-        ]);
-    }
-
-    /**
-     * Creates a new TblAppointment model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $model = new TblAppointment();
+        $model = $this->findModel($appt_id);
+        $user = Yii::$app->user->identity;
         
-        // Auto-set patient_id from logged-in user
-        $patientId = Yii::$app->user->identity->patient_id;
-        if ($patientId) {
-            $model->patient_id = $patientId;
+        if ($model->patient_id !== $user->patient_id) {
+            throw new \yii\web\ForbiddenHttpException('You can only view your own appointments.');
         }
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->patient_id = $patientId; // Ensure patient_id is set
-                $model->status = 'scheduled'; // Default status
-                
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Appointment booked successfully!');
-                    return $this->redirect(['view', 'appt_id' => $model->appt_id]);
-                }
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
+        
+        return $this->render('view', [
             'model' => $model,
         ]);
     }
 
-    /**
-     * Finds the TblAppointment model based on its primary key value.
-     * @param int $appt_id Appt ID
-     * @return TblAppointment the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+    public function actionCreate()
+    {
+        $model = new TblAppointment();
+        $model->scenario = 'patient-booking'; // Patient booking scenario
+        $user = Yii::$app->user->identity;
+        $patient = TblPatient::findOne($user->patient_id);
+        
+        if (!$patient) {
+            Yii::$app->session->setFlash('error', 'Patient profile not found. Please complete your profile first.');
+            return $this->redirect(['patient/create']);
+        }
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->patient_id = $user->patient_id;
+                $model->status = null; // Pending
+                $model->recep_id = null;
+                $model->appointment_date = null; // Set by receptionist
+                $model->appointment_time = null; // Set by receptionist
+                
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 
+                        '✅ Appointment request submitted successfully!<br><br>' .
+                        'Your request has been sent to the receptionist.<br>' .
+                        'You will be notified once your appointment is scheduled.<br>' .
+                        '<strong>Request ID:</strong> ' . $model->appt_id
+                    );
+                    return $this->redirect(['view', 'appt_id' => $model->appt_id]);
+                }
+            }
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+            'patient' => $patient,
+        ]);
+    }
+
     protected function findModel($appt_id)
     {
         if (($model = TblAppointment::findOne(['appt_id' => $appt_id])) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

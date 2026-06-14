@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'prescription_id',
             'appt_id',
-            'dr_id',
+
             'prescription_date',
             'dosage_instructions:ntext',
             'duration_days',

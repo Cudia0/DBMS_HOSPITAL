@@ -3,10 +3,11 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\TblAppointment $model */
+/** @var common\models\TblAppointment $model */
+/** @var common\models\TblPatient $patient */
 
-$this->title = 'Create Tbl Appointment';
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Appointments', 'url' => ['index']];
+$this->title = 'Book an Appointment';
+$this->params['breadcrumbs'][] = ['label' => 'My Appointments', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tbl-appointment-create">
@@ -15,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'patient' => $patient,
     ]) ?>
 
 </div>

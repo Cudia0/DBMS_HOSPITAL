@@ -16,7 +16,7 @@ $this->registerMetaTag(
 $this->registerMetaTag(
     [
         'name' => 'viewport',
-        'content' => 'width=device-width, initial-scale=1',
+        'content' => 'width=device-width, initial-scale=1, shrink-to-fit=no',
     ],
 );
 if (!empty($this->params['meta_description'])) {
@@ -42,3 +42,4 @@ $this->registerLinkTag(
         'href' => Yii::getAlias('@web/favicon.ico'),
     ],
 );
+?>

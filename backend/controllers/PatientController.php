@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\TblPatient;
 use common\models\PatientSearch;
+use common\models\User;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,14 +26,21 @@ class PatientController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
+                            'actions' => ['index', 'view'],
                             'roles' => ['@'],
                             'matchCallback' => function ($rule, $action) {
                                 $user = Yii::$app->user->identity;
                                 // All staff can view patients
-                                if (in_array($action->id, ['index', 'view'])) {
-                                    return $user->isDirector() || $user->isReceptionist() || $user->isDoctor();
-                                }
-                                // Only Director & Receptionist can create/update/delete
+                                return $user->isDirector() || $user->isReceptionist() || $user->isDoctor();
+                            },
+                        ],
+                        [
+                            'allow' => true,
+                            'actions' => ['create', 'update', 'delete'],
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user->identity;
+                                // Only Director & Receptionist can manage
                                 return $user->isDirector() || $user->isReceptionist();
                             },
                         ],
@@ -52,18 +60,24 @@ class PatientController extends Controller
     {
         $searchModel = new PatientSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        return $this->render('index', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionView($patient_id)
     {
-        return $this->render('view', ['model' => $this->findModel($patient_id)]);
+        return $this->render('view', [
+            'model' => $this->findModel($patient_id),
+        ]);
     }
 
     public function actionCreate()
     {
         $model = new TblPatient();
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Patient registered successfully.');
             return $this->redirect(['view', 'patient_id' => $model->patient_id]);
         }
         return $this->render('create', ['model' => $model]);
@@ -73,6 +87,7 @@ class PatientController extends Controller
     {
         $model = $this->findModel($patient_id);
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Patient updated successfully.');
             return $this->redirect(['view', 'patient_id' => $model->patient_id]);
         }
         return $this->render('update', ['model' => $model]);

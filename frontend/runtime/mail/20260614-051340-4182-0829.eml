@@ -1,0 +1,50 @@
+From: robot <support@example.com>
+To: cudialuckyvincent@gmail.com
+Subject: Password reset for 
+MIME-Version: 1.0
+Date: Sun, 14 Jun 2026 05:13:40 +0000
+Message-ID: <e8e2fb35b4bc5a4c8464f31f25b3c5de@example.com>
+Content-Type: multipart/alternative; boundary=aexkM9hm
+
+--aexkM9hm
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Hello xiena1,
+
+Follow the link below to reset your password:
+
+http:=
+//vince.com/frontend/index.php/site/reset-password?token=3DXgM_KB8dBkI481tp=
+Bm7hs6j-AGiPhT2M_1781414020
+--aexkM9hm
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=
+/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns=3D"http://www.w3.org/1999/=
+xhtml">
+<head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/ht=
+ml; charset=3DUTF-8" />
+    <title></title>
+    </head>
+<body>
+    =
+    <div class=3D"password-reset">
+    <p>Hello xiena1,</p>
+
+    <p>F=
+ollow the link below to reset your password:</p>
+
+    <p><a href=3D"htt=
+p://vince.com/frontend/index.php/site/reset-password?token=3DXgM_KB8dBkI481=
+tpBm7hs6j-AGiPhT2M_1781414020">http://vince.com/frontend/index.php/site/res=
+et-password?token=3DXgM_KB8dBkI481tpBm7hs6j-AGiPhT2M_1781414020</a></p>
+<=
+/div>
+    </body>
+</html>
+
+--aexkM9hm--

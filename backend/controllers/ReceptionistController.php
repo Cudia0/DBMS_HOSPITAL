@@ -83,16 +83,17 @@ class ReceptionistController extends Controller
                         // Auto-create user account for receptionist
                         if ($model->email) {
                             $existingUser = User::find()->where(['email' => $model->email])->one();
+                            
                             if ($existingUser) {
                                 Yii::$app->session->setFlash('warning', 
                                     'Receptionist saved, but a user account with this email already exists.'
                                 );
                             } else {
-                                // Generate username from name
+                                // Generate username: rec.firstname.lastname
                                 $username = $this->generateUsername($model);
                                 
-                                // Generate password
-                                $password = 'Recep@' . $model->recep_id;
+                                // Generate password: lastname@emailusername
+                                $password = $this->generatePassword($model);
                                 
                                 $user = new User();
                                 $user->username = $username;
@@ -110,11 +111,10 @@ class ReceptionistController extends Controller
                                         'Username: <strong>' . $user->username . '</strong><br>' .
                                         'Password: <strong>' . $password . '</strong><br>' .
                                         'Role: <strong>Receptionist</strong><br>' .
-                                        '<small class="text-danger">⚠️ Please save these credentials. The password should be changed after first login.</small>' .
+                                        '<small class="text-danger">⚠️ Please save these credentials. Share them securely with the receptionist.</small>' .
                                         '</div>'
                                     );
                                 } else {
-                                    // User creation failed
                                     $errors = implode(', ', $user->getFirstErrors());
                                     Yii::$app->session->setFlash('error', 
                                         'Receptionist saved, but failed to create user account: ' . $errors
@@ -160,8 +160,9 @@ class ReceptionistController extends Controller
                         $user = User::find()->where(['email' => $oldEmail])->one();
                         if ($user) {
                             $user->email = $model->email;
+                            $user->setPassword($this->generatePassword($model));
                             $user->save();
-                            Yii::$app->session->setFlash('info', 'User account email updated to match.');
+                            Yii::$app->session->setFlash('info', 'User account email and password updated to match.');
                         }
                     }
                     
@@ -191,7 +192,6 @@ class ReceptionistController extends Controller
         
         $transaction = Yii::$app->db->beginTransaction();
         try {
-            // Delete associated user account
             if ($email) {
                 $user = User::find()->where(['email' => $email])->one();
                 if ($user) {
@@ -202,7 +202,7 @@ class ReceptionistController extends Controller
             $model->delete();
             $transaction->commit();
             
-            Yii::$app->session->setFlash('success', '✅ Receptionist "' . $name . '" and associated account deleted.');
+            Yii::$app->session->setFlash('success', '✅ ' . $name . ' and associated account deleted.');
         } catch (\Exception $e) {
             $transaction->rollBack();
             Yii::$app->session->setFlash('error', '❌ Failed to delete: ' . $e->getMessage());
@@ -213,11 +213,12 @@ class ReceptionistController extends Controller
 
     /**
      * Generate a unique username for the receptionist
+     * Format: rec.firstname.lastname
      */
     protected function generateUsername($model)
     {
         $base = 'rec.' . strtolower($model->first_name . '.' . $model->last_name);
-        $base = preg_replace('/[^a-z0-9.]/', '', $base); // Remove special characters
+        $base = preg_replace('/[^a-z0-9.]/', '', $base);
         $username = $base;
         $count = 1;
         
@@ -227,6 +228,28 @@ class ReceptionistController extends Controller
         }
         
         return $username;
+    }
+
+    /**
+     * Generate password for receptionist
+     * Format: lastname@emailusername
+     * Example: email = johndoe@gmail.com, lastname = Santos → Santos@johndoe
+     */
+    protected function generatePassword($model)
+    {
+        // Get lastname with first letter capitalized
+        $lastname = ucfirst(strtolower($model->last_name));
+        $lastname = preg_replace('/[^a-zA-Z]/', '', $lastname);
+        
+        // Get email username (part before @)
+        $emailParts = explode('@', $model->email);
+        $emailUsername = isset($emailParts[0]) ? $emailParts[0] : 'user';
+        $emailUsername = strtolower($emailUsername);
+        $emailUsername = preg_replace('/[^a-z0-9]/', '', $emailUsername);
+        
+        $password = $lastname . '@' . $emailUsername;
+        
+        return $password;
     }
 
     /**
