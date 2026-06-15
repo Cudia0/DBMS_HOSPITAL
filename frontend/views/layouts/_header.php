@@ -50,8 +50,8 @@ if ($isGuest) {
 ?>
 <header id="header">
     <?php NavBar::begin([
-        'brandLabel' => Html::img('@web/images/medisync-logo.svg', ['alt' => 'MediSync', 'height' => 40, 'class' => 'd-inline-block align-top me-2']) . ' MediSync',
-        'brandUrl' => Yii::$app->homeUrl,
+        'brandLabel' => Html::img('@web/images/medisync-logo-dark.svg', ['alt' => 'MediSync', 'height' => 40, 'class' => 'd-inline-block align-top me-2']) . ' MediSync',
+        'brandUrl' => ' ',
         'options' => ['class' => 'navbar-expand-lg navbar-dark bg-dark fixed-top shadow', 'id' => 'main-navbar'],
         'innerContainerOptions' => ['class' => 'container-fluid'],
     ]); ?>

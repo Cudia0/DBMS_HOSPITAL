@@ -21,7 +21,7 @@ $labelOptions = ['class' => 'form-label fw-semibold small'];
             <div class="col-md-5 d-none d-md-flex login-brand-panel text-white">
                 <div class="d-flex flex-column justify-content-between p-4 p-lg-5 w-100">
                     <div>
-                        <?= Html::img(Yii::getAlias('@web/images/medisync-logo-white.svg'), ['alt' => 'MediSync', 'class' => 'mb-4', 'height' => 40]) ?>
+                        <?= Html::img(Yii::getAlias('@web/images/medisync-logo-white.svg'), ['alt' => 'MediSync', 'class' => 'mb-4', 'height' => 80]) ?>
                     </div>
                     <div>
                         <h2 class="fw-bold mb-3 login-brand-title">Patient<br>Portal</h2>
@@ -33,7 +33,7 @@ $labelOptions = ['class' => 'form-label fw-semibold small'];
                 <div class="p-4 p-lg-5">
                     <div class="text-center mb-4">
                         <div class="d-md-none mb-3">
-                            <?= Html::img(Yii::getAlias('@web/images/medisync-logo.svg'), ['alt' => 'MediSync', 'class' => 'login-mobile-logo', 'height' => 36]) ?>
+                            <?= Html::img(Yii::getAlias('@web/images/medisync-logo-light.svg'), ['alt' => 'MediSync', 'class' => 'login-mobile-logo', 'height' => 36]) ?>
                         </div>
                         <h1 class="h3 fw-bold mb-1"><?= Html::encode($this->title) ?></h1>
                         <p class="text-body-secondary small">Enter your credentials to access your patient portal</p>

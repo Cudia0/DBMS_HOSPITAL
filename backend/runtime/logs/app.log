@@ -64572,3 +64572,71 @@ $_SERVER = [
     'REQUEST_TIME_FLOAT' => 1781473649.3451
     'REQUEST_TIME' => 1781473649
 ]
+2026-06-15 01:35:25 [192.168.45.91][8][12627d22eb27c89bca61a6d952898bf0][error][yii\web\HttpException:400] yii\web\BadRequestHttpException: Missing required parameters: bill_id in /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Controller.php:185
+Stack trace:
+#0 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/InlineAction.php(54): yii\web\Controller->bindActionParams()
+#1 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Controller.php(182): yii\base\InlineAction->runWithParams()
+#2 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Module.php(547): yii\base\Controller->runAction()
+#3 /var/www/html/hospital_system/vendor/yiisoft/yii2/web/Application.php(105): yii\base\Module->runAction()
+#4 /var/www/html/hospital_system/vendor/yiisoft/yii2/base/Application.php(382): yii\web\Application->handleRequest()
+#5 /var/www/html/hospital_system/backend/web/index.php(20): yii\base\Application->run()
+#6 {main}
+2026-06-15 01:35:25 [192.168.45.91][8][12627d22eb27c89bca61a6d952898bf0][info][application] $_GET = []
+
+$_POST = []
+
+$_FILES = []
+
+$_COOKIE = [
+    'advanced-backend' => '12627d22eb27c89bca61a6d952898bf0'
+    '_identity-backend' => '402cce22a75ab4e635ef2b4d507ba4332fb5fc8bca22c8aa8a2f87ee4c02b85ba:2:{i:0;s:17:\"_identity-backend\";i:1;s:46:\"[8,\"g7SkAisg6peEKjIC7qsVv18keOoVjfrq\",2592000]\";}'
+    '_csrf-backend' => '4ea9150a7b2db3ab83fcd3b22d1968056bd63cf0021ad36cbf8dacf44bff7718a:2:{i:0;s:13:\"_csrf-backend\";i:1;s:32:\"lEJ6JiXtgX8JHdSI3nKI4ctDR_ewyy1A\";}'
+]
+
+$_SESSION = [
+    '__flash' => []
+    '__id' => 8
+    '__authKey' => 'g7SkAisg6peEKjIC7qsVv18keOoVjfrq'
+]
+
+$_SERVER = [
+    'USER' => 'apache'
+    'HOME' => '/usr/share/httpd'
+    'PATH_TRANSLATED' => '/var/www/html/bill/view'
+    'PATH_INFO' => '/bill/view'
+    'SCRIPT_NAME' => '/hospital_system/backend/web/index.php'
+    'REQUEST_URI' => '/hospital_system/backend/web/index.php/bill/view'
+    'QUERY_STRING' => ''
+    'REQUEST_METHOD' => 'GET'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'REMOTE_PORT' => '57877'
+    'SCRIPT_FILENAME' => '/var/www/html/hospital_system/backend/web/index.php'
+    'SERVER_ADMIN' => 'root@localhost'
+    'CONTEXT_DOCUMENT_ROOT' => '/var/www/html'
+    'CONTEXT_PREFIX' => ''
+    'REQUEST_SCHEME' => 'http'
+    'DOCUMENT_ROOT' => '/var/www/html'
+    'REMOTE_ADDR' => '192.168.45.91'
+    'SERVER_PORT' => '80'
+    'SERVER_ADDR' => '192.168.45.87'
+    'SERVER_NAME' => '192.168.45.87'
+    'SERVER_SOFTWARE' => 'Apache/2.4.66 (Fedora Linux) mod_fcgid/2.3.9 mod_perl/2.0.13 Perl/v5.42.2'
+    'SERVER_SIGNATURE' => ''
+    'PATH' => '/usr/local/bin:/usr/bin:/var/lib/snapd/snap/bin'
+    'HTTP_COOKIE' => 'advanced-backend=12627d22eb27c89bca61a6d952898bf0; _identity-backend=402cce22a75ab4e635ef2b4d507ba4332fb5fc8bca22c8aa8a2f87ee4c02b85ba%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_identity-backend%22%3Bi%3A1%3Bs%3A46%3A%22%5B8%2C%22g7SkAisg6peEKjIC7qsVv18keOoVjfrq%22%2C2592000%5D%22%3B%7D; _csrf-backend=4ea9150a7b2db3ab83fcd3b22d1968056bd63cf0021ad36cbf8dacf44bff7718a%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_csrf-backend%22%3Bi%3A1%3Bs%3A32%3A%22lEJ6JiXtgX8JHdSI3nKI4ctDR_ewyy1A%22%3B%7D'
+    'HTTP_ACCEPT_LANGUAGE' => 'en-US,en;q=0.9'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_REFERER' => 'http://192.168.45.87/hospital_system/backend/web/index.php/bill/update?bill_id=15'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36'
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_HOST' => '192.168.45.87'
+    'proxy-nokeepalive' => '1'
+    'UNIQUE_ID' => 'ai9W3X-jxmqvbOD_EhrceAAAAME'
+    'FCGI_ROLE' => 'RESPONDER'
+    'PHP_SELF' => '/hospital_system/backend/web/index.php/bill/view'
+    'REQUEST_TIME_FLOAT' => 1781487325.8113
+    'REQUEST_TIME' => 1781487325
+]

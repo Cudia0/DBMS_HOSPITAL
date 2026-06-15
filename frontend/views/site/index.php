@@ -47,7 +47,7 @@ if (!$isGuest && $patientId) {
             <div class="card shadow-lg border-0">
                 <div class="card-body p-5">
                     <div class="mb-4">
-                        <?= Html::img('@web/images/medisync-logo.svg', ['alt' => 'MediSync', 'height' => 80]) ?>
+                        <?= Html::img('@web/images/medisync-logo-light.svg', ['alt' => 'MediSync', 'height' => 80]) ?>
                     </div>
                     <h1 class="display-4 fw-bold text-primary">Welcome to MediSync</h1>
                     <p class="lead text-muted">Your Health, Our Priority</p>
